@@ -1,0 +1,37 @@
+&share
+ wrf_core         = 'ARW',
+ max_dom          =     3,
+ start_date       = '2021-09-07_12:00:00', '2021-09-07_12:00:00', '2021-09-07_12:00:00',
+ end_date         = '2021-09-09_00:00:00', '2021-09-09_00:00:00', '2021-09-09_00:00:00',
+ interval_seconds = 10800,
+/
+
+
+&geogrid
+parent_id         =    1,     1,    2,
+parent_grid_ratio =    1,     3,    3,
+i_parent_start    =    1,    44,   40,
+j_parent_start    =    1,    51,   30,
+e_we              =  150,   190,  169,
+e_sn              =  150,   148,  190,
+geog_data_res     = 'default','default','default',
+dx = 9000,
+dy = 9000,
+map_proj = 'lambert',
+ref_lat   =   44.47,
+ref_lon   = -102.75,
+truelat1  =   44.47,
+truelat2  =   44.47,
+stand_lon = -102.75,
+geog_data_path = '/Volumes/nfsdrives/ias_raid/data/WRF_DATA/WPS/geog/'
+/
+
+&ungrib
+ out_format = 'WPS',
+ prefix = 'FILE',
+/
+
+&metgrid
+ fg_name = 'FILE',
+ OPT_METGRID_TBL_PATH = "./",
+/

@@ -1,0 +1,9 @@
+*.exe
+*.o
+*.nc
+FILE:*
+GRIBFILE.???
+wrfinput_d*
+wrfbdy_d*
+wrfout_d*
+*.grib2
