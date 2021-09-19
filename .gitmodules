@@ -4,3 +4,6 @@
 [submodule "WRF4/WPS"]
 	path = WRF4/WPS
 	url = https://github.com/wrf-model/WPS.git
+[submodule "WRF4/NCEPlibs"]
+	path = WRF4/NCEPlibs
+	url = https://github.com/NCAR/NCEPlibs.git
