@@ -1,13 +1,1 @@
-[submodule "WRF4/WRF"]
-	path = WRF4/WRF
-	url = https://github.com/wrf-model/WRF.git
-[submodule "WRF4/WPS"]
-	path = WRF4/WPS
-	url = https://github.com/wrf-model/WPS.git
-[submodule "WRF4/NCEPlibs"]
-	path = WRF4/NCEPlibs
-	url = https://github.com/NCAR/NCEPlibs.git
-[submodule "WRF4/UPPV4.1"]
-	path = WRF4/UPPV4.1
-	url = https://github.com/NOAA-EMC/EMC_post
-	branch = dtc_post_v4.1.0
+
