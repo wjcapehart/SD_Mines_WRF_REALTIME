@@ -7,3 +7,7 @@ wrfinput_d*
 wrfbdy_d*
 wrfout_d*
 *.grib2
+rsl*
+met_em*
+.DS_Store
+.DS_Store
