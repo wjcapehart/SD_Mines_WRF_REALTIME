@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # # WRF Realtime Script
-# 
+#
 # ## Libraries
 
 # In[ ]:
@@ -71,7 +71,7 @@ NCEP_FTP_GRIB_DIR_ROOT = "/pub/data/nccf/com/nam/prod/nam."
 
 
 # ## Time Settings
-# 
+#
 # ### Setting up Time Intervals
 
 # In[ ]:
@@ -95,9 +95,9 @@ time_between_boundary_condition_feeds =  3 # hours
 
 
 # ### Timings for each run
-# 
-# The Realtime WRF is generated every 6 hr at best.  The model takes 3 hr to 
-# 
+#
+# The Realtime WRF is generated every 6 hr at best.  The model takes 3 hr to
+#
 # | Model Product Time (UTC) | Wallclock Start Time (UTC) |
 # |:------------------------:|:--------------------------:|
 # |        00 UTC            |        03 UTC              |
@@ -124,8 +124,8 @@ if (not beta_test) :
 
 
     #current_datetime = datetime.datetime(year   = 2021,
-    #                                     month  =    8, 
-    #                                     day    =    4, 
+    #                                     month  =    8,
+    #                                     day    =    4,
     #                                     hour   =   22,
     #                                     minute =   15)
 
@@ -143,16 +143,16 @@ if (not beta_test) :
             fx_hour = 18
 
         model_start_datetime = datetime.datetime(year  = current_datetime_lag3.year,
-                                                 month = current_datetime_lag3.month, 
-                                                 day   = current_datetime_lag3.day, 
-                                                 hour  = fx_hour)     
+                                                 month = current_datetime_lag3.month,
+                                                 day   = current_datetime_lag3.day,
+                                                 hour  = fx_hour)
     else:
         fx_hour = 18
         model_start_datetime = datetime.datetime(year  = current_datetime_lag3.year,
-                                                 month = current_datetime_lag3.month, 
-                                                 day   = current_datetime_lag3.day, 
+                                                 month = current_datetime_lag3.month,
+                                                 day   = current_datetime_lag3.day,
                                                  hour  = fx_hour)
-        
+
 else:
 
 
@@ -160,7 +160,7 @@ else:
                                              month =    9,
                                              day   =    7,
                                              hour  =   12)
-    
+
 model_end_datetime = model_start_datetime + datetime.timedelta(hours=total_sumulation_time)
 
 print("           Current Time ", current_datetime)
@@ -178,9 +178,9 @@ with open(WRF_OVERALL_DIR + "./current_run.txt", 'w') as f:
 
 
 # ## WRF Preprocessing System Components (WPS)
-# 
-# 
-# 
+#
+#
+#
 # ### Move to WPS Work Directory
 
 # In[ ]:
@@ -202,8 +202,8 @@ display( "Current Working Directory is now " + os.getcwd() )
 ## Enter Working WPS Direcotry
 
 
-ncep_boundary_condition_hour = np.arange(0, 
-                                         total_sumulation_time + 1, 
+ncep_boundary_condition_hour = np.arange(0,
+                                         total_sumulation_time + 1,
                                          time_between_boundary_condition_feeds)
 
 ncep_boundary_condition_hour = [str(x).zfill(2) for x in ncep_boundary_condition_hour]
@@ -214,8 +214,8 @@ len(ncep_boundary_condition_hour)
 
 
 # ### Times for First Guess NCEP Runs
-# 
-# 
+#
+#
 
 # In[ ]:
 
@@ -233,9 +233,9 @@ ncep_ftp_address = [ftp_directory + "/nam.t" + model_start_HH + "z.conusnest.hir
 
 # NCEP File Name Template
 # /pub/data/nccf/com/nam/prod/nam.20210904/nam.t00z.conusnest.hiresf03.tm00.grib2
-# ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
+# ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD
 
-ncep_ftp_dir = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
+ncep_ftp_dir = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD
 
 print(ncep_ftp_dir)
 
@@ -250,7 +250,7 @@ display(local_ftp_file)
 
 
 # ### FTP GRIB Files from NCEP
-# 
+#
 
 # In[ ]:
 
@@ -268,7 +268,7 @@ os.system("rm -frv " + WPS_WORK + "./NAMELIST_WPS_SHARE.TXT")
 
 
 if (not beta_test):
-    
+
     os.system("rm -frv " + WPS_WORK + "./ncep_first_guess_grib_*.grib2")
 
 
@@ -281,15 +281,15 @@ if (not beta_test):
                        open(WPS_WORK + local_ftp_file[file], 'wb').write)
 
     ftp.close()
-    
+
 
 os.system(WPS_EXE +"./link_grib.csh " +  WPS_WORK + "./ncep_first_guess_grib_*.grib2")
 
 
 # ### Create Namelist.WPS File
-# 
+#
 # Creates the following template and merges with a root value.
-# 
+#
 # ```
 # &share
 #  wrf_core = 'ARW',
@@ -326,7 +326,7 @@ with open(WPS_WORK + "./NAMELIST_WPS_SHARE.TXT", 'w') as f:
 os.system("cat  NAMELIST_WPS_SHARE.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/NAMELIST_WPS_ROOT.TXT > namelist.wps")
 
 
-# ### Execute UNGRIB.EXE, 
+# ### Execute UNGRIB.EXE,
 
 # In[ ]:
 
@@ -384,7 +384,7 @@ os.system("mv -v " + WPS_WORK + "./met_em.d??.*.nc  ./")
 
 
 # ### Write WRF Input File Area
-# 
+#
 # ```
 #  &time_control
 #  run_days                            = 0,
@@ -466,11 +466,7 @@ os.system("time ./real.exe")
 
 print("Executing WRF")
 
-os.system("time ./wrf.exe")
+os.system("nohup time mpiexec -machinefile ~/nodes.wrf -np 8 ./wrf.exe")
 
 
 # In[ ]:
-
-
-
-
