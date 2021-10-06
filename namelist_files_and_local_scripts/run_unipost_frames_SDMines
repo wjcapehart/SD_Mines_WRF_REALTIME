@@ -79,7 +79,12 @@ export modelDataPath=${DOMAINPATH}
 export paramFile=${DOMAINPATH}/parm/wrf_cntrl.parm # grib1 
 export txtCntrlFile=${DOMAINPATH}/parm/postxconfig-NT-WRF.txt # grib2
 
-rm -frv ${DOMAINPATH}/postprd/*
+
+rm -frv ${DOMAINPATH}/postprd/WRFPRS* 
+rm -frv ${DOMAINPATH}/postprd/fort* 
+rm -frv ${DOMAINPATH}/postprd/unipost_d??.??.out 
+
+
 
 # Specify Dyn Core (ARW in upper case)
 export dyncore="ARW"
@@ -100,7 +105,7 @@ export lastfhr=36
 export incrementhr=1
 
 # Set domain lists
-export domain_list="d01"
+export domain_list=( "d01" "d02" "d03" )
 
 # Set run command: 
 
@@ -303,6 +308,12 @@ MM=`echo $NEWDATE | cut -c5-6`
 DD=`echo $NEWDATE | cut -c7-8`
 HH=`echo $NEWDATE | cut -c9-10`
 
+
+export FINAL_GRIB=${TOP_DIR}/ARCHIVE/${YYi}-${MMi}-${DDi}_${HHi}/GRIB
+mkdir -pv ${FINAL_GRIB}
+
+
+
 echo 'NEWDATE' $NEWDATE
 echo 'YY' $YY
 
@@ -408,8 +419,12 @@ fhr=$((10#${fhr}+$((${incrementhr}))))
 
 NEWDATE=`date '+%Y%m%d%H' --date="$YYY$MMM$DDD $HHH $((10#${fhr})) hour"`
 
+cat ./WRFPRS_${domain}.?? > ${FINAL_GRIB}/wrfout_d${dom_id}_${YYi}-${MMi}-${DDi}_${HHi}.grib2
+
 done
 
 date
+
 echo "End of Output Job"
+
 exit
