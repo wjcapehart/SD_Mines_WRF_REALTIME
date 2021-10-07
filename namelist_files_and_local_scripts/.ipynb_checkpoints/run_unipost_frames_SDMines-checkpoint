@@ -4,13 +4,13 @@ set -x
 #--------------------------------------------------------
 # Updates:
 #
-# August 2005: Hui-Ya Chuang, NCEP: This script uses 
-# NCEP's Unipost to post processes WRF native model 
-# output, and uses copygb to horizontally interpolate posted 
-# output from native A-E to a regular projection grid. 
+# August 2005: Hui-Ya Chuang, NCEP: This script uses
+# NCEP's Unipost to post processes WRF native model
+# output, and uses copygb to horizontally interpolate posted
+# output from native A-E to a regular projection grid.
 #
-# July 2006: Meral Demirtas, NCAR/DTC: Added new "copygb" 
-# options and revised some parts for clarity. 
+# July 2006: Meral Demirtas, NCAR/DTC: Added new "copygb"
+# options and revised some parts for clarity.
 #
 # April 2015: Modified to run NMM-B/NEMS, KRF(DTC)
 #
@@ -28,7 +28,7 @@ set -x
 #----------------------------------------------------------------------------------
 #--- USER EDIT DESCIPTIONS --------------------------------------------------------
 # See UPP User's Guide for more information
-# http://www.dtcenter.org/upp/users/docs/user_guide/V4/upp_users_guide.pdf 
+# http://www.dtcenter.org/upp/users/docs/user_guide/V4/upp_users_guide.pdf
 #----------------------------------------------------------------------------------
 # TOP_DIR       : Top level directory for source codes (UPPV4.0)
 # DOMAINPATH    : Working directory for this run.
@@ -45,11 +45,11 @@ set -x
 #                 Step 2: Validate postcntrl.xml and post_avblflds.xml
 #                 Step 3: Type 'make' in parm directory to generate the post flat file
 # dyncore       : What model is used ARW (WRF)
-# inFormat      : Format of the model data 
+# inFormat      : Format of the model data
 #                 arw - "netcdf"
-# outFormat     : Format of output from UPP 
+# outFormat     : Format of output from UPP
 #                 grib
-#                 grib2 
+#                 grib2
 # startdate     : Forecast start date (YYYYMMDDHH)
 # fhr           : First forecast hour to be post-processed
 # lastfhr       : Last forecast hour to be post-processed
@@ -76,13 +76,13 @@ export UNIPOST_HOME=${TOP_DIR}/WRF4/UPPV4.1
 export POSTEXEC=${UNIPOST_HOME}/exec
 export SCRIPTS=${UNIPOST_HOME}/scripts
 export modelDataPath=${DOMAINPATH}
-export paramFile=${DOMAINPATH}/parm/wrf_cntrl.parm # grib1 
+export paramFile=${DOMAINPATH}/parm/wrf_cntrl.parm # grib1
 export txtCntrlFile=${DOMAINPATH}/parm/postxconfig-NT-WRF.txt # grib2
 
 
-rm -frv ${DOMAINPATH}/postprd/WRFPRS* 
-rm -frv ${DOMAINPATH}/postprd/fort* 
-rm -frv ${DOMAINPATH}/postprd/unipost_d??.??.out 
+rm -frv ${DOMAINPATH}/postprd/WRFPRS*
+rm -frv ${DOMAINPATH}/postprd/fort*
+rm -frv ${DOMAINPATH}/postprd/unipost_d??.??.out
 
 
 
@@ -105,19 +105,19 @@ export lastfhr=36
 export incrementhr=1
 
 # Set domain lists
-export domain_list=( "d01" "d02" "d03" )
+export domain_list="d01 d02 d03"
 
-# Set run command: 
+# Set run command:
 
 # Serial command example
 export RUN_COMMAND="${POSTEXEC}/unipost.exe "
 
 # Parallel command examples:
-#export RUN_COMMAND="mpirun -np 1 ${POSTEXEC}/unipost.exe "
+export RUN_COMMAND="mpirun -np 4 ${POSTEXEC}/unipost.exe "
 #export RUN_COMMAND="mpirun.lsf ${POSTEXEC}/unipost.exe "
 #export RUN_COMMAND="mpiexec_mpt ${POSTEXEC}/unipost.exe "
 
-# DEBUG command example found further below, search "DEBUG" 
+# DEBUG command example found further below, search "DEBUG"
 
 # Shouldn't need to edit these.
 # tmmark is an variable used as the file extention of the output
@@ -160,7 +160,7 @@ if [[ ${dyncore} == "ARW" ]]; then
    if [[ ${inFormat} != "netcdf" ]]; then
       echo "ERROR: 'inFormat' must be 'netcdf' for ARW model output. Exiting... "
       exit 1
-   fi 
+   fi
 fi
 
 if [[ ${outFormat} == "grib" ]]; then
@@ -174,7 +174,7 @@ elif [[ ${outFormat} == "grib2" ]]; then
       exit 1
    fi
 fi
- 
+
 if [ ! -d ${DOMAINPATH}/postprd ]; then
   echo "ERROR: DOMAINPATH/postprd, '${DOMAINPATH}/postprd', does not exist. Exiting..."
   exit 1
@@ -207,7 +207,7 @@ fi
 #   the available fields are set at compilation
 if [[ ${outFormat} == "grib" ]]; then
    if [[ ${dyncore} == "ARW" ]]; then
-      ln -fs ${paramFile} wrf_cntrl.parm 
+      ln -fs ${paramFile} wrf_cntrl.parm
    fi
 elif [[ ${outFormat} == "grib2" ]]; then
 # For GRIB2 the code reads postxconfig-NT.txt to select variables for output
@@ -246,11 +246,11 @@ ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_g13.TauCoeff.bin    ./
 ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_g15.SpcCoeff.bin    ./
 ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_g15.TauCoeff.bin    ./
 ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_mt1r.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_mt1r.TauCoeff.bin    
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_mt1r.TauCoeff.bin
 ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_mt2.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_mt2.TauCoeff.bin    
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_mt2.TauCoeff.bin
 ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_insat3d.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_insat3d.TauCoeff.bin    
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_insat3d.TauCoeff.bin
 ln -fs $CRTMDIR/SpcCoeff/Big_Endian/amsre_aqua.SpcCoeff.bin  ./
 ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/amsre_aqua.TauCoeff.bin  ./
 ln -fs $CRTMDIR/SpcCoeff/Big_Endian/tmi_trmm.SpcCoeff.bin    ./
@@ -271,16 +271,16 @@ ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f19.SpcCoeff.bin   ./
 ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f19.TauCoeff.bin   ./
 ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f20.SpcCoeff.bin   ./
 ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f20.TauCoeff.bin   ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/seviri_m10.SpcCoeff.bin   ./   
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/seviri_m10.SpcCoeff.bin   ./
 ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/seviri_m10.TauCoeff.bin   ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/v.seviri_m10.SpcCoeff.bin   ./   
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/v.seviri_m10.SpcCoeff.bin   ./
 ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/abi_gr.TauCoeff.bin   ./
 ln -fs $CRTMDIR/SpcCoeff/Big_Endian/abi_gr.SpcCoeff.bin   ./
 
 #######################################################
 # 1. Run Unipost
 #
-# The Unipost is used to read native WRF model 
+# The Unipost is used to read native WRF model
 # output and put out isobaric state fields and derived fields.
 #######################################################
 
@@ -332,13 +332,13 @@ if [[ ! -e ${inFileName} ]]; then
   echo "ERROR: Check if 'modelDataPath': ${modelDataPath} exists."
   if [[ ${dyncore} == "ARW" ]]; then
      echo "ERROR: Check if file: 'wrfout_d${dom_id}_${YYi}-${MMi}-${DDi}_${HHi}:00:00' exists in modelDataPath."
-  fi 
+  fi
   exit 1
 fi
-   
-# Create itag based on user provided info. 
+
+# Create itag based on user provided info.
 # Output format now set by user so if-block below uses this
-# to generate the correct itag. 
+# to generate the correct itag.
 
 if [[ ${outFormat} == "grib" ]]; then
 
@@ -373,7 +373,7 @@ ln -sf ${paramFile} fort.14
 
 #----------------------------------------------------------------------
 # There are two environment variables tmmark and COMSP
-# RUN the unipost.exe executable. 
+# RUN the unipost.exe executable.
 #----------------------------------------------------------------------
 
 ${RUN_COMMAND} > unipost_${domain}.${fhr}.out 2>&1
