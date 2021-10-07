@@ -298,60 +298,60 @@ HHH=`echo $startdate | cut -c9-10`
 
 while [ $((10#${fhr})) -le $((10#${lastfhr})) ] ; do
 
-# Formatted fhr for filenames
-fhr=`printf "%02i" ${fhr}`
+    # Formatted fhr for filenames
+    fhr=`printf "%02i" ${fhr}`
 
-NEWDATE=`date '+%Y%m%d%H' --date="$YYY$MMM$DDD $HHH $((10#${fhr})) hour"`
+    NEWDATE=`date '+%Y%m%d%H' --date="$YYY$MMM$DDD $HHH $((10#${fhr})) hour"`
 
-YY=`echo $NEWDATE | cut -c1-4`
-MM=`echo $NEWDATE | cut -c5-6`
-DD=`echo $NEWDATE | cut -c7-8`
-HH=`echo $NEWDATE | cut -c9-10`
-
-
-export FINAL_GRIB=${TOP_DIR}/ARCHIVE/${YYi}-${MMi}-${DDi}_${HHi}/GRIB
-mkdir -pv ${FINAL_GRIB}
+    YY=`echo $NEWDATE | cut -c1-4`
+    MM=`echo $NEWDATE | cut -c5-6`
+    DD=`echo $NEWDATE | cut -c7-8`
+    HH=`echo $NEWDATE | cut -c9-10`
 
 
+    export FINAL_GRIB=${TOP_DIR}/ARCHIVE/${YYi}-${MMi}-${DDi}_${HHi}/GRIB
+    mkdir -pv ${FINAL_GRIB}
 
-echo 'NEWDATE' $NEWDATE
-echo 'YY' $YY
 
-# Begin looping through domains list
-for domain in ${domain_list}; do
 
-# Create model file name (inFileName)
-dom_id=`echo "${domain}" | cut -d 'd' -f 2`
-if [[ ${dyncore} == "ARW" ]]; then
-   inFileName=${modelDataPath}/wrfout_d${dom_id}_${YYi}-${MMi}-${DDi}_${HHi}:00:00
-fi
+    echo 'NEWDATE' $NEWDATE
+    echo 'YY' $YY
 
-# Check if that file exists
-if [[ ! -e ${inFileName} ]]; then
-  echo "ERROR: Can't find 'inFileName': ${inFileName}. Directory or file does not exist.  Exiting..."
-  echo "ERROR: Check if 'modelDataPath': ${modelDataPath} exists."
-  if [[ ${dyncore} == "ARW" ]]; then
-     echo "ERROR: Check if file: 'wrfout_d${dom_id}_${YYi}-${MMi}-${DDi}_${HHi}:00:00' exists in modelDataPath."
-  fi
-  exit 1
-fi
+    # Begin looping through domains list
+    for domain in ${domain_list}; do
 
-# Create itag based on user provided info.
-# Output format now set by user so if-block below uses this
-# to generate the correct itag.
+        # Create model file name (inFileName)
+        dom_id=`echo "${domain}" | cut -d 'd' -f 2`
+        if [[ ${dyncore} == "ARW" ]]; then
+           inFileName=${modelDataPath}/wrfout_d${dom_id}_${YYi}-${MMi}-${DDi}_${HHi}:00:00
+        fi
 
-if [[ ${outFormat} == "grib" ]]; then
+        # Check if that file exists
+        if [[ ! -e ${inFileName} ]]; then
+          echo "ERROR: Can't find 'inFileName': ${inFileName}. Directory or file does not exist.  Exiting..."
+          echo "ERROR: Check if 'modelDataPath': ${modelDataPath} exists."
+          if [[ ${dyncore} == "ARW" ]]; then
+             echo "ERROR: Check if file: 'wrfout_d${dom_id}_${YYi}-${MMi}-${DDi}_${HHi}:00:00' exists in modelDataPath."
+          fi
+          exit 1
+        fi
 
-cat > itag <<EOF
+        # Create itag based on user provided info.
+        # Output format now set by user so if-block below uses this
+        # to generate the correct itag.
+
+        if [[ ${outFormat} == "grib" ]]; then
+
+        cat > itag <<EOF
 ${inFileName}
 ${inFormat}
 ${YY}-${MM}-${DD}_${HH}:00:00
 ${tag}
 EOF
 
-elif [[ ${outFormat} == "grib2" ]]; then
+        elif [[ ${outFormat} == "grib2" ]]; then
 
-cat > itag <<EOF
+        cat > itag <<EOF
 ${inFileName}
 ${inFormat}
 ${outFormat}
@@ -359,68 +359,72 @@ ${YY}-${MM}-${DD}_${HH}:00:00
 ${tag}
 EOF
 
-else
-echo "ERROR: output format 'outFormat=${outFormat}' not supported, must choose 'grib' or 'grib2'. Exiting..."
-exit 1
-fi
+        else
+            echo "ERROR: output format 'outFormat=${outFormat}' not supported, must choose 'grib' or 'grib2'. Exiting..."
+            exit 1
+        fi
 
-#-----------------------------------------------------------------------
-#   Run unipost.
-#-----------------------------------------------------------------------
-rm fort.*
+        #-----------------------------------------------------------------------
+        #   Run unipost.
+        #-----------------------------------------------------------------------
+        rm fort.*
 
-ln -sf ${paramFile} fort.14
+        ln -sf ${paramFile} fort.14
 
-#----------------------------------------------------------------------
-# There are two environment variables tmmark and COMSP
-# RUN the unipost.exe executable.
-#----------------------------------------------------------------------
+        #----------------------------------------------------------------------
+        # There are two environment variables tmmark and COMSP
+        # RUN the unipost.exe executable.
+        #----------------------------------------------------------------------
 
-${RUN_COMMAND} > unipost_${domain}.${fhr}.out 2>&1
+        ${RUN_COMMAND} > unipost_${domain}.${fhr}.out 2>&1
 
-#----------------------------------------------------------------------
-# DEBUG Example, uncomment below and comment ${RUN_COMMAND} line above.
+        #----------------------------------------------------------------------
+        # DEBUG Example, uncomment below and comment ${RUN_COMMAND} line above.
 
-# debugger runs - enter your debugger and hour of error
-#if [[ $((10#${fhr})) -eq 3 ]]; then
-#  mpirun.dbg.totalview -progname ${POSTEXEC}/unipost.exe > unipost_${domain}.${fhr}.out 2>&1
-#else
-#  mpirun -np 1 ${POSTEXEC}/unipost.exe > unipost_${domain}.${fhr}.out 2>&1
-#fi
-#----------------------------------------------------------------------
+        # debugger runs - enter your debugger and hour of error
+        #if [[ $((10#${fhr})) -eq 3 ]]; then
+            #  mpirun.dbg.totalview -progname ${POSTEXEC}/unipost.exe > unipost_${domain}.${fhr}.out 2>&1
+        #else
+            #  mpirun -np 1 ${POSTEXEC}/unipost.exe > unipost_${domain}.${fhr}.out 2>&1
+        #fi
+        #----------------------------------------------------------------------
 
 
-# This prefix was given in the wrf_cntl.parm file (GRIB1)
-# or postcntrl.xml(GRIB2)
+        # This prefix was given in the wrf_cntl.parm file (GRIB1)
+        # or postcntrl.xml(GRIB2)
 
-if [[ ${dyncore} == "ARW" ]]; then
-   mv WRFPRS${fhr}.${tmmark} WRFPRS_${domain}.${fhr}
-fi
+        if [[ ${dyncore} == "ARW" ]]; then
+           mv WRFPRS${fhr}.${tmmark} WRFPRS_${domain}.${fhr}
+        fi
 
-#
-#----------------------------------------------------------------------
-#   End of unipost job
-#----------------------------------------------------------------------
+        #
+        #----------------------------------------------------------------------
+        #   End of unipost job
+        #----------------------------------------------------------------------
 
-# check to make sure UPP was successful and script linked the file
-if [[ ${dyncore} == "ARW" ]]; then
-    ls -l WRFPRS_${domain}.${fhr}
-    err1=$?
-fi
+        # check to make sure UPP was successful and script linked the file
+        if [[ ${dyncore} == "ARW" ]]; then
+            ls -l WRFPRS_${domain}.${fhr}
+            err1=$?
+        fi
 
-if test "$err1" -ne 0; then
-    echo 'UNIPOST FAILED, EXITTING'
-    exit
-fi
+        if test "$err1" -ne 0; then
+            echo 'UNIPOST FAILED, EXITTING'
+            exit
+        fi
+
+    done
+
+    fhr=$((10#${fhr}+$((${incrementhr}))))
+
+    NEWDATE=`date '+%Y%m%d%H' --date="$YYY$MMM$DDD $HHH $((10#${fhr})) hour"`
+
 
 done
 
-fhr=$((10#${fhr}+$((${incrementhr}))))
 
-NEWDATE=`date '+%Y%m%d%H' --date="$YYY$MMM$DDD $HHH $((10#${fhr})) hour"`
-
-cat ./WRFPRS_${domain}.?? > ${FINAL_GRIB}/wrfout_d${dom_id}_${YYi}-${MMi}-${DDi}_${HHi}.grib2
-
+for domain in ${domain_list}; do
+    cat ./WRFPRS_${domain}.?? > ${FINAL_GRIB}/wrfout_d${dom_id}_${YYi}-${MMi}-${DDi}_${HHi}.grib2
 done
 
 date
