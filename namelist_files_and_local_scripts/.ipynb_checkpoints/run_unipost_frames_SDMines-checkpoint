@@ -70,6 +70,7 @@ set -x
 # This script assumes you created a directory $DOMAINPATH/postprd
 # and that your model output is in $DOMAINPATH/wrfprd
 # as recommended in the users guide where UPP will output.
+
 export TOP_DIR=/projects/SD_Mines_WRF_REALTIME/
 export DOMAINPATH=${TOP_DIR}/WRF4/WRF/test/em_real
 export UNIPOST_HOME=${TOP_DIR}/WRF4/UPPV4.1
@@ -210,15 +211,15 @@ if [[ ${outFormat} == "grib" ]]; then
       ln -fs ${paramFile} wrf_cntrl.parm
    fi
 elif [[ ${outFormat} == "grib2" ]]; then
-# For GRIB2 the code reads postxconfig-NT.txt to select variables for output
-#   the available fields are defined in post_avlbflds.xml -- while we
-#   set a link to this file for reading during runtime it is not typical
-#   for one to update this file, therefore the link goes back to the
-#   program directory - this is true for params_grib2_tbl_new also - a
-#   file which defines the GRIB2 table values
-ln -fs ${txtCntrlFile} postxconfig-NT.txt
-ln -fs ${UNIPOST_HOME}/parm/post_avblflds_comm.xml post_avblflds.xml
-ln -fs ${UNIPOST_HOME}/parm/params_grib2_tbl_new params_grib2_tbl_new
+   # For GRIB2 the code reads postxconfig-NT.txt to select variables for output
+   #   the available fields are defined in post_avlbflds.xml -- while we
+   #   set a link to this file for reading during runtime it is not typical
+   #   for one to update this file, therefore the link goes back to the    
+   #   program directory - this is true for params_grib2_tbl_new also - a
+   #   file which defines the GRIB2 table value
+   ln -fs ${txtCntrlFile} postxconfig-NT.txt
+   ln -fs ${UNIPOST_HOME}/parm/post_avblflds_comm.xml post_avblflds.xml
+   ln -fs ${UNIPOST_HOME}/parm/params_grib2_tbl_new params_grib2_tbl_new
 fi
 
 # Link microphysics tables - code will use based on mp_physics option
@@ -229,53 +230,53 @@ ln -fs ${UNIPOST_HOME}/parm/hires_micro_lookup.dat .
 # link coefficients for crtm2 (simulated synthetic satellites)
 CRTMDIR=${UNIPOST_HOME}/sorc/comlibs/crtm2/src/fix
 ln -fs $CRTMDIR/EmisCoeff/IR_Water/Big_Endian/Nalli.IRwater.EmisCoeff.bin           ./
-ln -fs $CRTMDIR/EmisCoeff/MW_Water/Big_Endian/FASTEM4.MWwater.EmisCoeff.bin           ./
-ln -fs $CRTMDIR/EmisCoeff/MW_Water/Big_Endian/FASTEM5.MWwater.EmisCoeff.bin           ./
-ln -fs $CRTMDIR/EmisCoeff/MW_Water/Big_Endian/FASTEM6.MWwater.EmisCoeff.bin           ./
-ln -fs $CRTMDIR/EmisCoeff/IR_Land/SEcategory/Big_Endian/NPOESS.IRland.EmisCoeff.bin           ./
-ln -fs $CRTMDIR/EmisCoeff/IR_Snow/SEcategory/Big_Endian/NPOESS.IRsnow.EmisCoeff.bin           ./
-ln -fs $CRTMDIR/EmisCoeff/IR_Ice/SEcategory/Big_Endian/NPOESS.IRice.EmisCoeff.bin           ./
-ln -fs $CRTMDIR/AerosolCoeff/Big_Endian/AerosolCoeff.bin     ./
-ln -fs $CRTMDIR/CloudCoeff/Big_Endian/CloudCoeff.bin         ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_g11.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_g11.TauCoeff.bin    ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_g12.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_g12.TauCoeff.bin    ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_g13.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_g13.TauCoeff.bin    ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_g15.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_g15.TauCoeff.bin    ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_mt1r.SpcCoeff.bin    ./
+ln -fs $CRTMDIR/EmisCoeff/MW_Water/Big_Endian/FASTEM4.MWwater.EmisCoeff.bin         ./
+ln -fs $CRTMDIR/EmisCoeff/MW_Water/Big_Endian/FASTEM5.MWwater.EmisCoeff.bin         ./
+ln -fs $CRTMDIR/EmisCoeff/MW_Water/Big_Endian/FASTEM6.MWwater.EmisCoeff.bin         ./
+ln -fs $CRTMDIR/EmisCoeff/IR_Land/SEcategory/Big_Endian/NPOESS.IRland.EmisCoeff.bin ./
+ln -fs $CRTMDIR/EmisCoeff/IR_Snow/SEcategory/Big_Endian/NPOESS.IRsnow.EmisCoeff.bin ./
+ln -fs $CRTMDIR/EmisCoeff/IR_Ice/SEcategory/Big_Endian/NPOESS.IRice.EmisCoeff.bin   ./
+ln -fs $CRTMDIR/AerosolCoeff/Big_Endian/AerosolCoeff.bin           ./
+ln -fs $CRTMDIR/CloudCoeff/Big_Endian/CloudCoeff.bin               ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_g11.SpcCoeff.bin          ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_g11.TauCoeff.bin     ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_g12.SpcCoeff.bin          ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_g12.TauCoeff.bin     ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_g13.SpcCoeff.bin          ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_g13.TauCoeff.bin     ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_g15.SpcCoeff.bin          ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_g15.TauCoeff.bin     ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_mt1r.SpcCoeff.bin         ./
 ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_mt1r.TauCoeff.bin
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_mt2.SpcCoeff.bin    ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_mt2.SpcCoeff.bin          ./
 ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_mt2.TauCoeff.bin
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_insat3d.SpcCoeff.bin    ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/imgr_insat3d.SpcCoeff.bin      ./
 ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/imgr_insat3d.TauCoeff.bin
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/amsre_aqua.SpcCoeff.bin  ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/amsre_aqua.TauCoeff.bin  ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/tmi_trmm.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/tmi_trmm.TauCoeff.bin    ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmi_f13.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmi_f13.TauCoeff.bin    ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmi_f14.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmi_f14.TauCoeff.bin    ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmi_f15.SpcCoeff.bin    ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmi_f15.TauCoeff.bin    ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f16.SpcCoeff.bin   ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f16.TauCoeff.bin   ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f17.SpcCoeff.bin   ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f17.TauCoeff.bin   ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f18.SpcCoeff.bin   ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f18.TauCoeff.bin   ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f19.SpcCoeff.bin   ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f19.TauCoeff.bin   ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f20.SpcCoeff.bin   ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f20.TauCoeff.bin   ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/seviri_m10.SpcCoeff.bin   ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/amsre_aqua.SpcCoeff.bin        ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/amsre_aqua.TauCoeff.bin   ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/tmi_trmm.SpcCoeff.bin          ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/tmi_trmm.TauCoeff.bin     ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmi_f13.SpcCoeff.bin          ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmi_f13.TauCoeff.bin     ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmi_f14.SpcCoeff.bin          ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmi_f14.TauCoeff.bin     ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmi_f15.SpcCoeff.bin          ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmi_f15.TauCoeff.bin     ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f16.SpcCoeff.bin         ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f16.TauCoeff.bin    ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f17.SpcCoeff.bin         ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f17.TauCoeff.bin    ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f18.SpcCoeff.bin         ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f18.TauCoeff.bin    ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f19.SpcCoeff.bin         ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f19.TauCoeff.bin    ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/ssmis_f20.SpcCoeff.bin         ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/ssmis_f20.TauCoeff.bin    ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/seviri_m10.SpcCoeff.bin        ./
 ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/seviri_m10.TauCoeff.bin   ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/v.seviri_m10.SpcCoeff.bin   ./
-ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/abi_gr.TauCoeff.bin   ./
-ln -fs $CRTMDIR/SpcCoeff/Big_Endian/abi_gr.SpcCoeff.bin   ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/v.seviri_m10.SpcCoeff.bin      ./
+ln -fs $CRTMDIR/TauCoeff/ODPS/Big_Endian/abi_gr.TauCoeff.bin       ./
+ln -fs $CRTMDIR/SpcCoeff/Big_Endian/abi_gr.SpcCoeff.bin            ./
 
 #######################################################
 # 1. Run Unipost
@@ -351,7 +352,7 @@ EOF
 
         elif [[ ${outFormat} == "grib2" ]]; then
 
-        cat > itag <<EOF
+            cat > itag <<EOF
 ${inFileName}
 ${inFormat}
 ${outFormat}
@@ -424,7 +425,7 @@ done
 
 
 for domain in ${domain_list}; do
-    cat ./WRFPRS_${domain}.?? > ${FINAL_GRIB}/wrfout_d${dom_id}_${YYi}-${MMi}-${DDi}_${HHi}.grib2
+    cat ./WRFPRS_${domain}.?? > ${FINAL_GRIB}/wrfout_d${domain}_${YYi}-${MMi}-${DDi}_${HHi}.grib2
 done
 
 date
