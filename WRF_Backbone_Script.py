@@ -172,8 +172,12 @@ print("  WRF Forecast End Time ", model_end_datetime)
 
 model_start_date_YYYYMMDDHH = model_start_datetime.strftime("%Y%m%d%H")
 
+file_time = model_start_datetime.strftime("%Y-%m-%d_%H")
+
 with open(WRF_OVERALL_DIR + "./current_run.txt", 'w') as f:
     print(model_start_date_YYYYMMDDHH, file =  f)
+    
+    
 
 #
 ####################################################
@@ -677,6 +681,19 @@ os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./wrf.exe  >& w
 #
 
 
+netcdf_archive_directory = WRF_ARCHIVE + "/" + file_time + "/NETCDF/"
+
+print("Creating " + netcdf_archive_directory)
+
+os.system("mkdir -pv " + netcdf_archive_directory )
+
+
+print("Creating " + WRF_IMAGES + file_time  )
+
+os.system("mkdir -pv " + WRF_IMAGES + file_time )
+
+
+
 
 os.chdir(WRF_OVERALL_DIR)
 
@@ -724,11 +741,6 @@ os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh")
 # Graphics Production for Webpage
 #
 
-netcdf_archive_directory = WRF_ARCHIVE + "/" + file_time + "/NETCDF/"
-
-print("Creating " + netcdf_archive_directory)
-
-os.system("mkdir -pv " + netcdf_archive_directory )
 
 for domain in range(1, 3+1):
     print("cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ".nc")
@@ -738,20 +750,27 @@ for domain in range(1, 3+1):
 # Lock in Final 
 #
 
-with open(WRF_OVERALL_DIR + "./current_complete_run.txt", 'w') as f:
+with open(WRF_OVERALL_DIR + "/current_complete_run.txt", 'w') as f:
     print(file_time, file =  f)
 
 
-with open(WRF_IMAGES + file_time + "./current_run.txt", 'w') as f:
+with open(WRF_IMAGES + file_time + "/current_run.txt", 'w') as f:
     print(model_start_date_YYYYMMDDHH, file =  f)
 
-with open(WRF_ARCHIVE + file_time + "./current_run.txt", 'w') as f:
+with open(WRF_ARCHIVE + file_time + "/current_run.txt", 'w') as f:
     print(model_start_date_YYYYMMDDHH, file =  f)
 
 os.chdir(WRF_IMAGES)
 
 os.system("rm -fv " + WRF_IMAGES + "current_complete_run")
 os.system("ln -sv " + WRF_IMAGES + file_time  + " " + WRF_IMAGES + "current_complete_run"
+
+os.chdir(WRF_ARCHIVE)
+
+          
+          
+os.system("rm -fv " + WRF_ARCHIVE + "current_complete_run")
+os.system("ln -sv " + WRF_ARCHIVE + file_time  + " " + WRF_ARCHIVE + "current_complete_run"
 
 
 
