@@ -516,6 +516,7 @@ print("Copying MetGRID Files from WPS to WRF Area")
 
 os.system("mv -v " + WPS_WORK + "./met_em.d??.*.nc  ./")
 
+
 #
 ####################################################
 ####################################################
@@ -590,6 +591,8 @@ with open(WRF_EXE + "./NAMELIST_TIME_CONTROL.TXT", 'w') as f:
 os.system("cat  ./NAMELIST_TIME_CONTROL.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/NAMELIST_WRF_ROOT.TXT > namelist.input")
 
 os.system("cp -frv "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/tslist ./")
+os.system("cp -frv "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/bk.sh ./")
+
 
 #
 ####################################################
@@ -609,7 +612,7 @@ os.system("cp -frv "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/tslis
 
 print("Executing Real")
 
-os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 8 ./real.exe >& reallog.txt")
+os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./real.exe >& reallog.txt")
 
 #
 ####################################################
@@ -629,7 +632,7 @@ os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 8 ./real.exe >& re
 
 print("Executing WRF")
 
-os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 8 ./wrf.exe  >& wrflog.txt")
+os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./wrf.exe  >& wrflog.txt")
 
 #
 ####################################################
@@ -682,12 +685,24 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
     print("cd " + WRF_OVERALL_DIR, file =  f)
-    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py >& TS2NC.LOG  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py >& METOGRAMS.LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps.py >& MAPS.LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt.py >& SKEWT.LOG ) & ", file =  f) 
-    print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines >& UUP.LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py >& TS2NC."+file_time+".LOG  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py >& METOGRAMS."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py >& MAPS_D01."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py >& MAPS_D02."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py >& MAPS_D03."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py >& SKEWT_D01."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py >& SKEWT_D02."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py >& SKEWT_D03."+file_time+".LOG ) & ", file =  f) 
+    print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines >& UUP."+file_time+".LOG ) & ", file =  f) 
     print("wait", file =  f) 
     print("echo We're Outahere Like Vladimir", file =  f) 
+    
+# os.system("rm -frv " + WRF_OVERALL_DIR + "./MAPS_D??.LOG ")
+# os.system("rm -frv " + WRF_OVERALL_DIR + "./SKEWT_D??01.LOG ")
+# os.system("rm -frv " + WRF_OVERALL_DIR + "./UUP.LOG")
+
+# os.system("rm -frv " + WRF_OVERALL_DIR + "./METOGRAMS.LOG")
+# os.system("rm -frv " + WRF_OVERALL_DIR + "./TS2NC.LOG")
+
 
 os.system("chmod a+x " + WRF_OVERALL_DIR + "./wrf_post_processing.sh")
 os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh")
@@ -698,7 +713,7 @@ os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh")
 ####################################################
 
 
-# ### Graphics Production for Webpage
+# ### Push NetCDF Files to Final Destination on Archive Drive
 
 # In[ ]:
 
@@ -707,21 +722,6 @@ os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh")
 ####################################################
 #
 # Graphics Production for Webpage
-#
-
-
-
-
-#
-# Plot Meteogram
-#
-
-
-
-
-
-#
-# Creating Archive Directory
 #
 
 netcdf_archive_directory = WRF_ARCHIVE + "/" + file_time + "/NETCDF/"
@@ -740,7 +740,13 @@ for domain in range(1, 3+1):
 
 with open(WRF_OVERALL_DIR + "./current_complete_run.txt", 'w') as f:
     print(file_time, file =  f)
-    
+
+
+with open(WRF_IMAGES + file_time + "./current_run.txt", 'w') as f:
+    print(model_start_date_YYYYMMDDHH, file =  f)
+
+with open(WRF_ARCHIVE + file_time + "./current_run.txt", 'w') as f:
+    print(model_start_date_YYYYMMDDHH, file =  f)
 
 os.chdir(WRF_IMAGES)
 

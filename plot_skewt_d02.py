@@ -186,9 +186,9 @@ print(available_time_series_list)
 # Rotate through Available Files
 #
 
-for domain in range(1,3+1):
+for domain in range(2,3):
     station_doms = available_time_series_list[available_time_series_list['Domain'] == domain]
-    find(station_doms)
+    print(station_doms)
     
     wrf_file  = WRF_EXE  + "./wrfout_d" + str(domain).zfill(2) + "_" + wrf_time
     

@@ -296,7 +296,7 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 # Rotate through Available Files
 #
 
-for domain in range(1,max_domains+1):
+for domain in range(1,1+1):
 
     
     graphics_directory = WRF_IMAGES + "/" + wrf_time_gif_name + "/MAPS/d" +  str(domain).zfill(2) + "/"
