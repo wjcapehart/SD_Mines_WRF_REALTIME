@@ -171,7 +171,7 @@ else:
                                                         'Latitude', 
                                                        'Longitude'])
     print("Full Time Series List")
-    display(full_time_series_list)
+    print(full_time_series_list)
     # Grep the Library for *.TS
 
     available_time_series_list = glob.glob("????.d??.TS")
@@ -208,7 +208,7 @@ else:
     available_time_series_list.to_excel(station_list_file)
 
 print("Available Time Series List")
-display(available_time_series_list)
+print(available_time_series_list)
 
 #
 ####################################################

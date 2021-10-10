@@ -157,8 +157,8 @@ else:
 
     model_start_datetime = datetime.datetime(year  = 2021,
                                              month =    9,
-                                             day   =    7,
-                                             hour  =   12)
+                                             day   =   28,
+                                             hour  =   18)
     
 model_end_datetime = model_start_datetime + datetime.timedelta(hours=total_sumulation_time)
 
@@ -209,7 +209,7 @@ print("Entering WPS Section")
 
 os.chdir(WPS_WORK)
 
-display( "Current Working Directory is now " + os.getcwd() )
+print( "Current Working Directory is now " + os.getcwd() )
 
 #
 ####################################################
@@ -277,9 +277,9 @@ ncep_ftp_file = ["./nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.
 local_ftp_file = ["./ncep_first_guess_grib_" + x + ".grib2" for x in ncep_boundary_condition_hour]
 
 
-display(ncep_ftp_file)
+print(ncep_ftp_file)
 
-display(local_ftp_file)
+print(local_ftp_file)
 
 #
 ####################################################
@@ -466,7 +466,7 @@ print("Entering WRF Section")
 
 os.chdir(WRF_EXE)
 
-display( "Current Working Directory is now " + os.getcwd() )
+print( "Current Working Directory is now " + os.getcwd() )
 
 with open(WRF_EXE + "./current_run.txt", 'w') as f:
     print(model_start_date_YYYYMMDDHH, file =  f)
@@ -682,15 +682,15 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
     print("cd " + WRF_OVERALL_DIR, file =  f)
-    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps.py  ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt.py  ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py >& TS2NC.LOG  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py >& METOGRAMS.LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps.py >& MAPS.LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt.py >& SKEWT.LOG ) & ", file =  f) 
     print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines >& UUP.LOG ) & ", file =  f) 
     print("wait", file =  f) 
     print("echo We're Outahere Like Vladimir", file =  f) 
 
 os.system("chmod a+x " + WRF_OVERALL_DIR + "./wrf_post_processing.sh")
-os.system(WPS_WORK + "./wrf_post_processing.sh")
+os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh")
 
 
 #

@@ -188,7 +188,7 @@ print(available_time_series_list)
 
 for domain in range(1,3+1):
     station_doms = available_time_series_list[available_time_series_list['Domain'] == domain]
-    display(station_doms)
+    find(station_doms)
     
     wrf_file  = WRF_EXE  + "./wrfout_d" + str(domain).zfill(2) + "_" + wrf_time
     
