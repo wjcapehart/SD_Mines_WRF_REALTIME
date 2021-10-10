@@ -739,7 +739,7 @@ for domain in range(1, 3+1):
 #
 
 with open(WRF_OVERALL_DIR + "./current_complete_run.txt", 'w') as f:
-    print(model_start_date_YYYYMMDDHH, file =  f)
+    print(file_time, file =  f)
     
 
 os.chdir(WRF_IMAGES)
