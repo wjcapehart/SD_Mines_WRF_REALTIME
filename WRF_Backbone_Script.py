@@ -41,7 +41,7 @@ import platform          as platform
 # Directory Workspaces
 #
 
-beta_on = 1
+beta_on = 0
 
 if (platform.system() == "Darwin"):
     WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
