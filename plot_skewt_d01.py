@@ -46,6 +46,7 @@ import seaborn           as sns
 
 import timezonefinder    as tzf
 import pytz as pytz
+import socket as socket
 
 sns.set_theme(style="ticks")
 
@@ -67,15 +68,18 @@ sns.set_theme(style="ticks")
 # File Organization
 #
 
-beta_on     = 1
+beta_on     = 0
 max_domains = 3
 
-
-
-if (platform.system() == "Darwin"):
-    WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
-else:
+if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
+else:
+    if ((platform.system() == "Darwin):
+         WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
+    else:
+         WRF_OVERALL_DIR = "/home/wjc/GitHub/SD_Mines_WRF_REALTIME/"
+
+
 
 os.chdir(WRF_OVERALL_DIR)
 

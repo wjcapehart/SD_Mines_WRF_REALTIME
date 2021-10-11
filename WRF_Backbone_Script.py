@@ -21,6 +21,10 @@ import ftplib            as ftplib
 import datetime          as datetime
 import os                as os
 import platform          as platform
+import socket            as socket
+
+
+import pathlib           as pathlib
 
 
 #
@@ -43,10 +47,16 @@ import platform          as platform
 
 beta_on = 0
 
-if (platform.system() == "Darwin"):
-    WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
-else:
+if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
+else:
+    if ((platform.system() == "Darwin):
+         WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
+    else:
+         WRF_OVERALL_DIR = "/home/wjc/GitHub/SD_Mines_WRF_REALTIME/"
+
+         
+
 
 
 os.chdir(WRF_OVERALL_DIR)
@@ -399,12 +409,13 @@ os.system("cat  NAMELIST_WPS_SHARE.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and
 # Execute UNGRIB.EXE
 #
 
-print("Executing UnGrib.exe")
-print("nohup time  " + WPS_EXE +"./ungrib.exe 2>&1 ./ungriblog.txt ")
+print()
+print("Executing MetGrid.exe")
+os.system(date)
+os.system("(nohup  " + WPS_EXE + "./ungrib.exe 2>&1 ungriblog.txt)")
+os.system(date)
+print()
 
-os.system("nohup time  " + WPS_EXE +"./ungrib.exe 2>&1 ./ungriblog.txt ")
-print("     ")
-      
 #
 ####################################################
 ####################################################
@@ -421,13 +432,23 @@ print("     ")
 # Execute METGRID.EXE
 #
 
+print()
 print("Executing MetGrid.exe")
-print("nohup time  " + WPS_EXE +"./metgrid.exe 2>&1 ./metgridlog.txt ")
+os.system(date)
+os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 12 " + WPS_EXE + "./metgrid.exe 2>&1 metgridlog.txt)")
+os.system(date)
+print()
 
+last_metgrid_file = WPS_WORK + "./met_em.d01." + model_end_wpsdate + ".nc"
 
-os.system("nohup time " + WPS_EXE +"./metgrid.exe  2>&1 ./metgridlog.txt")
-print("     ")
-      
+print("checking status of " + last_metgrid_file)
+
+if pathlib.Path(last_metgrid_file).is_file() :
+    print(last_metgrid_file + " exists!")
+else:
+    print(last_metgrid_file + " missing.  ABORT!")
+
+        
 #
 ####################################################
 ####################################################
@@ -619,9 +640,12 @@ os.system("cp -frv "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/bk.sh
 # Run REAL.EXE
 #
 
+print()
 print("Executing Real")
-
-os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./real.exe 2>&1 reallog.txt")
+os.system(date)
+os.system("(nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./real.exe 2>&1 reallog.txt)")
+os.system(date)
+print()
 
 #
 ####################################################
@@ -636,12 +660,16 @@ os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./real.exe 2>&1
 ####################################################
 ####################################################
 #
-# Run REAL.EXE
+# Run WRF.EXE
 #
 
+print()
 print("Executing WRF")
+os.system(date)
+os.system("(nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./wrf.exe 2>&1 wrflog.txt)")
+os.system(date)
+print()
 
-os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./wrf.exe  2>&1 wrflog.txt")
 
 #
 ####################################################

@@ -31,6 +31,8 @@ import platform          as platform
 
 import metpy.calc  as mpcalc
 import metpy.units as mpunits
+import socket as socket
+
 
 from metpy.units import units
 
@@ -52,12 +54,17 @@ from metpy.units import units
 # File Organization
 #
 
-beta_on = 0
+beta_on     = 0
+max_domains = 3
 
-if (platform.system() == "Darwin"):
-    WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
-else:
+if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
+else:
+    if ((platform.system() == "Darwin):
+         WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
+    else:
+         WRF_OVERALL_DIR = "/home/wjc/GitHub/SD_Mines_WRF_REALTIME/"
+
 
 os.chdir(WRF_OVERALL_DIR)
 
