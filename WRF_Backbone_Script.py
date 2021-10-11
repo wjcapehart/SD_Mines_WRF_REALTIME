@@ -400,9 +400,9 @@ os.system("cat  NAMELIST_WPS_SHARE.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and
 #
 
 print("Executing UnGrib.exe")
-print("nohup time  " + WPS_EXE +"./ungrib.exe >& ./ungriblog.txt "")
+print("nohup time  " + WPS_EXE +"./ungrib.exe 2>&1 ./ungriblog.txt ")
 
-os.system("nohup time  " + WPS_EXE +"./ungrib.exe >& ./ungriblog.txt ")
+os.system("nohup time  " + WPS_EXE +"./ungrib.exe 2>&1 ./ungriblog.txt ")
 print("     ")
       
 #
@@ -422,10 +422,10 @@ print("     ")
 #
 
 print("Executing MetGrid.exe")
-print("nohup time  " + WPS_EXE +"./metgrid.exe >& ./metgridlog.txt "")
+print("nohup time  " + WPS_EXE +"./metgrid.exe 2>&1 ./metgridlog.txt ")
 
 
-os.system("nohup time " + WPS_EXE +"./metgrid.exe  >& ./metgridlog.txt")
+os.system("nohup time " + WPS_EXE +"./metgrid.exe  2>&1 ./metgridlog.txt")
 print("     ")
       
 #
@@ -621,7 +621,7 @@ os.system("cp -frv "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/bk.sh
 
 print("Executing Real")
 
-os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./real.exe >& reallog.txt")
+os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./real.exe 2>&1 reallog.txt")
 
 #
 ####################################################
@@ -641,7 +641,7 @@ os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./real.exe >& r
 
 print("Executing WRF")
 
-os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./wrf.exe  >& wrflog.txt")
+os.system("nohup time mpiexec -machinefile ~wjc/nodes.wrf -np 24 ./wrf.exe  2>&1 wrflog.txt")
 
 #
 ####################################################
@@ -707,14 +707,14 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
     print("cd " + WRF_OVERALL_DIR, file =  f)
-    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py >& TS2NC."+file_time+".LOG  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py >& METOGRAMS."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py >& MAPS_D01."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py >& MAPS_D02."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py >& MAPS_D03."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py >& SKEWT_D01."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py >& SKEWT_D02."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py >& SKEWT_D03."+file_time+".LOG ) & ", file =  f) 
-    print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines >& UUP."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py 2>&1 TS2NC."+file_time+".LOG  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py 2>&1 METOGRAMS."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py 2>&1 MAPS_D01."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py 2>&1 MAPS_D02."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py 2>&1 MAPS_D03."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D01."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D02."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D03."+file_time+".LOG ) & ", file =  f) 
+    print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines 2>&1 UUP."+file_time+".LOG ) & ", file =  f) 
     print("wait", file =  f) 
     print("echo We're Outahere Like Vladimir", file =  f) 
     
