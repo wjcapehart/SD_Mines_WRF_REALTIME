@@ -411,9 +411,9 @@ os.system("cat  NAMELIST_WPS_SHARE.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and
 
 print()
 print("Executing MetGrid.exe")
-os.system(date)
+os.system("date")
 os.system("(nohup  " + WPS_EXE + "./ungrib.exe 2>&1 ungriblog.txt)")
-os.system(date)
+os.system("date")
 print()
 
 #
@@ -434,9 +434,9 @@ print()
 
 print()
 print("Executing MetGrid.exe")
-os.system(date)
+os.system("date")
 os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 12 " + WPS_EXE + "./metgrid.exe 2>&1 metgridlog.txt)")
-os.system(date)
+os.system("date")
 print()
 
 last_metgrid_file = WPS_WORK + "./met_em.d01." + model_end_wpsdate + ".nc"
@@ -642,9 +642,9 @@ os.system("cp -frv "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/bk.sh
 
 print()
 print("Executing Real")
-os.system(date)
+os.system("date")
 os.system("(nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./real.exe 2>&1 reallog.txt)")
-os.system(date)
+os.system("date")
 print()
 
 #
@@ -665,9 +665,9 @@ print()
 
 print()
 print("Executing WRF")
-os.system(date)
+os.system("date")
 os.system("(nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./wrf.exe 2>&1 wrflog.txt)")
-os.system(date)
+os.system("date")
 print()
 
 
