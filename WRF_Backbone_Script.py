@@ -400,9 +400,11 @@ os.system("cat  NAMELIST_WPS_SHARE.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and
 #
 
 print("Executing UnGrib.exe")
+print("nohup time  " + WPS_EXE +"./ungrib.exe >& ./ungriblog.txt "")
 
 os.system("nohup time  " + WPS_EXE +"./ungrib.exe >& ./ungriblog.txt ")
-
+print("     ")
+      
 #
 ####################################################
 ####################################################
@@ -420,9 +422,12 @@ os.system("nohup time  " + WPS_EXE +"./ungrib.exe >& ./ungriblog.txt ")
 #
 
 print("Executing MetGrid.exe")
+print("nohup time  " + WPS_EXE +"./metgrid.exe >& ./metgridlog.txt "")
+
 
 os.system("nohup time " + WPS_EXE +"./metgrid.exe  >& ./metgridlog.txt")
-
+print("     ")
+      
 #
 ####################################################
 ####################################################
