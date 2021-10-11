@@ -314,7 +314,7 @@ os.system("rm -frv " + WPS_WORK + "./namelist.wps")
 os.system("rm -frv " + WPS_WORK + "./NAMELIST_WPS_SHARE.TXT")
 
 
-if (not beta_test):
+if (not beta_on):
     
     os.system("rm -frv " + WPS_WORK + "./ncep_first_guess_grib_*.grib2")
 
