@@ -91,7 +91,7 @@ max_domains = 3
 if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
 else:
-    if ((platform.system() == "Darwin):
+    if (platform.system() == "Darwin):
          WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
     else:
          WRF_OVERALL_DIR = "/home/wjc/GitHub/SD_Mines_WRF_REALTIME/"
