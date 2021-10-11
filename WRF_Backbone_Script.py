@@ -126,7 +126,7 @@ lag_hours = 3
 
 current_datetime = datetime.datetime.utcnow()
 
-if (not beta_test) :
+if (not beta_on) :
 
     current_datetime_lag3 = current_datetime - datetime.timedelta(hours=lag_hours)
 
@@ -763,14 +763,14 @@ with open(WRF_ARCHIVE + file_time + "/current_run.txt", 'w') as f:
 os.chdir(WRF_IMAGES)
 
 os.system("rm -fv " + WRF_IMAGES + "current_complete_run")
-os.system("ln -sv " + WRF_IMAGES + file_time  + " " + WRF_IMAGES + "current_complete_run"
+os.system("ln -sv " + WRF_IMAGES + file_time  + " " + WRF_IMAGES + "current_complete_run")
 
 os.chdir(WRF_ARCHIVE)
 
           
           
 os.system("rm -fv " + WRF_ARCHIVE + "current_complete_run")
-os.system("ln -sv " + WRF_ARCHIVE + file_time  + " " + WRF_ARCHIVE + "current_complete_run"
+os.system("ln -sv " + WRF_ARCHIVE + file_time  + " " + WRF_ARCHIVE + "current_complete_run")
 
 
 
