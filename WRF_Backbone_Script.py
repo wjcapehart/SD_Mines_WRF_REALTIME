@@ -649,7 +649,7 @@ os.system("date")
 print()
 
 
-boundary_file = WRF_EXE + "wrfbdyt_d01"
+boundary_file = WRF_EXE + "wrfbdy_d01"
 
 
 print("checking status of " + boundary_file)
@@ -684,7 +684,7 @@ os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./wrf.exe 2>&1 wrflo
 os.system("date")
 print()
 
-wrfout_file = WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00
+wrfout_file = WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00"
 
 
 print("checking status of " + wrfout_file)
@@ -698,7 +698,7 @@ else:
 
 
 
-WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00
+
 
 #
 ####################################################
