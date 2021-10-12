@@ -412,7 +412,7 @@ os.system("cat  NAMELIST_WPS_SHARE.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and
 print()
 print("Executing MetGrid.exe")
 os.system("date")
-os.system("(nohup  " + WPS_EXE + "./ungrib.exe 2>&1 ungriblog.txt)")
+os.system("nohup  " + WPS_EXE + "./ungrib.exe 2>&1 ungriblog.txt")
 os.system("date")
 print()
 
@@ -435,7 +435,7 @@ print()
 print()
 print("Executing MetGrid.exe")
 os.system("date")
-os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 12 " + WPS_EXE + "./metgrid.exe 2>&1 metgridlog.txt)")
+os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 12 " + WPS_EXE + "./metgrid.exe 2>&1 metgridlog.txt")
 os.system("date")
 print()
 
@@ -643,7 +643,7 @@ os.system("cp -frv "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/bk.sh
 print()
 print("Executing Real")
 os.system("date")
-os.system("(nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./real.exe 2>&1 reallog.txt)")
+os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./real.exe 2>&1 reallog.txt")
 os.system("date")
 print()
 
@@ -666,7 +666,7 @@ print()
 print()
 print("Executing WRF")
 os.system("date")
-os.system("(nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./wrf.exe 2>&1 wrflog.txt)")
+os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./wrf.exe 2>&1 wrflog.txt")
 os.system("date")
 print()
 
@@ -731,7 +731,7 @@ os.system("mkdir -pv " + WRF_IMAGES + file_time )
 os.chdir(WRF_OVERALL_DIR)
 
 print("creating " + WRF_OVERALL_DIR + "./wrf_post_processing.sh")
-with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
+with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh 2>&1 wrf_post_processing.LOG", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
     print("cd " + WRF_OVERALL_DIR, file =  f)
