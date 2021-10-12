@@ -435,7 +435,7 @@ print()
 print()
 print("Executing MetGrid.exe")
 os.system("date")
-os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 12 " + WPS_EXE + "./metgrid.exe 2>&1 metgridlog.txt")
+os.system("nohup ./metgrid.exe 2>&1 metgridlog.txt")
 os.system("date")
 print()
 
