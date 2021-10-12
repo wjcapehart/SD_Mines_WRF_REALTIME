@@ -435,7 +435,7 @@ print()
 print()
 print("Executing MetGrid.exe")
 os.system("date")
-os.system("nohup ./metgrid.exe 2>&1 metgridlog.txt")
+os.system("nohup " + WPS_EXE + "./metgrid.exe 2>&1 metgridlog.txt")
 os.system("date")
 print()
 
@@ -447,6 +447,7 @@ if pathlib.Path(last_metgrid_file).is_file() :
     print(last_metgrid_file + " exists!")
 else:
     print(last_metgrid_file + " missing.  ABORT!")
+    quit()
 
         
 #
@@ -647,6 +648,19 @@ os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./real.exe 2>&1 real
 os.system("date")
 print()
 
+
+boundary_file = WRF_EXE + "wrfbdyt_d01"
+
+
+print("checking status of " + boundary_file)
+
+if pathlib.Path(boundary_file).is_file() :
+    print(boundary_file + " exists!")
+else:
+    print(boundary_file + " missing.  ABORT!")
+    quit()
+
+
 #
 ####################################################
 ####################################################
@@ -670,6 +684,21 @@ os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./wrf.exe 2>&1 wrflo
 os.system("date")
 print()
 
+wrfout_file = WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00
+
+
+print("checking status of " + wrfout_file)
+
+if pathlib.Path(wrfout_file).is_file() :
+    print(wrfout_file + " exists!")
+else:
+    print(wrfout_file + " missing.  ABORT!")
+    quit()
+
+
+
+
+WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00
 
 #
 ####################################################
@@ -731,7 +760,7 @@ os.system("mkdir -pv " + WRF_IMAGES + file_time )
 os.chdir(WRF_OVERALL_DIR)
 
 print("creating " + WRF_OVERALL_DIR + "./wrf_post_processing.sh")
-with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh 2>&1 wrf_post_processing.LOG", 'w') as f:
+with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
     print("cd " + WRF_OVERALL_DIR, file =  f)
@@ -755,7 +784,7 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh 2>&1 wrf_post_processing.L
 
 
 os.system("chmod a+x " + WRF_OVERALL_DIR + "./wrf_post_processing.sh")
-os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh")
+os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh 2>&1 wrf_post_processing.LOG")
 
 
 #
@@ -776,7 +805,7 @@ os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh")
 
 
 for domain in range(1, 3+1):
-    print("cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ".nc")
+    print(    "cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ".nc")
     os.system("cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ".nc")
 
 #
@@ -796,14 +825,15 @@ with open(WRF_ARCHIVE + file_time + "/current_run.txt", 'w') as f:
 os.chdir(WRF_IMAGES)
 
 os.system("rm -fv " + WRF_IMAGES + "current_complete_run")
-os.system("ln -sv " + WRF_IMAGES + file_time  + " " + WRF_IMAGES + "current_complete_run")
+os.system("ln -sv ./" + file_time  + " " + "./current_complete_run")
 
 os.chdir(WRF_ARCHIVE)
 
           
           
-os.system("rm -fv " + WRF_ARCHIVE + "current_complete_run")
-os.system("ln -sv " + WRF_ARCHIVE + file_time  + " " + WRF_ARCHIVE + "current_complete_run")
+os.system("rm -fv " + WRF_ARCHIVE  + " ./current_complete_run")
+os.system("ln -sv ./" + file_time  + " ./current_complete_run")
+
 
 
 
