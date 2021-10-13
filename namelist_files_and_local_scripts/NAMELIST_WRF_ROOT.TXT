@@ -34,7 +34,7 @@
  bl_pbl_physics                      = -1,    -1,  -1,
  sf_sfclay_physics                   = -1,    -1,  -1,
  sf_surface_physics                  = -1,    -1,  -1,
- radt                                = 15,    15,  15,
+ radt                                = 1,    1,  1,
  bldt                                = 0,     0,    0,
  cudt                                = 0,     0,    0,
  icloud                              = 1,
