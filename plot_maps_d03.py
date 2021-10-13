@@ -856,7 +856,7 @@ for domain in range(3,4):
 
         filled_cm     = ax1.contourf(lon2d, 
                                      lat2d, 
-                                     hrly_snowfall_map.isel(Time=t),
+                                     hrly_snowfall_maps.isel(Time=t),
                                      transform = ccrs.PlateCarree(),
                                      norm      = rain_norm,
                                      cmap      = precip_colormap,
