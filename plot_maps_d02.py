@@ -97,10 +97,6 @@ else:
          WRF_OVERALL_DIR = "/home/wjc/GitHub/SD_Mines_WRF_REALTIME/"
 
 
-         
-
-
-
 os.chdir(WRF_OVERALL_DIR)
 
 
@@ -556,7 +552,7 @@ for domain in range(2,3):
 
         print(fig_dir_name + file_name)
 
-        fig = plt.figure(figsize=(7,5))
+        fig = plt.figure(figsize=(7,5.25))
 
         fig.suptitle(model_run_label)
 
@@ -660,7 +656,7 @@ for domain in range(2,3):
 
         print(fig_dir_name + file_name)
 
-        fig = plt.figure(figsize=(7,5))
+        fig = plt.figure(figsize=(7,5.25))
 
         fig.suptitle(model_run_label)
 
@@ -749,7 +745,7 @@ for domain in range(2,3):
 
         print(fig_dir_name + file_name)
 
-        fig = plt.figure(figsize=(7,5))
+        fig = plt.figure(figsize=(7,5.25))
 
         fig.suptitle(model_run_label)
 
@@ -842,7 +838,7 @@ for domain in range(2,3):
         print(fig_dir_name + file_name)
 
 
-        fig = plt.figure(figsize=(7,5))
+        fig = plt.figure(figsize=(7,5.25))
 
         fig.suptitle(model_run_label)
 
@@ -931,7 +927,7 @@ for domain in range(2,3):
         print(fig_dir_name + file_name)
 
 
-        fig = plt.figure(figsize=(7,5))
+        fig = plt.figure(figsize=(7,5.25))
 
         fig.suptitle(model_run_label)
 
@@ -1019,7 +1015,7 @@ for domain in range(2,3):
         fig_dir_name = graphics_directory + "/" + v_name + "/"
         file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + wrf_time_gif_name + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
-        fig = plt.figure(figsize=(7,5))
+        fig = plt.figure(figsize=(7,5.25))
 
         fig.suptitle(model_run_label)
 
@@ -1111,7 +1107,7 @@ for domain in range(2,3):
 
         pbl_height_levels = np.arange(0,5000,100)
 
-        fig = plt.figure(figsize=(7,5))
+        fig = plt.figure(figsize=(7,5.25))
 
         fig.suptitle(model_run_label)
 
@@ -1200,7 +1196,7 @@ for domain in range(2,3):
     print(fig_dir_name + file_name)
 
 
-    fig = plt.figure(figsize=(7,5))
+    fig = plt.figure(figsize=(7,5.25))
 
     fig.suptitle(model_run_label)
 
@@ -1293,7 +1289,7 @@ for domain in range(2,3):
 
     print(fig_dir_name + file_name)
 
-    fig = plt.figure(figsize=(7,5))
+    fig = plt.figure(figsize=(7,5.25))
 
     fig.suptitle(model_run_label)
 

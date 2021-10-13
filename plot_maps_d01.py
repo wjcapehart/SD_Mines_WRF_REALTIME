@@ -633,7 +633,11 @@ for domain in range(1,1+1):
                   transform = ccrs.PlateCarree(), 
                   length=5)
 
+
         # plt.show()
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.90)
+
 
         fig.savefig(fig_dir_name + file_name)
 
@@ -719,7 +723,11 @@ for domain in range(1,1+1):
                      pad    = 0.012)
 
 
+
         # plt.show()
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.90)
+
 
         fig.savefig(fig_dir_name + file_name)
 
@@ -806,7 +814,11 @@ for domain in range(1,1+1):
                      pad    = 0.012)
 
 
+
         # plt.show()
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.90)
+
 
         fig.savefig(fig_dir_name + file_name)
 
@@ -892,7 +904,11 @@ for domain in range(1,1+1):
                      pad    = 0.012)
 
 
+
         # plt.show()
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.90)
+
 
         fig.savefig(fig_dir_name + file_name)
 
@@ -979,7 +995,11 @@ for domain in range(1,1+1):
                      pad    = 0.012)
 
 
+
         # plt.show()
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.90)
+
 
         fig.savefig(fig_dir_name + file_name)
 
@@ -1063,7 +1083,11 @@ for domain in range(1,1+1):
 
 
 
+
         # plt.show()
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.90)
+
 
         fig.savefig(fig_dir_name + file_name)
 
@@ -1149,7 +1173,11 @@ for domain in range(1,1+1):
 
 
 
+ 
         # plt.show()
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.90)
+
 
         fig.savefig(fig_dir_name + file_name)
 
@@ -1239,7 +1267,11 @@ for domain in range(1,1+1):
 
 
 
+
     # plt.show()
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
+
 
     fig.savefig(fig_dir_name + file_name)
 
@@ -1323,7 +1355,12 @@ for domain in range(1,1+1):
                  pad    = 0.012)
 
 
+
+
     # plt.show()
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
+
 
     fig.savefig(fig_dir_name + file_name)
 
