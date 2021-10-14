@@ -33,18 +33,23 @@ import matplotlib.pyplot as plt
 import pint_xarray       as px
 import matplotlib.dates  as mdates
 import timezonefinder    as tzf
+import pytz              as pytz
+import haversine         as hs
+import socket            as socket
+import metpy.calc        as mpcalc
+import metpy.units       as mpunits
 
-import metpy.calc  as mpcalc
-import metpy.units as mpunits
+import matplotlib.font_manager as fm
+import matplotlib as mpl
 
 from metpy.units import units
 
-import pytz as pytz
-import haversine as hs
-import socket as socket
-
-
 sns.set_theme(style="ticks")
+
+if (platform.system() != "Darwin"):
+    path = '/usr/share/fonts/truetype/open-sans/OpenSans-Regular.ttf'
+    prop = fm.FontProperties(fname=path)
+    mpl.rcParams['font.family'] = prop.get_name()
 
 #
 ####################################################
