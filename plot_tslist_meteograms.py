@@ -390,7 +390,7 @@ for station in available_time_series_list.iterrows():
                            ncols   =  2,
                            sharex  =  True)
 
-    date_form = mdates.DateFormatter("%H %Z\n%m %b", tz=pytz.timezone(tz))
+    date_form = mdates.DateFormatter("%H %Z\n%d %b", tz=pytz.timezone(tz))
     xmajor = mdates.HourLocator(interval = 6)
     xminor = mdates.HourLocator(interval = 1)
 

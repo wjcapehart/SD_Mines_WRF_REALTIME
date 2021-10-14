@@ -181,6 +181,8 @@ print("  WRF Forecast End Time ", model_end_datetime)
 #
 
 model_start_date_YYYYMMDDHH = model_start_datetime.strftime("%Y%m%d%H")
+model_start_date_YYYY_MM_DD_HH = model_start_datetime.strftime("%Y %m %d %H UTC")
+
 
 file_time = model_start_datetime.strftime("%Y-%m-%d_%H")
 
@@ -815,13 +817,26 @@ for domain in range(1, 3+1):
 with open(WRF_OVERALL_DIR + "/current_complete_run.txt", 'w') as f:
     print(file_time, file =  f)
 
-
 with open(WRF_IMAGES + file_time + "/current_run.txt", 'w') as f:
     print(model_start_date_YYYYMMDDHH, file =  f)
 
 with open(WRF_ARCHIVE + file_time + "/current_run.txt", 'w') as f:
     print(model_start_date_YYYYMMDDHH, file =  f)
 
+with open(WRF_IMAGES + file_time + "/current_run_formatted.txt", 'w') as f:
+    print(model_start_date_YYYY_MM_DD_HH, file =  f)
+
+with open(WRF_ARCHIVE + file_time + "/current_run_formatted.txt", 'w') as f:
+    print(model_start_date_YYYY_MM_DD_HH, file =  f)
+
+    
+
+    
+#
+# Link dates to web page.
+#
+    
+    
 os.chdir(WRF_IMAGES)
 
 os.system("rm -fv " + WRF_IMAGES + "current_complete_run")
