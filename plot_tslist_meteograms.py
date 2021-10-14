@@ -9,7 +9,7 @@
 
 # ## Libraries
 
-# In[ ]:
+# In[1]:
 
 
 ####################################################
@@ -60,7 +60,7 @@ sns.set_theme(style="ticks")
 
 # ## File Organization
 
-# In[ ]:
+# In[2]:
 
 
 ####################################################
@@ -106,7 +106,7 @@ os.chdir(WRF_EXE)
 
 # ## Time Control
 
-# In[ ]:
+# In[3]:
 
 
 ####################################################
@@ -483,20 +483,32 @@ for station in available_time_series_list.iterrows():
                  fontsize=20)
 
 
-    ax[1,0].set_xlim(model_start_datetime, siphon_end_datetime)
+    ax[1,0].set_xlim(model_start_datetime, model_end_datetime)
     ax[1,0].xaxis.set_major_formatter(date_form)
     ax[1,0].xaxis.set_major_locator(xmajor)
     ax[1,0].xaxis.set_minor_locator(xminor)
     ax[1,0].xaxis_date()
 
-    ax[1,1].set_xlim(model_start_datetime, siphon_end_datetime)
+    ax[1,1].set_xlim(model_start_datetime, model_end_datetime)
     ax[1,1].xaxis.set_major_formatter(date_form)
     ax[1,1].xaxis.set_major_locator(xmajor)
     ax[1,1].xaxis.set_minor_locator(xminor)
     ax[1,1].xaxis_date()
 
+    ax[0,0].set_xlim(model_start_datetime, model_end_datetime)
+    ax[0,0].xaxis.set_major_formatter(date_form)
+    ax[0,0].xaxis.set_major_locator(xmajor)
+    ax[0,0].xaxis.set_minor_locator(xminor)
+    ax[0,0].xaxis_date()
+
+    ax[0,1].set_xlim(model_start_datetime, model_end_datetime)
+    ax[0,1].xaxis.set_major_formatter(date_form)
+    ax[0,1].xaxis.set_major_locator(xmajor)
+    ax[0,1].xaxis.set_minor_locator(xminor)
+    ax[0,1].xaxis_date()
 
 
+    
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
