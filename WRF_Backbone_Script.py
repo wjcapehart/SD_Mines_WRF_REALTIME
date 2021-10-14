@@ -684,7 +684,7 @@ os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./wrf.exe 2>&1 wrflo
 os.system("date")
 print()
 
-wrfout_file = WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00"
+wrfout_file = WRF_EXE + "wrfout_d01_" + file_time + ":00:00"
 
 
 print("checking status of " + wrfout_file)
@@ -768,8 +768,8 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py 2>&1 MAPS_D01."+file_time+".LOG ) & ", file =  f) 
     print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py 2>&1 MAPS_D02."+file_time+".LOG ) & ", file =  f) 
     print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py 2>&1 MAPS_D03."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D01."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D02."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py 2>&1 SKEWT_D01."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py 2>&1 SKEWT_D02."+file_time+".LOG ) & ", file =  f) 
     print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D03."+file_time+".LOG ) & ", file =  f) 
     print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines 2>&1 UUP."+file_time+".LOG ) & ", file =  f) 
     print("wait", file =  f) 
