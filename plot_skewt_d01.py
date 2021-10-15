@@ -191,7 +191,7 @@ print(available_time_series_list)
 # Rotate through Available Files
 #
 
-for domain in range(chosen_domain,2):
+for domain in range(chosen_domain,chosen_domain+1):
     station_doms = available_time_series_list[available_time_series_list['Domain'] == domain]
     print(station_doms)
     

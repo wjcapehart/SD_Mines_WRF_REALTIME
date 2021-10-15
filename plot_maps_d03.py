@@ -323,7 +323,7 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 # Rotate through Available Files
 #
 
-for domain in range(chosen_domain,1+1):
+for domain in range(chosen_domain,chosen_domain+1):
     
     
     if (domain == 1): 
@@ -1380,6 +1380,12 @@ print("done")
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
 
 
 # ## Ending Script
