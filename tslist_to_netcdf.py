@@ -110,7 +110,7 @@ print( "Current Working Directory is now " + os.getcwd() )
 with open(WRF_OVERALL_DIR + "./current_run.txt") as f:
     model_start_date_YYYY_MM_DD_HH = f.readlines()
 
-model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:10]
+model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:13]
 
 model_start_date_YYYY_MM_DD_HH0000 = model_start_date_YYYY_MM_DD_HH + ":00:00"
 print(model_start_date_YYYY_MM_DD_HH0000)
