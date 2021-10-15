@@ -146,13 +146,15 @@ os.chdir(WRF_EXE)
 #
 
 with open(WRF_OVERALL_DIR + "./current_run.txt") as f:
-    model_start_date_YYYYMMDDHH = f.readlines()
+    model_start_date_YYYY_MM_DD_HH = f.readlines()
 
-model_start_date_YYYYMMDDHH = model_start_date_YYYYMMDDHH[0][0:10]+"0000"
-print(model_start_date_YYYYMMDDHH)
+model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:13]
+
+model_start_date_YYYY_MM_DD_HH0000 = model_start_date_YYYY_MM_DD_HH + ":00:00"
+print(model_start_date_YYYY_MM_DD_HH0000)
     
-model_start_datetime = datetime.datetime.strptime(model_start_date_YYYYMMDDHH, '%Y%m%d%H%M%S')
-print(model_start_datetime)
+model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')
+print("Model Simulation Date ", model_start_datetime)
 
 model_end_datetime  = model_start_datetime + datetime.timedelta(hours=36)
 current_datetime    = datetime.datetime.utcnow()
