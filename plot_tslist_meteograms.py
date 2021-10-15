@@ -132,7 +132,6 @@ print(model_start_date_YYYY_MM_DD_HH0000)
 model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')
 print("Model Simulation Date ", model_start_datetime)
     
-model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH, '%Y-%m-%d_%H:%M:%S')
 model_end_datetime   = model_start_datetime + datetime.timedelta(hours=36)
 current_datetime     = datetime.datetime.utcnow()
 siphon_end_datetime  = min(current_datetime,model_end_datetime)
