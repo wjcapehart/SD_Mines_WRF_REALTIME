@@ -108,19 +108,15 @@ print( "Current Working Directory is now " + os.getcwd() )
 #
 
 with open(WRF_OVERALL_DIR + "./current_run.txt") as f:
-    model_start_date_YYYYMMDDHH = f.readlines()
+    model_start_date_YYYY_MM_DD_HH = f.readlines()
 
-model_start_date_YYYYMMDDHH = model_start_date_YYYYMMDDHH[0][0:10]+"0000"
-print(model_start_date_YYYYMMDDHH)
+model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:10]
+
+model_start_date_YYYY_MM_DD_HH0000 = model_start_date_YYYY_MM_DD_HH + ":00:00"
+print(model_start_date_YYYY_MM_DD_HH0000)
     
-model_start_datetime = datetime.datetime.strptime(model_start_date_YYYYMMDDHH, '%Y%m%d%H%M%S')
+model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH, '%Y-%m-%d_%H:%M:%S')
 print("Model Simulation Date ", model_start_datetime)
-
-wrf_model_date_string = model_start_datetime.strftime('%Y-%m-%d_%H:00:00')
-
-
-
-
 
 #
 ####################################################
@@ -235,13 +231,9 @@ print(available_time_series_list)
 # Read common values for sigma levels and top of model space
 #
 
-wrf_model_date_string = model_start_datetime.strftime('%Y-%m-%d_%H:00:00')
-file_time             = model_start_datetime.strftime('%Y-%m-%d_%H')
+model_start_date_YYYY_MM_DD_HH0000 = model_start_datetime.strftime('%Y-%m-%d_%H:00:00')
 
-
-
-
-wrf_file  = WRF_EXE  + "./wrfout_d01_" + wrf_model_date_string
+wrf_file  = WRF_EXE  + "./wrfout_d01_" + model_start_date_YYYY_MM_DD_HH0000
     
 #
 # Extract Sigma Coordinates
@@ -292,9 +284,9 @@ wrf_ptop = wrf_ptop.assign_coords({"wrf_ptop":wrf_ptop.values})
 # Creating Archive Directory
 #
 
-archive_directory = WRF_ARCHIVE + "/" + file_time + "/STATION_TIME_SERIES/"
+archive_directory = WRF_ARCHIVE + "/" + model_start_date_YYYY_MM_DD_HH + "/STATION_TIME_SERIES/"
 
-print("Creating ARCHIVE/" + file_time + "/STATION_TIME_SERIES")
+print("Creating ARCHIVE/" + model_start_date_YYYY_MM_DD_HH + "/STATION_TIME_SERIES")
 
 os.system("mkdir -pv " + archive_directory )
 
@@ -330,7 +322,6 @@ for station in available_time_series_list.iterrows():
     grid_lon       = float(headerline[ 78:86])
     grid_elevation = float(headerline[ 87:94])
     grid_time      = datetime.datetime.strptime(headerline[103:122], '%Y-%m-%d_%H:%M:%S')
-    file_time      = grid_time.strftime('%Y-%m-%d_%H')
     units_time     = grid_time.strftime('%Y-%m-%d_%H:%M:%S.00')
 
     print(units_time)
@@ -812,7 +803,7 @@ for station in available_time_series_list.iterrows():
 
 
 
-    netcdf_file_name = archive_directory + "./wrfout_d"+str(grid_domain).zfill(2)+"_"+file_time+"_"+station_id+".nc"
+    netcdf_file_name = archive_directory + "./wrfout_d"+str(grid_domain).zfill(2)+"_"+model_start_date_YYYY_MM_DD_HH+"_"+station_id+".nc"
     
     print(netcdf_file_name)
     

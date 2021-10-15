@@ -49,8 +49,8 @@ import seaborn           as sns
 
 import timezonefinder    as tzf
 import pytz as pytz
-import socket as socket
 
+import socket as socket
 
 
 sns.set_theme(style="ticks")
@@ -70,23 +70,12 @@ sns.set_theme(style="ticks")
 ####################################################
 ####################################################
 #
-# File Organization
-#
-
-beta_on     = 0
-max_domains = 3
-
-
-
-####################################################
-####################################################
-####################################################
-#
 # Directory Workspaces
 #
 
-beta_on     = 0
-max_domains = 3
+beta_on       = 0
+max_domains   = 3
+chosen_domain = 2
 
 if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
@@ -95,6 +84,9 @@ else:
          WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
     else:
          WRF_OVERALL_DIR = "/home/wjc/GitHub/SD_Mines_WRF_REALTIME/"
+
+        
+
 
 
 os.chdir(WRF_OVERALL_DIR)
@@ -174,8 +166,8 @@ print( "          Siphon End Datetime is " +  siphon_end_datetime.strftime("%Y-%
 print( "               Station List File " +    station_list_file)
 
 wrf_skewt_time    = model_start_datetime.strftime("%Y-%m-%d %H UTC")
-wrf_time          = model_start_datetime.strftime("%Y-%m-%d_%H:00:00")
-wrf_time_gif_name = model_start_datetime.strftime("%Y-%m-%d_%H")
+
+
 
 
 tf     = tzf.TimezoneFinder()
@@ -329,10 +321,20 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 # Rotate through Available Files
 #
 
-for domain in range(2,3):
+for domain in range(chosen_domain,1+1):
+    
+    
+    if (domain == 1): 
+        figure_domain_size = (7,6)
+    elif (domain ==2):
+        figure_domain_size = (7,5.25)
+    else:
+        figure_domain_size = (7,6)
+        
+        
 
     
-    graphics_directory = WRF_IMAGES + "/" + wrf_time_gif_name + "/MAPS/d" +  str(domain).zfill(2) + "/"
+    graphics_directory = WRF_IMAGES + "/" + model_start_date_YYYY_MM_DD_HH + "/MAPS/d" +  str(domain).zfill(2) + "/"
     
     os.system("mkdir -pv " + graphics_directory + "SFCT")
     os.system("mkdir -pv " + graphics_directory + "WIND")
@@ -349,7 +351,7 @@ for domain in range(2,3):
     os.system("mkdir -pv " + graphics_directory + "TRAIN")
     os.system("mkdir -pv " + graphics_directory + "TSNOW")
 
-    wrf_file  = WRF_EXE  + "./wrfout_d" + str(domain).zfill(2) + "_" + wrf_time
+    wrf_file  = WRF_EXE  + "./wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH0000
     print(wrf_file)
     
     ncf = nc4.Dataset(filename = wrf_file)
@@ -548,11 +550,11 @@ for domain in range(2,3):
 
         v_name       = "SFCT"
         fig_dir_name = graphics_directory + "/" + v_name + "/"
-        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + wrf_time_gif_name + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
         print(fig_dir_name + file_name)
 
-        fig = plt.figure(figsize=(7,5.25))
+        fig = plt.figure(figsize=figure_domain_size)
 
         fig.suptitle(model_run_label)
 
@@ -652,11 +654,11 @@ for domain in range(2,3):
 
         v_name       = "WIND"
         fig_dir_name = graphics_directory + "/" + v_name + "/"
-        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + wrf_time_gif_name + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
         print(fig_dir_name + file_name)
 
-        fig = plt.figure(figsize=(7,5.25))
+        fig = plt.figure(figsize=(7,6))
 
         fig.suptitle(model_run_label)
 
@@ -741,11 +743,11 @@ for domain in range(2,3):
 
         v_name       = "RAIN"
         fig_dir_name = graphics_directory + "/" + v_name + "/"
-        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + wrf_time_gif_name + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
         print(fig_dir_name + file_name)
 
-        fig = plt.figure(figsize=(7,5.25))
+        fig = plt.figure(figsize=(7,6))
 
         fig.suptitle(model_run_label)
 
@@ -833,12 +835,12 @@ for domain in range(2,3):
 
         v_name       = "WEASD"
         fig_dir_name = graphics_directory + "/" + v_name + "/"
-        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + wrf_time_gif_name + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
         print(fig_dir_name + file_name)
 
 
-        fig = plt.figure(figsize=(7,5.25))
+        fig = plt.figure(figsize=(7,6))
 
         fig.suptitle(model_run_label)
 
@@ -922,12 +924,12 @@ for domain in range(2,3):
 
         v_name       = "SNOWH"
         fig_dir_name = graphics_directory + "/" + v_name + "/"
-        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + wrf_time_gif_name + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
         print(fig_dir_name + file_name)
 
 
-        fig = plt.figure(figsize=(7,5.25))
+        fig = plt.figure(figsize=(7,6))
 
         fig.suptitle(model_run_label)
 
@@ -1013,9 +1015,9 @@ for domain in range(2,3):
 
         v_name       = "DBZ"
         fig_dir_name = graphics_directory + "/" + v_name + "/"
-        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + wrf_time_gif_name + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
-        fig = plt.figure(figsize=(7,5.25))
+        fig = plt.figure(figsize=(7,6))
 
         fig.suptitle(model_run_label)
 
@@ -1101,13 +1103,13 @@ for domain in range(2,3):
 
         v_name       = "PBL"
         fig_dir_name = graphics_directory + "/" + v_name + "/"
-        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + wrf_time_gif_name + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+        file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
         print(fig_dir_name + file_name)
 
         pbl_height_levels = np.arange(0,5000,100)
 
-        fig = plt.figure(figsize=(7,5.25))
+        fig = plt.figure(figsize=(7,6))
 
         fig.suptitle(model_run_label)
 
@@ -1170,6 +1172,7 @@ for domain in range(2,3):
 
 
 
+ 
         # plt.show()
         plt.tight_layout()
         plt.subplots_adjust(top=0.90)
@@ -1191,12 +1194,12 @@ for domain in range(2,3):
 
     v_name       = "TRAIN"
     fig_dir_name = graphics_directory + "/" + v_name + "/"
-    file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + wrf_time_gif_name + "_FXX_MAP_" + v_name + ".png"
+    file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_FXX_MAP_" + v_name + ".png"
 
     print(fig_dir_name + file_name)
 
 
-    fig = plt.figure(figsize=(7,5.25))
+    fig = plt.figure(figsize=(7,6))
 
     fig.suptitle(model_run_label)
 
@@ -1263,9 +1266,8 @@ for domain in range(2,3):
 
 
 
- 
+
     # plt.show()
-    
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
@@ -1285,11 +1287,11 @@ for domain in range(2,3):
 
     v_name       = "TSNOW"
     fig_dir_name = graphics_directory + "/" + v_name + "/"
-    file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + wrf_time_gif_name + "_FXX_MAP_" + v_name + ".png"
+    file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_FXX_MAP_" + v_name + ".png"
 
     print(fig_dir_name + file_name)
 
-    fig = plt.figure(figsize=(7,5.25))
+    fig = plt.figure(figsize=(7,6))
 
     fig.suptitle(model_run_label)
 
@@ -1352,11 +1354,11 @@ for domain in range(2,3):
                  pad    = 0.012)
 
 
+
+
     # plt.show()
-    
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
-
 
 
     fig.savefig(fig_dir_name + file_name)
@@ -1396,82 +1398,4 @@ print("End Sounding Plotting Script")
 ####################################################
 ####################################################
 ####################################################
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
 

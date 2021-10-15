@@ -68,8 +68,9 @@ sns.set_theme(style="ticks")
 # File Organization
 #
 
-beta_on     = 0
-max_domains = 3
+beta_on       = 0
+max_domains   = 3
+chosen_domain = 1
 
 if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
@@ -116,12 +117,14 @@ os.chdir(WRF_EXE)
 #
 
 with open(WRF_OVERALL_DIR + "./current_run.txt") as f:
-    model_start_date_YYYYMMDDHH = f.readlines()
+    model_start_date_YYYY_MM_DD_HH = f.readlines()
 
-model_start_date_YYYYMMDDHH = model_start_date_YYYYMMDDHH[0][0:10]+"0000"
-print(model_start_date_YYYYMMDDHH)
+model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:10]
+
+model_start_date_YYYY_MM_DD_HH0000 = model_start_date_YYYY_MM_DD_HH + ":00:00"
+print(model_start_date_YYYY_MM_DD_HH0000)
     
-model_start_datetime = datetime.datetime.strptime(model_start_date_YYYYMMDDHH, '%Y%m%d%H%M%S')
+model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH, '%Y-%m-%d_%H:%M:%S')
 print(model_start_datetime)
 
 model_end_datetime  = model_start_datetime + datetime.timedelta(hours=36)
@@ -136,16 +139,14 @@ print( "          Siphon End Datetime is " +  siphon_end_datetime.strftime("%Y-%
 print( "               Station List File " +    station_list_file)
 
 wrf_skewt_time    = model_start_datetime.strftime("%Y-%m-%d %H UTC")
-wrf_time          = model_start_datetime.strftime("%Y-%m-%d_%H:00:00")
-wrf_time_gif_name = model_start_datetime.strftime("%Y-%m-%d_%H")
-file_time         = model_start_datetime.strftime("%Y-%m-%d_%H")
+
 
 tf     = tzf.TimezoneFinder()
 tz     = tf.certain_timezone_at(lng=-104, lat=44)
 tzabbr = pytz.timezone(tz).localize(model_start_datetime)
 
 
-print(wrf_time)
+print(model_start_date_YYYY_MM_DD_HH0000)
 
 #
 ####################################################
@@ -190,11 +191,11 @@ print(available_time_series_list)
 # Rotate through Available Files
 #
 
-for domain in range(1,2):
+for domain in range(chosen_domain,2):
     station_doms = available_time_series_list[available_time_series_list['Domain'] == domain]
     print(station_doms)
     
-    wrf_file  = WRF_EXE  + "./wrfout_d" + str(domain).zfill(2) + "_" + wrf_time
+    wrf_file  = WRF_EXE  + "./wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH0000
     
     ncf = nc4.Dataset(filename = wrf_file)
     
@@ -266,7 +267,7 @@ for domain in range(1,2):
         # Creating Graphics Directory
         #
 
-        graphics_directory = WRF_IMAGES + "/" + file_time + "/SKEWTS/" + station_id + "/"
+        graphics_directory = WRF_IMAGES + "/" + model_start_date_YYYY_MM_DD_HH + "/SKEWTS/" + station_id + "/"
 
         print("Creating " + graphics_directory)
 
@@ -288,7 +289,7 @@ for domain in range(1,2):
         max_temperature = temperature_4d[:, :,wrf_y, wrf_x].values.max()
         max_axis_temp   = above_30[above_30 > max_temperature].min() 
         
-        sounding_file_name_gif = "wrfout_dxx_" + wrf_time_gif_name + "_SKEWT_" + station_id + ".gif"
+        sounding_file_name_gif = "wrfout_dxx_" + model_start_date_YYYY_MM_DD_HH + "_SKEWT_" + station_id + ".gif"
 
         print(" - " + sounding_file_name_gif)
                
@@ -319,7 +320,7 @@ for domain in range(1,2):
             local_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%Y-%m-%d %H %Z")
 
 
-            sounding_file_name_png = "wrfout_dxx_" + wrf_time_gif_name + "_F" + str(t).zfill(2) + "_SKEWT_" + station_id + ".png"
+            sounding_file_name_png = "wrfout_dxx_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_SKEWT_" + station_id + ".png"
             
             print("     -- " + sounding_file_name_png)
     

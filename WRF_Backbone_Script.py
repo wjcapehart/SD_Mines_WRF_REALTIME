@@ -55,13 +55,7 @@ else:
     else:
          WRF_OVERALL_DIR = "/home/wjc/GitHub/SD_Mines_WRF_REALTIME/"
 
-         
-
-
-
 os.chdir(WRF_OVERALL_DIR)
-
-
 
 print( "Current Working Directory is now " + os.getcwd() )
 
@@ -180,14 +174,15 @@ print("  WRF Forecast End Time ", model_end_datetime)
 # Burn Current Time to File in WRF Root Directory
 #
 
-model_start_date_YYYYMMDDHH = model_start_datetime.strftime("%Y%m%d%H")
-model_start_date_YYYY_MM_DD_HH = model_start_datetime.strftime("%Y %m %d %H UTC")
+model_start_date_YYYYMMDDHH         = model_start_datetime.strftime("%Y%m%d%H")
+model_start_date_YYYY_MM_DD_HH      = model_start_datetime.strftime("%Y-%m-%d_%H")
+model_start_date_YYYY_MM_DD_HH00UTC = model_start_datetime.strftime("%Y-%m-%d %H00 UTC")
 
 
 file_time = model_start_datetime.strftime("%Y-%m-%d_%H")
 
 with open(WRF_OVERALL_DIR + "./current_run.txt", 'w') as f:
-    print(model_start_date_YYYYMMDDHH, file =  f)
+    print(model_start_date_YYYY_MM_DD_HH, file =  f)
     
     
 
@@ -745,16 +740,16 @@ else:
 #
 
 
-netcdf_archive_directory = WRF_ARCHIVE + "/" + file_time + "/NETCDF/"
+netcdf_archive_directory = WRF_ARCHIVE + "/" + model_start_date_YYYY_MM_DD_HH + "/NETCDF/"
 
 print("Creating " + netcdf_archive_directory)
 
 os.system("mkdir -pv " + netcdf_archive_directory )
 
 
-print("Creating " + WRF_IMAGES + file_time  )
+print("Creating " + WRF_IMAGES + model_start_date_YYYY_MM_DD_HH  )
 
-os.system("mkdir -pv " + WRF_IMAGES + file_time )
+os.system("mkdir -pv " + WRF_IMAGES + model_start_date_YYYY_MM_DD_HH )
 
 
 
@@ -766,14 +761,14 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
     print("cd " + WRF_OVERALL_DIR, file =  f)
-    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py 2>&1 TS2NC."+file_time+".LOG  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py 2>&1 METOGRAMS."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py 2>&1 MAPS_D01."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py 2>&1 MAPS_D02."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py 2>&1 MAPS_D03."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py 2>&1 SKEWT_D01."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py 2>&1 SKEWT_D02."+file_time+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D03."+file_time+".LOG ) & ", file =  f) 
-    print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines 2>&1 UUP."+file_time+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py 2>&1 TS2NC."+model_start_date_YYYY_MM_DD_HH+".LOG  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py 2>&1 METOGRAMS."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py 2>&1 MAPS_D01."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py 2>&1 MAPS_D02."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py 2>&1 MAPS_D03."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py 2>&1 SKEWT_D01."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py 2>&1 SKEWT_D02."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D03."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
+    print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines 2>&1 UUP."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
     print("wait", file =  f) 
     print("echo We're Outahere Like Vladimir", file =  f) 
     
@@ -807,27 +802,27 @@ os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh 2>&1 wrf_post_processing.L
 
 
 for domain in range(1, 3+1):
-    print(    "cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ".nc")
-    os.system("cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + file_time + ".nc")
+    print(    "cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + ".nc")
+    os.system("cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + ".nc")
 
 #
 # Lock in Final 
 #
 
 with open(WRF_OVERALL_DIR + "/current_complete_run.txt", 'w') as f:
-    print(file_time, file =  f)
+    print(model_start_date_YYYY_MM_DD_HH, file =  f)
 
 with open(WRF_IMAGES + file_time + "/current_run.txt", 'w') as f:
-    print(model_start_date_YYYYMMDDHH, file =  f)
+    print(model_start_date_YYYY_MM_DD_HH, file =  f)
 
 with open(WRF_ARCHIVE + file_time + "/current_run.txt", 'w') as f:
-    print(model_start_date_YYYYMMDDHH, file =  f)
+    print(model_start_date_YYYY_MM_DD_HH, file =  f)
 
 with open(WRF_IMAGES + file_time + "/current_run_formatted.txt", 'w') as f:
-    print(model_start_date_YYYY_MM_DD_HH, file =  f)
+    print(model_start_date_YYYY_MM_DD_HH00UTC, file =  f)
 
 with open(WRF_ARCHIVE + file_time + "/current_run_formatted.txt", 'w') as f:
-    print(model_start_date_YYYY_MM_DD_HH, file =  f)
+    print(model_start_date_YYYY_MM_DD_HH00UTC, file =  f)
 
     
 
@@ -840,14 +835,14 @@ with open(WRF_ARCHIVE + file_time + "/current_run_formatted.txt", 'w') as f:
 os.chdir(WRF_IMAGES)
 
 os.system("rm -fv " + WRF_IMAGES + "current_complete_run")
-os.system("ln -sv ./" + file_time  + " " + "./current_complete_run")
+os.system("ln -sv ./" + model_start_date_YYYY_MM_DD_HH  + " " + "./current_complete_run")
 
 os.chdir(WRF_ARCHIVE)
 
           
           
 os.system("rm -fv " + WRF_ARCHIVE  + " ./current_complete_run")
-os.system("ln -sv ./" + file_time  + " ./current_complete_run")
+os.system("ln -sv ./" + model_start_date_YYYY_MM_DD_HH  + " ./current_complete_run")
 
 
 
