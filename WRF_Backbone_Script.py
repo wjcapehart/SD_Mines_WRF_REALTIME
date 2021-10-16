@@ -45,6 +45,7 @@ import pathlib           as pathlib
 # Directory Workspaces
 #
 
+open_mp = 1
 beta_on = 0
 
 if (socket.gethostname() == "kyrill"):
@@ -638,12 +639,21 @@ os.system("cp -frv "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/bk.sh
 # Run REAL.EXE
 #
 
-print()
-print("Executing Real")
-os.system("date")
-os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./real.exe 2>&1 reallog.txt")
-os.system("date")
-print()
+
+if (open_mp ==1) then:
+    print()
+    print("Executing Real with OMP")
+    os.system("date")
+    os.system("nohup ./real.exe 2>&1 reallog.txt")
+    os.system("date")
+    print()   
+else:
+    print()
+    print("Executing Real with MPICH")
+    os.system("date")
+    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./real.exe 2>&1 reallog.txt")
+    os.system("date")
+    print()
 
 
 boundary_file = WRF_EXE + "wrfbdy_d01"
@@ -674,12 +684,25 @@ else:
 # Run WRF.EXE
 #
 
-print()
-print("Executing WRF")
-os.system("date")
-os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./wrf.exe 2>&1 wrflog.txt")
-os.system("date")
-print()
+
+if (open_mp ==1) then:
+    print()
+    print("Executing WRF with OMP")
+    os.system("date")
+    os.system("nohup ./wrf.exe 2>&1 wrflog.txt")
+    os.system("date")
+    print()   
+else:
+    print()
+    print("Executing WRF with MPICH")
+    os.system("date")
+    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./wrf.exe 2>&1 wrflog.txt")
+    os.system("date")
+    print()
+
+
+
+
 
 wrfout_file = WRF_EXE + "wrfout_d01_" + file_time + ":00:00"
 
