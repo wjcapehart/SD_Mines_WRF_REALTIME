@@ -51,7 +51,8 @@ import timezonefinder    as tzf
 import pytz as pytz
 
 import socket as socket
-
+import matplotlib.font_manager as fm
+import matplotlib as mpl
 
 sns.set_theme(style="ticks")
 
