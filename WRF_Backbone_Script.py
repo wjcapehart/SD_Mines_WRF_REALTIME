@@ -640,7 +640,7 @@ os.system("cp -frv "+ WRF_OVERALL_DIR +"./namelist_files_and_local_scripts/bk.sh
 #
 
 
-if (open_mp ==1) then:
+if (open_mp ==1) :
     print()
     print("Executing Real with OMP")
     os.system("date")
@@ -685,7 +685,7 @@ else:
 #
 
 
-if (open_mp ==1) then:
+if (open_mp ==1) :
     print()
     print("Executing WRF with OMP")
     os.system("date")
