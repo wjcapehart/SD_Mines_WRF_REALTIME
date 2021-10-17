@@ -52,7 +52,7 @@ if (platform.system() != "Darwin"):
     prop = fm.FontProperties(fname=path)
     print( prop.get_name() )
     mpl.rcParams['font.family'] = prop.get_name()[0]
-    print("mpl.rcParams['font.family'] " + mpl.rcParams['font.family'])
+    # print("mpl.rcParams['font.family'] " + mpl.rcParams['font.family'])
 
 
 #
