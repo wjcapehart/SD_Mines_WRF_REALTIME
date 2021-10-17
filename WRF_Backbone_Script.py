@@ -45,7 +45,7 @@ import pathlib           as pathlib
 # Directory Workspaces
 #
 
-open_mp = 1
+open_mp = 0
 beta_on = 0
 
 if (socket.gethostname() == "kyrill"):
