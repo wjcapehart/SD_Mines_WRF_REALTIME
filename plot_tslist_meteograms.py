@@ -451,7 +451,7 @@ for station in available_time_series_list.iterrows():
     ax01.set_yticklabels(["WRF","OBS"])
 
     ax01.barbs( wrf_time_hrly, 1/3.,  u_wrf, v_wrf )
-    ax01.barbs( ncss_times,    2/3.,  u_obs, v_obs, color="darkslateblue")
+    ax01.barbs( ncss_times,    2/3.,  u_obs, v_obs, color="blue")
 
    
     
