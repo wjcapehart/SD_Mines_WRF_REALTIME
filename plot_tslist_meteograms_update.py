@@ -125,7 +125,7 @@ os.chdir(WRF_EXE)
 # Model Start Date
 #
 
-with open(WRF_ARCHIVE  + " ./current_complete_run") as f:
+with open(WRF_ARCHIVE  + "./current_complete_run") as f:
     model_start_date_YYYY_MM_DD_HH = f.readlines()
 
 model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:13]
