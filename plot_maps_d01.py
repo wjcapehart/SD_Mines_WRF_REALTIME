@@ -55,6 +55,14 @@ import socket as socket
 
 sns.set_theme(style="ticks")
 
+if (platform.system() != "Darwin"):
+    path = '/usr/share/fonts/truetype/open-sans/OpenSans-Regular.ttf'
+    print("          Enabling OpenSans " + path)
+    prop = fm.FontProperties(fname=path)
+    print( prop.get_name() )
+    mpl.rcParams['font.family'] = prop.get_name()[0]
+    # print("mpl.rcParams['font.family'] " + mpl.rcParams['font.family'])
+
 #
 ####################################################
 ####################################################
@@ -1187,7 +1195,20 @@ for domain in range(chosen_domain,chosen_domain+1):
         #
         ####################################################
 
-        
+    ####################################################
+    #
+    # making gifs
+    #
+    
+    for v_name in ("DBZ", "PBL", "RAIN", "SFCT", "SNOWH", "WIND", "WEASD"):          
+        fig_dir_name = graphics_directory + "/" + v_name + "/"
+        png_file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F??_MAP_" + v_name + ".png"
+        gif_file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_Fxx_MAP_" + v_name + ".gif"
+        os.system("convert -delay 25 " + fig_dir_name + png_file_name + " " + fig_dir_name + gif_file_name)
+    
+    #
+    ####################################################    
+    
         
     ####################################################
     #

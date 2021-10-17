@@ -50,6 +50,14 @@ import socket as socket
 
 sns.set_theme(style="ticks")
 
+if (platform.system() != "Darwin"):
+    path = '/usr/share/fonts/truetype/open-sans/OpenSans-Regular.ttf'
+    print("          Enabling OpenSans " + path)
+    prop = fm.FontProperties(fname=path)
+    print( prop.get_name() )
+    mpl.rcParams['font.family'] = prop.get_name()[0]
+    # print("mpl.rcParams['font.family'] " + mpl.rcParams['font.family'])
+
 #
 ####################################################
 ####################################################
@@ -606,6 +614,22 @@ for domain in range(chosen_domain,chosen_domain+1):
         #
         ### ### ### ### ### ### ### ### ### ### ### ### ####
         ####################################################
+        
+        
+        ####################################################
+        #
+        # making gifs
+        #
+
+        png_file_name    = "wrfout_dxx_" + model_start_date_YYYY_MM_DD_HH + "_F??_SKEWT_" + station_id + ".png"
+        gif_file_name    = "wrfout_dxx_" + model_start_date_YYYY_MM_DD_HH + "_Fxx_SKEWT_" + station_id + ".gif"
+        os.system("convert -delay 25 " + graphics_directory + png_file_name + " " + graphics_directory + gif_file_name)
+
+        #
+        ####################################################  
+        
+        
+
             
     #
     ####################################################
