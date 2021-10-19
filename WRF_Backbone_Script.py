@@ -45,6 +45,7 @@ import pathlib           as pathlib
 # Directory Workspaces
 #
 
+max_dom = 2
 open_mp = 0
 beta_on = 0
 
@@ -379,7 +380,7 @@ model_end_wpsdate   =   model_end_datetime.strftime("%Y-%m-%d_%H:%M:00")
 with open(WPS_WORK + "./NAMELIST_WPS_SHARE.TXT", 'w') as f:
     print("&share", file =  f)
     print(" wrf_core         = 'ARW',", file =  f)
-    print(" max_dom          =     3,", file =  f)
+    print(" max_dom          =     2,", file =  f)
     print(" start_date       = '" + model_start_wpsdate + "', '"
                                   + model_start_wpsdate + "', '"
                                   + model_start_wpsdate + "',", file =  f)
@@ -787,10 +788,10 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py 2>&1 TS2NC."+model_start_date_YYYY_MM_DD_HH+".LOG  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py 2>&1 METOGRAMS."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
     print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py 2>&1 MAPS_D01."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
     print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py 2>&1 MAPS_D02."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py 2>&1 MAPS_D03."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
+    # print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py 2>&1 MAPS_D03."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
     print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py 2>&1 SKEWT_D01."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
     print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py 2>&1 SKEWT_D02."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D03."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
+    # print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D03."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
     print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines 2>&1 UUP."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
     print("wait", file =  f) 
     print("echo We're Outahere Like Vladimir", file =  f) 
@@ -824,7 +825,7 @@ os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh 2>&1 wrf_post_processing.L
 #
 
 
-for domain in range(1, 3+1):
+for domain in range(1, max_dom+1):
     print(    "cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + ".nc")
     os.system("cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + ".nc")
 

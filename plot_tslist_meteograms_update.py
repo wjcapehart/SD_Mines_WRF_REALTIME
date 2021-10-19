@@ -80,7 +80,7 @@ if (platform.system() != "Darwin"):
 #
 
 beta_on     = 0
-max_domains = 3
+max_domains = 2
 
 if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"

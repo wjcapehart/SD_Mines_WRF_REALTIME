@@ -83,7 +83,7 @@ if (platform.system() != "Darwin"):
 #
 
 beta_on       = 0
-max_domains   = 3
+max_domains   = 2
 chosen_domain = 1
 
 if (socket.gethostname() == "kyrill"):
