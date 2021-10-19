@@ -288,14 +288,14 @@ ln -fs $CRTMDIR/SpcCoeff/Big_Endian/abi_gr.SpcCoeff.bin            ./
 export NEWDATE=$startdate
 
 YYi=`echo $NEWDATE | cut -c1-4`
-MMi=`echo $NEWDATE | cut -c5-6`
-DDi=`echo $NEWDATE | cut -c7-8`
-HHi=`echo $NEWDATE | cut -c9-10`
+MMi=`echo $NEWDATE | cut -c6-7`
+DDi=`echo $NEWDATE | cut -c9-10`
+HHi=`echo $NEWDATE | cut -c12-13`
 
 YYY=`echo $startdate | cut -c1-4`
-MMM=`echo $startdate | cut -c5-6`
-DDD=`echo $startdate | cut -c7-8`
-HHH=`echo $startdate | cut -c9-10`
+MMM=`echo $startdate | cut -c6-7`
+DDD=`echo $startdate | cut -c9-10`
+HHH=`echo $startdate | cut -c12-13`
 
 while [ $((10#${fhr})) -le $((10#${lastfhr})) ] ; do
 
@@ -305,9 +305,9 @@ while [ $((10#${fhr})) -le $((10#${lastfhr})) ] ; do
     NEWDATE=`date '+%Y%m%d%H' --date="$YYY$MMM$DDD $HHH $((10#${fhr})) hour"`
 
     YY=`echo $NEWDATE | cut -c1-4`
-    MM=`echo $NEWDATE | cut -c5-6`
-    DD=`echo $NEWDATE | cut -c7-8`
-    HH=`echo $NEWDATE | cut -c9-10`
+    MM=`echo $NEWDATE | cut -c6-7`
+    DD=`echo $NEWDATE | cut -c9-10`
+    HH=`echo $NEWDATE | cut -c12-13`
 
 
     export FINAL_GRIB=${TOP_DIR}/ARCHIVE/${YYi}-${MMi}-${DDi}_${HHi}/GRIB
