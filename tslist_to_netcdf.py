@@ -68,7 +68,7 @@ else:
 
 os.chdir(WRF_OVERALL_DIR)
 
-print( "Current Working Directory is now " + os.getcwd() )
+print( "Current Working Directory is now " + os.getcwd()  )
 
 WPS_WORK    = WRF_OVERALL_DIR + "./WPS_PrepArea/"
 WPS_EXE     = WRF_OVERALL_DIR + "./WRF4/WPS/"
@@ -80,7 +80,6 @@ File_Suffixes = [ "TS", "UU", "VV", "WW", "PH", "PR", "QV", "TH" ]
 
 
 use_excel_inventory_file = 1
-max_domains              = 3
 
 station_list_file = WRF_OVERALL_DIR + "namelist_files_and_local_scripts/time_series_station_files_"+str(max_domains)+"_dom.xlsx"
 
