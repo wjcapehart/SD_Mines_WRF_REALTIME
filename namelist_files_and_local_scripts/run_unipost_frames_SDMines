@@ -106,7 +106,7 @@ export lastfhr=36
 export incrementhr=1
 
 # Set domain lists
-export domain_list="d01 d02 d03"
+export domain_list="d01 d02"
 
 # Set run command:
 
