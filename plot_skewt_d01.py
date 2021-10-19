@@ -446,7 +446,7 @@ for domain in range(chosen_domain,chosen_domain+1):
             fig = plt.figure(figsize=(9, 9))
 
             fig.suptitle(station_name + "; Model Run " + wrf_skewt_time + "; WRF Domain " + str(domain).zfill(2), 
-                         fontsize=20)
+                         fontsize=18)
 
             # Grid for plots
 

@@ -652,7 +652,7 @@ else:
     print()
     print("Executing Real with MPICH")
     os.system("date")
-    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./real.exe 2>&1 reallog.txt")
+    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 72 ./real.exe 2>&1 reallog.txt")
     os.system("date")
     print()
 
@@ -697,7 +697,7 @@ else:
     print()
     print("Executing WRF with MPICH")
     os.system("date")
-    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 48 ./wrf.exe 2>&1 wrflog.txt")
+    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 72 ./wrf.exe 2>&1 wrflog.txt")
     os.system("date")
     print()
 
