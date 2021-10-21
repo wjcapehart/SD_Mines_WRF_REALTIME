@@ -836,16 +836,16 @@ for domain in range(1, max_dom+1):
 with open(WRF_OVERALL_DIR + "/current_complete_run.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH, file =  f)
 
-with open(WRF_IMAGES + file_time + "/current_run.txt", 'w') as f:
+with open(WRF_IMAGES + model_start_date_YYYY_MM_DD_HH + "/current_run.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH, file =  f)
 
-with open(WRF_ARCHIVE + file_time + "/current_run.txt", 'w') as f:
+with open(WRF_ARCHIVE + model_start_date_YYYY_MM_DD_HH + "/current_run.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH, file =  f)
 
-with open(WRF_IMAGES + file_time + "/current_run_formatted.txt", 'w') as f:
+with open(WRF_IMAGES + model_start_date_YYYY_MM_DD_HH + "/current_run_formatted.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH00UTC, file =  f)
 
-with open(WRF_ARCHIVE + file_time + "/current_run_formatted.txt", 'w') as f:
+with open(WRF_ARCHIVE + model_start_date_YYYY_MM_DD_HH + "/current_run_formatted.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH00UTC, file =  f)
 
     
