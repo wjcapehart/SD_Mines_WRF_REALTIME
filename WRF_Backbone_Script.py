@@ -181,8 +181,6 @@ model_start_date_YYYY_MM_DD_HH      = model_start_datetime.strftime("%Y-%m-%d_%H
 model_start_date_YYYY_MM_DD_HH00UTC = model_start_datetime.strftime("%Y-%m-%d %H00 UTC")
 
 
-file_time = model_start_datetime.strftime("%Y-%m-%d_%H")
-
 with open(WRF_OVERALL_DIR + "./current_run.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH, file =  f)
     
@@ -499,7 +497,7 @@ os.chdir(WRF_EXE)
 print( "Current Working Directory is now " + os.getcwd() )
 
 with open(WRF_EXE + "./current_run.txt", 'w') as f:
-    print(model_start_date_YYYYMMDDHH, file =  f)
+    print(model_start_date_YYYY_MM_DD_HH, file =  f)
     
 #
 ####################################################
@@ -705,7 +703,7 @@ else:
 
 
 
-wrfout_file = WRF_EXE + "wrfout_d01_" + file_time + ":00:00"
+wrfout_file = WRF_EXE + "wrfout_d01_" +  model_start_date_YYYY_MM_DD_HH + ":00:00"
 
 
 print("checking status of " + wrfout_file)
