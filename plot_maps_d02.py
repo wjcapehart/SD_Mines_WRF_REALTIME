@@ -669,7 +669,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
         print(fig_dir_name + file_name)
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=(figure_domain_size))
 
         fig.suptitle(model_run_label)
 
@@ -758,7 +758,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
         print(fig_dir_name + file_name)
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=(figure_domain_size))
 
         fig.suptitle(model_run_label)
 
@@ -851,7 +851,7 @@ for domain in range(chosen_domain,chosen_domain+1):
         print(fig_dir_name + file_name)
 
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=(figure_domain_size))
 
         fig.suptitle(model_run_label)
 
@@ -940,7 +940,7 @@ for domain in range(chosen_domain,chosen_domain+1):
         print(fig_dir_name + file_name)
 
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=(figure_domain_size))
 
         fig.suptitle(model_run_label)
 
@@ -1028,7 +1028,7 @@ for domain in range(chosen_domain,chosen_domain+1):
         fig_dir_name = graphics_directory + "/" + v_name + "/"
         file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=(figure_domain_size))
 
         fig.suptitle(model_run_label)
 
@@ -1120,7 +1120,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
         pbl_height_levels = np.arange(0,5000,100)
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=(figure_domain_size))
 
         fig.suptitle(model_run_label)
 
@@ -1223,7 +1223,7 @@ for domain in range(chosen_domain,chosen_domain+1):
     print(fig_dir_name + file_name)
 
 
-    fig = plt.figure(figsize=(7,6))
+    fig = plt.figure(figsize=(figure_domain_size))
 
     fig.suptitle(model_run_label)
 
@@ -1315,7 +1315,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
     print(fig_dir_name + file_name)
 
-    fig = plt.figure(figsize=(7,6))
+    fig = plt.figure(figsize=(figure_domain_size))
 
     fig.suptitle(model_run_label)
 
