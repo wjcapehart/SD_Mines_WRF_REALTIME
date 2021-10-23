@@ -9,7 +9,7 @@
 
 # ## Libraries
 
-# In[ ]:
+# In[1]:
 
 
 ####################################################
@@ -44,15 +44,7 @@ import matplotlib as mpl
 
 from metpy.units import units
 
-sns.set_theme(style="ticks")
 
-if (platform.system() != "Darwin"):
-    path = '/usr/share/fonts/truetype/open-sans/OpenSans-Regular.ttf'
-    print("          Enabling OpenSans " + path)
-    prop = fm.FontProperties(fname=path)
-    print(prop.get_name())
-    mpl.rcParams['font.family'] = prop.get_name()[0]
-    # print("mpl.rcParams['font.family'] " + mpl.rcParams['font.family'])
 
 
 #
@@ -69,7 +61,7 @@ if (platform.system() != "Darwin"):
 
 # ## File Organization
 
-# In[ ]:
+# In[2]:
 
 
 ####################################################
@@ -115,7 +107,7 @@ os.chdir(WRF_EXE)
 
 # ## Time Control
 
-# In[ ]:
+# In[3]:
 
 
 ####################################################
@@ -155,7 +147,7 @@ print("          Siphon End Datetime is ",  siphon_end_datetime)
 # 
 # 
 
-# In[ ]:
+# In[6]:
 
 
 ####################################################
@@ -180,7 +172,7 @@ print(available_time_series_list)
 
 # ## Rotate through Available Files
 
-# In[ ]:
+# In[8]:
 
 
 ####################################################
@@ -273,32 +265,14 @@ for station in available_time_series_list.iterrows():
                     'cloud_area_fraction',
                     'dew_point_temperature',
                     'hectoPascal_ALTIM',
-                    'high_cloud_area_fraction',
-                    'high_cloud_base_altitude',
-                    'low_cloud_area_fraction',
-                    'low_cloud_base_altitude',
-                    'middle_cloud_area_fraction',
-                    'middle_cloud_base_altitude',
                     'numChildren',
                     'precipitation_amount_24',
                     'precipitation_amount_hourly',
                     'report',
                     'report_id',
                     'report_length',
-                    'snowfall_amount',
-                    'snowfall_amount_last_hour',
-                    'visibility_in_air',
-                    'visibility_in_air_direction',
-                    'visibility_in_air_surface',
-                    'visibility_in_air_vertical',
                     'weather',
                     'wind_from_direction',
-                    'wind_from_direction_max',
-                    'wind_from_direction_min',
-                    'wind_gust',
-                    'wind_peak_from_direction',
-                    'wind_peak_speed',
-                    'wind_peak_time',
                     'wind_speed')
     query.accept('netcdf')
 
@@ -528,8 +502,10 @@ for station in available_time_series_list.iterrows():
 
 
     # plt.show()
-    
-    fig.savefig(graphics_directory + "./wrfout_dxx_"+file_time+"_"+station_id+".png")
+    if (platform.system() != "Darwin"):
+        fig.savefig(graphics_directory + "./wrfout_dxx_"+file_time+"_"+station_id+".png")
+    else:
+        plt.show()
 
     plt.close('all')
 

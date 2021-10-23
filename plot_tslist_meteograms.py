@@ -44,15 +44,7 @@ import matplotlib as mpl
 
 from metpy.units import units
 
-sns.set_theme(style="ticks")
 
-if (platform.system() != "Darwin"):
-    path = '/usr/share/fonts/truetype/open-sans/OpenSans-Regular.ttf'
-    print("          Enabling OpenSans " + path)
-    prop = fm.FontProperties(fname=path)
-    print( prop.get_name() )
-    mpl.rcParams['font.family'] = prop.get_name()[0]
-    # print("mpl.rcParams['font.family'] " + mpl.rcParams['font.family'])
 
 
 #
