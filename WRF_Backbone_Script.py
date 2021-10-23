@@ -409,7 +409,7 @@ os.system("cat  NAMELIST_WPS_SHARE.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and
 print()
 print("Executing UnGrib.exe")
 os.system("date")
-os.system("nohup  " + WPS_EXE + "./ungrib.exe 2>&1 ungriblog.txt")
+os.system("nohup  " + WPS_EXE + "./ungrib.exe 2>&1 ungrib.log")
 os.system("date")
 print()
 
@@ -432,7 +432,7 @@ print()
 print()
 print("Executing MetGrid.exe")
 os.system("date")
-os.system("nohup " + WPS_EXE + "./metgrid.exe 2>&1 metgridlog.txt")
+os.system("nohup " + WPS_EXE + "./metgrid.exe 2>&1 metgrid.log")
 os.system("date")
 print()
 
@@ -650,7 +650,7 @@ else:
     print()
     print("Executing Real with MPICH")
     os.system("date")
-    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 108 ./real.exe 2>&1 reallog.txt")
+    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 108 ./real.exe 2>&1 real.log")
     os.system("date")
     print()
 
@@ -695,7 +695,7 @@ else:
     print()
     print("Executing WRF with MPICH")
     os.system("date")
-    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 108 ./wrf.exe 2>&1 wrflog.txt")
+    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 108 ./wrf.exe 2>&1 wrf.log")
     os.system("date")
     print()
 
@@ -861,8 +861,6 @@ os.system("ln -sv ./" + model_start_date_YYYY_MM_DD_HH  + " " + "./current_compl
 
 os.chdir(WRF_ARCHIVE)
 
-          
-          
 os.system("rm -fv " + WRF_ARCHIVE  + " ./current_complete_run")
 os.system("ln -sv ./" + model_start_date_YYYY_MM_DD_HH  + " ./current_complete_run")
 
