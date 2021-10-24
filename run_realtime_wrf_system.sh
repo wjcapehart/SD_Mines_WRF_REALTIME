@@ -14,8 +14,9 @@ else
 fi
 unset __conda_setup
 
-which python
+conda activate base
 
+which python
 
 DATESTRING=`date +"%Y-%m-%d%H"`
 cd /home/wjc/GitHub/SD_Mines_WRF_REALTIME

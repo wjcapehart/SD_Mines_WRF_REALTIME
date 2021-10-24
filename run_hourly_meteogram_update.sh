@@ -1,8 +1,6 @@
 #!/bin/bash
 echo "Date: `date`"
-DATESTRING=`date +"%Y-%m-%d_%H%M"`
-
-
+source /home/wjc/.bashrc
 
 __conda_setup="$('/home/wjc/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
@@ -16,9 +14,9 @@ else
 fi
 unset __conda_setup
 
+conda activate base
+
 which python
-
-
 
 echo $DATESTRING
 source /home/wjc/.bashrc
