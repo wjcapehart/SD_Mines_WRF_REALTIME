@@ -782,15 +782,15 @@ print("creating " + WRF_OVERALL_DIR + "./wrf_post_processing.sh")
 with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
-    print("cd " + WRF_OVERALL_DIR, file =  f)
-    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py 2>&1 TS2NC."+model_start_date_YYYY_MM_DD_HH+".LOG  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py 2>&1 METOGRAMS."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py 2>&1 MAPS_D01."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py 2>&1 MAPS_D02."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
-    # print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py 2>&1 MAPS_D03."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py 2>&1 SKEWT_D01."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py 2>&1 SKEWT_D02."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
-    # print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py 2>&1 SKEWT_D03."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
-    print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines 2>&1 UUP."+model_start_date_YYYY_MM_DD_HH+".LOG ) & ", file =  f) 
+    print("cd " + WRF_OVERALL_DIR, file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py > ./TS2NC."     + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py > ./METOGRAMS." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py    > ./MAPS_D01."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py    > ./MAPS_D02."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    # print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py    > ./MAPS_D03."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py   > ./SKEWT_D01." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py   > ./SKEWT_D02." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    # print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py   > ./SKEWT_D03." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines > ./UPP."+model_start_date_YYYY_MM_DD_HH+".LOG 2>&1  ) & ", file =  f) 
     print("wait", file =  f) 
     print("echo We're Outahere Like Vladimir", file =  f) 
     
@@ -803,7 +803,7 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
 
 
 os.system("chmod a+x " + WRF_OVERALL_DIR + "./wrf_post_processing.sh")
-os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh 2>&1 wrf_post_processing.LOG")
+os.system(WRF_OVERALL_DIR + "./wrf_post_processing.sh > wrf_post_processing." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
 
 
 #
@@ -864,6 +864,8 @@ os.chdir(WRF_ARCHIVE)
 os.system("rm -fv " + WRF_ARCHIVE  + " ./current_complete_run")
 os.system("ln -sv ./" + model_start_date_YYYY_MM_DD_HH  + " ./current_complete_run")
 
+os.system("scp /home/wjc/GitHub/SD_Mines_WRF_REALTIME//ARCHIVE/current_complete_run/GRIB/wrfout_d02_" + model_start_date_YYYY_MM_DD_HH + ".grib2 wjc@kyrill:/var/www/html/WRF/GRIB/wrf_out_d02_current.grib2")
+os.system("scp /home/wjc/GitHub/SD_Mines_WRF_REALTIME//ARCHIVE/current_complete_run/GRIB/wrfout_d01_" + model_start_date_YYYY_MM_DD_HH + ".grib2 wjc@kyrill:/var/www/html/WRF/GRIB/wrf_out_d01_current.grib2")
 
 
 

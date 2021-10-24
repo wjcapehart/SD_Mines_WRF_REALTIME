@@ -97,7 +97,7 @@ WRF_IMAGES  = WRF_OVERALL_DIR + "./WEB_IMAGES/"
 
 TS_DIR = WRF_EXE
 
-station_list_file = WRF_OVERALL_DIR + "namelist_files_and_local_scripts/time_series_station_files_"+str(max_domains)+"_dom.xlsx"
+station_list_file = WRF_OVERALL_DIR + "namelist_files_and_local_scripts/time_series_station_files_"+str(max_domains)+"_dom_all.xlsx"
 
 os.chdir(WRF_EXE)
 
