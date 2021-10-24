@@ -42,6 +42,9 @@ import metpy.units       as mpunits
 import matplotlib.font_manager as fm
 import matplotlib as mpl
 
+from requests import HTTPError
+
+
 from metpy.units import units
 
 
@@ -95,7 +98,7 @@ WRF_IMAGES  = WRF_OVERALL_DIR + "./WEB_IMAGES/"
 
 
 
-station_list_file = WRF_OVERALL_DIR + "namelist_files_and_local_scripts/time_series_station_files_"+str(max_domains)+"_dom.xlsx"
+station_list_file = WRF_OVERALL_DIR + "namelist_files_and_local_scripts/time_series_station_files_"+str(max_domains)+"_dom_all.xlsx"
 
 os.chdir(WRF_EXE)
 
@@ -147,7 +150,7 @@ print("          Siphon End Datetime is ",  siphon_end_datetime)
 # 
 # 
 
-# In[6]:
+# In[4]:
 
 
 ####################################################
@@ -172,7 +175,7 @@ print(available_time_series_list)
 
 # ## Rotate through Available Files
 
-# In[8]:
+# In[5]:
 
 
 ####################################################
@@ -275,35 +278,46 @@ for station in available_time_series_list.iterrows():
                     'wind_from_direction',
                     'wind_speed')
     query.accept('netcdf')
+    
+    error_404 = False
+    try:
+        nc = ncss.get_data(query)
+    except HTTPError:
+        print("BALLS! 404")
+        error_404 = True
+        pass
+
 
     #
     # Pull Querry
     # 
+    
+    if (not error_404):
 
-    ncss_xarray_dataset = xr.open_dataset(xr.backends.NetCDF4DataStore(ncss.get_data(query)))
-    ncss_xarray_dataset = ncss_xarray_dataset.sortby(["time"])
-    
-    metar_station_name = ncss_xarray_dataset["station_description"].values
-    metar_station_ata  = ncss_xarray_dataset["station_id"].values
-    
-    metar_latitude  = ncss_xarray_dataset["latitude"].values
-    metar_longitude = ncss_xarray_dataset["longitude"].values
-    
-    metar_to_sta_distance  = hs.haversine((metar_latitude,
-                                           metar_longitude),
-                                          (station_lat,
-                                           station_lon))
-    
-    metar_to_wrf_distance = hs.haversine((metar_latitude,
-                                          metar_longitude),
-                                         (wrf_timeseries["wrf_grid_latitude"].values,
-                                          wrf_timeseries["wrf_grid_longitude"].values))
-    
+        ncss_xarray_dataset = xr.open_dataset(xr.backends.NetCDF4DataStore(ncss.get_data(query)))
+        ncss_xarray_dataset = ncss_xarray_dataset.sortby(["time"])
 
-    sta_to_wrf_distance   = hs.haversine((station_lat,
-                                          station_lon),
-                                         (wrf_timeseries["wrf_grid_latitude"].values,
-                                          wrf_timeseries["wrf_grid_longitude"].values))
+        metar_station_name = ncss_xarray_dataset["station_description"].values
+        metar_station_ata  = ncss_xarray_dataset["station_id"].values
+
+        metar_latitude  = ncss_xarray_dataset["latitude"].values
+        metar_longitude = ncss_xarray_dataset["longitude"].values
+
+        metar_to_sta_distance  = hs.haversine((metar_latitude,
+                                               metar_longitude),
+                                              (station_lat,
+                                               station_lon))
+
+        metar_to_wrf_distance = hs.haversine((metar_latitude,
+                                              metar_longitude),
+                                             (wrf_timeseries["wrf_grid_latitude"].values,
+                                              wrf_timeseries["wrf_grid_longitude"].values))
+
+
+        sta_to_wrf_distance   = hs.haversine((station_lat,
+                                              station_lon),
+                                             (wrf_timeseries["wrf_grid_latitude"].values,
+                                              wrf_timeseries["wrf_grid_longitude"].values))
 
     #
     ###################################################################    
@@ -326,7 +340,9 @@ for station in available_time_series_list.iterrows():
     tzabbr = pytz.timezone(tz).localize(model_start_datetime)
 
     wrf_times  = pd.to_datetime(wrf_timeseries["time"]).tz_localize(tz="UTC").tz_convert(tz=tz)
-    ncss_times = pd.to_datetime(ncss_xarray_dataset["time"]).tz_localize(tz="UTC").tz_convert(tz=tz)
+    
+    if (not error_404) : 
+        ncss_times = pd.to_datetime(ncss_xarray_dataset["time"]).tz_localize(tz="UTC").tz_convert(tz=tz)
 
 
     wrf_time_seconds =  wrf_times.minute*60+wrf_times.second 
@@ -360,10 +376,11 @@ for station in available_time_series_list.iterrows():
     u_wrf = (wrf_timeseries["eastward_wind_10m"]*units("m")/units("s")).pint.to("knots")[on_the_hour]
     v_wrf = (wrf_timeseries["northward_wind_10m"]*units("m")/units("s")).pint.to("knots")[on_the_hour]
 
-    obs_winddir   = ncss_xarray_dataset["wind_from_direction"] * units.deg
-    obs_windspeed = ( ncss_xarray_dataset["wind_speed"] * units("m")/units("s")).pint.to("knots") 
+    if (not error_404) : 
+        obs_winddir   = ncss_xarray_dataset["wind_from_direction"] * units.deg
+        obs_windspeed = ( ncss_xarray_dataset["wind_speed"] * units("m")/units("s")).pint.to("knots") 
 
-    u_obs, v_obs =  mpcalc.wind_components(obs_windspeed, obs_winddir) 
+        u_obs, v_obs =  mpcalc.wind_components(obs_windspeed, obs_winddir) 
 
     #
     ###################################################################
@@ -392,20 +409,23 @@ for station in available_time_series_list.iterrows():
     ax[0,0].plot(wrf_times,
              (wrf_timeseries["dew_point_temperature_2m"]*units("K")).pint.to("degF"),
               color = "blue")
-
-    ax[0,0].plot(ncss_times,
-             (ncss_xarray_dataset["air_temperature"]*units("degC")).pint.to("degF"),
-             marker = "o",
-             color="magenta",
-            linestyle = "None")
-    ax[0,0].plot(ncss_times,
-             (ncss_xarray_dataset["dew_point_temperature"]*units("degC")).pint.to("degF"),
-             marker = "o",
-             color="cyan",
-            linestyle = "None")
     ax[0,0].set_ylabel("Temperature/DewPoint (°F)")
-    ax[0,0].set_title("Nearest Sta: "+metar_station_name[0].astype('U') +" ("+metar_station_ata[0].astype('U') +")")
-    ax[0,1].set_title("Sta-to-WRF dist: "+str(round(metar_to_wrf_distance,1)) +" km")
+
+
+    if (not error_404) :         
+        ax[0,0].plot(ncss_times,
+                 (ncss_xarray_dataset["air_temperature"]*units("degC")).pint.to("degF"),
+                 marker = "o",
+                 color="magenta",
+                linestyle = "None")
+        ax[0,0].plot(ncss_times,
+                 (ncss_xarray_dataset["dew_point_temperature"]*units("degC")).pint.to("degF"),
+                 marker = "o",
+                 color="cyan",
+                linestyle = "None")
+        ax[0,0].set_title("Nearest Sta: "+metar_station_name[0].astype('U') +" ("+metar_station_ata[0].astype('U') +")")
+        ax[0,1].set_title("Sta-to-WRF dist: "+str(round(metar_to_wrf_distance,1)) +" km")
+        
 
 
     #
@@ -424,8 +444,10 @@ for station in available_time_series_list.iterrows():
     ax01.set_yticks([1/3.,2/3.])
     ax01.set_yticklabels(["WRF","OBS"])
 
+    
     ax01.barbs( wrf_time_hrly, 1/3.,  u_wrf, v_wrf )
-    ax01.barbs( ncss_times,    2/3.,  u_obs, v_obs, color="blue")
+    if (not error_404) : 
+        ax01.barbs( ncss_times,    2/3.,  u_obs, v_obs, color="blue")
 
    
     
@@ -522,7 +544,7 @@ for station in available_time_series_list.iterrows():
 
 # ## Depart 
 
-# In[ ]:
+# In[6]:
 
 
 ####################################################
