@@ -9,12 +9,11 @@ DATESTRING=`date +"%Y-%m-%d_%H%M"`
 echo
 echo Running BashRC
 echo
-. ~/.bashrc
 echo
 echo "Checking for MPIRUN and MPIEXEX"
 echo
-which mpirun
-which mpiexec
+which mpirun > /home/wjc/wheres_my_mpirun.txt 2>&1
+which mpiexec > /home/wjc/wheres_my_mpiexec.txt 2>&1 
 echo
 echo "Entering Working Directory"
 echo
