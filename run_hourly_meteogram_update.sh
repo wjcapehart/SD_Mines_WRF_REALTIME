@@ -7,7 +7,7 @@ echo "Date: `date`"
 echo
 echo "Getting Date Stamps"
 echo
-echo $DATESTRING
+DATESTRING=`date +"%Y-%m-%d_%H%M"`
 echo
 echo "Moving to Working Directory"
 echo
@@ -15,7 +15,7 @@ cd /home/wjc/GitHub/SD_Mines_WRF_REALTIME
 echo
 echo "Starting Python Script"
 echo
-/home/wjc/miniconda3/bin/python /home/wjc/GitHub/SD_Mines_WRF_REALTIME/plot_tslist_meteograms_update.py > /home/wjc/GitHub/SD_Mines_WRF_REALTIME/wrf_metogramupdate_${DATESTRING}.log 2>&1 
+/home/wjc/miniconda3/bin/python /home/wjc/GitHub/SD_Mines_WRF_REALTIME/plot_tslist_meteograms_update.py > /home/wjc/GitHub/SD_Mines_WRF_REALTIME/wrf_metogramupdate_${DATESTRING}.log 2>&1
 echo
 echo "Ending Script"
 echo
