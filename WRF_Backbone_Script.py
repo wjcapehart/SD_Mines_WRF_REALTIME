@@ -80,7 +80,7 @@ NCEP_FTP_GRIB_DIR_ROOT = "/pub/data/nccf/com/nam/prod/nam."
 
 
 # ## Time Settings
-# 
+#
 # ### Setting up Time Intervals
 
 # In[ ]:
@@ -108,9 +108,9 @@ time_between_boundary_condition_feeds =  3 # hours
 
 
 # ### Timings for each run
-# 
-# The Realtime WRF is generated every 6 hr at best.  The model takes 3 hr to 
-# 
+#
+# The Realtime WRF is generated every 6 hr at best.  The model takes 3 hr to
+#
 # | Model Product Time (UTC) | Wallclock Start Time (UTC) |
 # |:------------------------:|:--------------------------:|
 # |        00 UTC            |        03 UTC              |
@@ -148,16 +148,16 @@ if (not beta_on) :
             fx_hour = 18
 
         model_start_datetime = datetime.datetime(year  = current_datetime_lag3.year,
-                                                 month = current_datetime_lag3.month, 
-                                                 day   = current_datetime_lag3.day, 
-                                                 hour  = fx_hour)     
+                                                 month = current_datetime_lag3.month,
+                                                 day   = current_datetime_lag3.day,
+                                                 hour  = fx_hour)
     else:
         fx_hour = 18
         model_start_datetime = datetime.datetime(year  = current_datetime_lag3.year,
-                                                 month = current_datetime_lag3.month, 
-                                                 day   = current_datetime_lag3.day, 
+                                                 month = current_datetime_lag3.month,
+                                                 day   = current_datetime_lag3.day,
                                                  hour  = fx_hour)
-        
+
 else:
 
 
@@ -165,7 +165,7 @@ else:
                                              month =    9,
                                              day   =   28,
                                              hour  =   18)
-    
+
 model_end_datetime = model_start_datetime + datetime.timedelta(hours=total_sumulation_time)
 
 print("           Current Time ", current_datetime)
@@ -183,8 +183,8 @@ model_start_date_YYYY_MM_DD_HH00UTC = model_start_datetime.strftime("%Y-%m-%d %H
 
 with open(WRF_OVERALL_DIR + "./current_run.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH, file =  f)
-    
-    
+
+
 
 #
 ####################################################
@@ -238,8 +238,8 @@ print( "Current Working Directory is now " + os.getcwd() )
 # Enter Working WPS Direcotry
 #
 
-ncep_boundary_condition_hour = np.arange(0, 
-                                         total_sumulation_time + 1, 
+ncep_boundary_condition_hour = np.arange(0,
+                                         total_sumulation_time + 1,
                                          time_between_boundary_condition_feeds)
 
 ncep_boundary_condition_hour = [str(x).zfill(2) for x in ncep_boundary_condition_hour]
@@ -277,9 +277,9 @@ ncep_ftp_address = [ftp_directory + "/nam.t" + model_start_HH + "z.conusnest.hir
 
 # NCEP File Name Template
 # /pub/data/nccf/com/nam/prod/nam.20210904/nam.t00z.conusnest.hiresf03.tm00.grib2
-# ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
+# ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD
 
-ncep_ftp_dir = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
+ncep_ftp_dir = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD
 
 print(ncep_ftp_dir)
 
@@ -298,7 +298,7 @@ print(local_ftp_file)
 
 
 # ### FTP GRIB Files from NCEP
-# 
+#
 
 # In[ ]:
 
@@ -322,7 +322,7 @@ os.system("rm -frv " + WPS_WORK + "./NAMELIST_WPS_SHARE.TXT")
 
 
 if (not beta_on):
-    
+
     os.system("rm -frv " + WPS_WORK + "./ncep_first_guess_grib_*.grib2")
 
 
@@ -336,7 +336,7 @@ if (not beta_on):
 
     ftp.close()
 
-# Link Files 
+# Link Files
 
 os.system(WPS_EXE +"./link_grib.csh " +  WPS_WORK + "./ncep_first_guess_grib_*.grib2")
 
@@ -346,9 +346,9 @@ os.system(WPS_EXE +"./link_grib.csh " +  WPS_WORK + "./ncep_first_guess_grib_*.g
 
 
 # ### Create Namelist.WPS File
-# 
+#
 # Creates the following template and merges with a root value.
-# 
+#
 # ```
 # &share
 #  wrf_core = 'ARW',
@@ -395,7 +395,7 @@ os.system("cat  NAMELIST_WPS_SHARE.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and
 ####################################################
 
 
-# ### Execute UNGRIB.EXE 
+# ### Execute UNGRIB.EXE
 
 # In[ ]:
 
@@ -446,7 +446,7 @@ else:
     print(last_metgrid_file + " missing.  ABORT!")
     quit()
 
-        
+
 #
 ####################################################
 ####################################################
@@ -486,7 +486,7 @@ else:
 ####################################################
 ####################################################
 #
-# Enter WRF Section of Workflow and 
+# Enter WRF Section of Workflow and
 #   Burn Model Runtime to WRF Dir
 #
 
@@ -498,7 +498,7 @@ print( "Current Working Directory is now " + os.getcwd() )
 
 with open(WRF_EXE + "./current_run.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH, file =  f)
-    
+
 #
 ####################################################
 ####################################################
@@ -523,7 +523,7 @@ os.system("rm -frv " + WRF_EXE + "./namelist.input")
 os.system("rm -frv " + WRF_EXE + "./wrfbdy_*")
 os.system("rm -frv " + WRF_EXE + "./wrfinput_*")
 os.system("rm -frv " + WRF_EXE + "./wrfout*")
-    
+
 #
 ####################################################
 ####################################################
@@ -551,7 +551,7 @@ os.system("mv -v " + WPS_WORK + "./met_em.d??.*.nc  ./")
 
 
 # ### Write WRF Input File Area
-# 
+#
 # ```
 #  &time_control
 #  run_days                            = 0,
@@ -645,12 +645,12 @@ if (open_mp ==1) :
     os.system("date")
     os.system("nohup ./real.exe 2>&1 reallog.txt")
     os.system("date")
-    print()   
+    print()
 else:
     print()
     print("Executing Real with MPICH")
     os.system("date")
-    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 108 ./real.exe 2>&1 real.log")
+    os.system("nohup /usr/local/bin/mpiexec -machinefile ~wjc/nodes.wrf -np 108 ./real.exe 2>&1 real.log")
     os.system("date")
     print()
 
@@ -690,12 +690,12 @@ if (open_mp ==1) :
     os.system("date")
     os.system("nohup ./wrf.exe 2>&1 wrflog.txt")
     os.system("date")
-    print()   
+    print()
 else:
     print()
     print("Executing WRF with MPICH")
     os.system("date")
-    os.system("nohup mpiexec -machinefile ~wjc/nodes.wrf -np 108 ./wrf.exe 2>&1 wrf.log")
+    os.system("nohup /usr/local/bin/mpiexec -machinefile ~wjc/nodes.wrf -np 108 ./wrf.exe 2>&1 wrf.log")
     os.system("date")
     print()
 
@@ -782,18 +782,18 @@ print("creating " + WRF_OVERALL_DIR + "./wrf_post_processing.sh")
 with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
-    print("cd " + WRF_OVERALL_DIR, file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py > ./TS2NC."     + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py > ./METOGRAMS." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py    > ./MAPS_D01."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py    > ./MAPS_D02."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    # print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py    > ./MAPS_D03."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py   > ./SKEWT_D01." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py   > ./SKEWT_D02." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    # print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py   > ./SKEWT_D03." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines > ./UPP."+model_start_date_YYYY_MM_DD_HH+".LOG 2>&1  ) & ", file =  f) 
-    print("wait", file =  f) 
-    print("echo We're Outahere Like Vladimir", file =  f) 
-    
+    print("cd " + WRF_OVERALL_DIR, file =  f)
+    print("( python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py > ./TS2NC."     + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  && python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py > ./METOGRAMS." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f)
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py    > ./MAPS_D01."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f)
+    print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py    > ./MAPS_D02."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f)
+    # print("( python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py    > ./MAPS_D03."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f)
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py   > ./SKEWT_D01." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f)
+    print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py   > ./SKEWT_D02." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f)
+    # print("( python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py   > ./SKEWT_D03." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f)
+    print("( " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines > ./UPP."+model_start_date_YYYY_MM_DD_HH+".LOG 2>&1  ) & ", file =  f)
+    print("wait", file =  f)
+    print("echo We're Outahere Like Vladimir", file =  f)
+
 # os.system("rm -frv " + WRF_OVERALL_DIR + "./MAPS_D??.LOG ")
 # os.system("rm -frv " + WRF_OVERALL_DIR + "./SKEWT_D??01.LOG ")
 # os.system("rm -frv " + WRF_OVERALL_DIR + "./UUP.LOG")
@@ -828,7 +828,7 @@ for domain in range(1, max_dom+1):
     os.system("cp -v " + WRF_EXE + "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + ":00:00  " + netcdf_archive_directory + "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + ".nc")
 
 #
-# Lock in Final 
+# Lock in Final
 #
 
 with open(WRF_OVERALL_DIR + "/current_complete_run.txt", 'w') as f:
@@ -846,14 +846,14 @@ with open(WRF_IMAGES + model_start_date_YYYY_MM_DD_HH + "/current_run_formatted.
 with open(WRF_ARCHIVE + model_start_date_YYYY_MM_DD_HH + "/current_run_formatted.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH00UTC, file =  f)
 
-    
 
-    
+
+
 #
 # Link dates to web page.
 #
-    
-    
+
+
 os.chdir(WRF_IMAGES)
 
 os.system("rm -fv " + WRF_IMAGES + "current_complete_run")

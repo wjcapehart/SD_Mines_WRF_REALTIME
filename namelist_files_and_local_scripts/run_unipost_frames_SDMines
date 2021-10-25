@@ -111,11 +111,10 @@ export domain_list="d01 d02"
 # Set run command:
 
 # Serial command example
-export RUN_COMMAND="mpiexec -np 36 -machinefile ~/nodes.wrf ${POSTEXEC}/unipost.exe "
+export RUN_COMMAND="/usr/local/bin/mpiexec -np 36 -machinefile ~/nodes.wrf ${POSTEXEC}/unipost.exe "
 
 # Parallel command examples:
-export RUN_COMMAND="mpirun -np 4 ${POSTEXEC}/unipost.exe "
-#export RUN_COMMAND="mpirun.lsf ${POSTEXEC}/unipost.exe "
+##export RUN_COMMAND="mpirun.lsf ${POSTEXEC}/unipost.exe "
 #export RUN_COMMAND="mpiexec_mpt ${POSTEXEC}/unipost.exe "
 
 # DEBUG command example found further below, search "DEBUG"
@@ -214,7 +213,7 @@ elif [[ ${outFormat} == "grib2" ]]; then
    # For GRIB2 the code reads postxconfig-NT.txt to select variables for output
    #   the available fields are defined in post_avlbflds.xml -- while we
    #   set a link to this file for reading during runtime it is not typical
-   #   for one to update this file, therefore the link goes back to the    
+   #   for one to update this file, therefore the link goes back to the
    #   program directory - this is true for params_grib2_tbl_new also - a
    #   file which defines the GRIB2 table value
    ln -fs ${txtCntrlFile} postxconfig-NT.txt
