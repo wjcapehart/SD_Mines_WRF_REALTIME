@@ -114,7 +114,7 @@ export domain_list="d01 d02"
 # Set run command:
 
 # Serial command example
-export RUN_COMMAND="/usr/local/bin/mpiexec -np 36 -machinefile ~/nodes.wrf ${POSTEXEC}/unipost.exe "
+export RUN_COMMAND="/usr/local/bin/mpiexec -np 36 -machinefile ~/nodes.wrf ${POSTEXEC}/unipost.exe > upp_runme.LOG 2>&1  "
 
 # Parallel command examples:
 ##export RUN_COMMAND="mpirun.lsf ${POSTEXEC}/unipost.exe "
