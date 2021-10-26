@@ -7,9 +7,6 @@ echo
 echo
 DATESTRING=`date +"%Y-%m-%d_%H%M"`
 echo
-echo Running BashRC
-echo
-echo
 echo
 echo "Entering Working Directory"
 echo
