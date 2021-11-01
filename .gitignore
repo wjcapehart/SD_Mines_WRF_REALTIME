@@ -14,4 +14,8 @@ WRF4/UPPV4.1/
 .DS_Store
 ARCHIVE
 WEB_IMAGES
+METARS
 .DS_Store
+current_run.txt
+current_run_formatted.txt
+./current_run.txt
