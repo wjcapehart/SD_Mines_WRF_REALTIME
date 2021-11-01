@@ -2,14 +2,14 @@
 # coding: utf-8
 
 # # Plot Time Series w/ Observations
-#
-#
-#
-#
+# 
+# 
+# 
+# 
 
 # ## Libraries
 
-# In[95]:
+# In[1]:
 
 
 ####################################################
@@ -26,7 +26,7 @@ import platform          as platform
 import xarray            as xr
 import pandas            as pd
 import glob              as glob
-import siphon.catalog    as siphcat
+import siphon.catalog    as siphcat  
 import siphon.ncss       as siphncss
 import seaborn           as sns
 import matplotlib.pyplot as plt
@@ -66,14 +66,14 @@ def haversine(row):
     lon2 = row['longitude']
     lat2 = row['latitude']
     lon1, lat1, lon2, lat2 = map(np.radians, [lon1, lat1, lon2, lat2])
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
     a = np.sin(dlat/2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2)**2
-    c = 2 * np.arcsin(np.sqrt(a))
+    c = 2 * np.arcsin(np.sqrt(a)) 
     km = 6367 * c
     return km
-
-
+    
+    
 #
 ####################################################
 ####################################################
@@ -88,7 +88,7 @@ def haversine(row):
 
 # ## File Organization
 
-# In[96]:
+# In[2]:
 
 
 ####################################################
@@ -113,7 +113,7 @@ else:
 os.chdir(WRF_OVERALL_DIR)
 
 print( "Current Working Directory is now " + os.getcwd() )
-
+    
 WPS_WORK    = WRF_OVERALL_DIR + "./WPS_PrepArea/"
 WPS_EXE     = WRF_OVERALL_DIR + "./WRF4/WPS/"
 WRF_EXE     = WRF_OVERALL_DIR + "./WRF4/WRF/test/em_real/"
@@ -135,7 +135,7 @@ os.chdir(WRF_EXE)
 
 # ## Time Control
 
-# In[97]:
+# In[3]:
 
 
 ####################################################
@@ -152,10 +152,10 @@ model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:13]
 
 model_start_date_YYYY_MM_DD_HH0000 = model_start_date_YYYY_MM_DD_HH + ":00:00"
 print(model_start_date_YYYY_MM_DD_HH0000)
-
+    
 model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')
 print("Model Simulation Date ", model_start_datetime)
-
+    
 model_end_datetime   = model_start_datetime + datetime.timedelta(hours=36)
 current_datetime     = datetime.datetime.utcnow()
 siphon_end_datetime  = min(current_datetime,model_end_datetime)
@@ -178,10 +178,10 @@ print(siphon_pulls_YYYYMMDD_HH)
 
 
 # ## Read tslist excel file
-#
-#
+# 
+# 
 
-# In[98]:
+# In[4]:
 
 
 ####################################################
@@ -206,7 +206,7 @@ print(available_time_series_list)
 
 # ## Get Station Information
 
-# In[99]:
+# In[5]:
 
 
 ####################################################
@@ -226,7 +226,7 @@ airport_database = airpt.load('ICAO')
 
 # ## Pull METARS from Siphon Services
 
-# In[100]:
+# In[6]:
 
 
 ####################################################
@@ -244,19 +244,19 @@ cat = siphcat.TDSCatalog('https://thredds-test.unidata.ucar.edu/thredds/catalog/
 
 first = True
 for datehour in siphon_pulls_YYYYMMDD_HH:
+    
 
-
-
+    
     metar_url  = "https://thredds-test.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_"+datehour+".txt"
     metar_file = METAR_DIR + "./metar_"+datehour+".txt"
-
-
+    
+    
     path_to_file = pathlib.Path(metar_file)
-
+    
     print(path_to_file, path_to_file.is_file())
 
-
-
+    
+    
     if (not path_to_file.is_file()) :
 
         print("downloading "+ metar_url)
@@ -290,7 +290,7 @@ metar_station_locs = metar_dataframe[["station_id","latitude","longitude"]].drop
 
 # ## Rotate through Available Files
 
-# In[94]:
+# In[7]:
 
 
 ####################################################
@@ -322,7 +322,7 @@ for station in available_time_series_list.iterrows():
 
     ###################################################################
     #
-    # Pull Station Data
+    # Pull Station Data 
     #
 
     station_id     = station[1][0]
@@ -331,19 +331,19 @@ for station in available_time_series_list.iterrows():
     station_lat    = station[1][3]
     station_lon    = station[1][4]
 
-    #
+    #    
     ###################################################################
 
     ###################################################################
     #
     # Pull WRF Time Series
     #
-
+    
     netcdf_file_name = TS_DIR + "./wrfout_d"+str(grid_domain).zfill(2)+"_"+file_time+"_"+station_id+".nc"
-
-    wrf_timeseries = xr.open_dataset(netcdf_file_name,
+    
+    wrf_timeseries = xr.open_dataset(netcdf_file_name, 
                                      engine='netcdf4')
-
+    
     print(netcdf_file_name)
 
     #
@@ -354,21 +354,21 @@ for station in available_time_series_list.iterrows():
     # Select Metars for Closest Station
     #
 
-
+  
 
     ###################################################################
     #
-    # Get METARS for Station
+    # Get METARS for Station 
     #
-
+    
 
 
     #
     # Get Nearest Station to Requested Station Point
     #
-
+    
     metar_station_locs['distance'] = metar_station_locs.apply(lambda row: haversine(row), axis=1)
-
+    
     x=metar_station_locs[ metar_station_locs['distance'] == metar_station_locs['distance'].min() ]
 
     try:
@@ -378,16 +378,16 @@ for station in available_time_series_list.iterrows():
         weather_station_name = x['station_id'][0]
         print("Weatherstation from short table ", weather_station_name)
 
-
+               
     metar_data = metar_dataframe[metar_dataframe["station_id"]==x["station_id"][0]].set_index("date_time")
+    
 
-
-
-
+    
+    
     print("lon metar/station/wrf:",metar_data["longitude"][0],station_lon,wrf_timeseries["wrf_grid_longitude"].values)
     print("lat metar/station/wrf:",metar_data["latitude"][0],station_lat,wrf_timeseries["wrf_grid_latitude"].values)
 
-
+   
 
     metar_to_sta_distance  = hs.haversine((metar_data["latitude"][0],
                                            metar_data["longitude"][0]),
@@ -403,28 +403,28 @@ for station in available_time_series_list.iterrows():
     sta_to_wrf_distance   = hs.haversine((station_lat,
                                           station_lon),
                                          (wrf_timeseries["wrf_grid_latitude"].values,
-                                          wrf_timeseries["wrf_grid_longitude"].values))
-
+                                          wrf_timeseries["wrf_grid_longitude"].values))    
+    
     print("distance between  metar and tslist ",metar_to_sta_distance)
     print("distance between  metar and    wrf ",metar_to_wrf_distance)
     print("distance between tslist and    wrf ",sta_to_wrf_distance)
 
+    
+    
+    #    
+    ###################################################################    
+
+        
+
+
+
+
+
 
 
     #
-    ###################################################################
-
-
-
-
-
-
-
-
-
-    #
-    ###################################################################
-
+    ###################################################################    
+    
 
     ###################################################################
     ###################################################################
@@ -436,19 +436,19 @@ for station in available_time_series_list.iterrows():
     #
     # Time Axes
     #
-
+                                         
     tf     = tzf.TimezoneFinder()
     tz     = tf.certain_timezone_at(lng=station_lon, lat=station_lat)
-
+    
     tzabbr = pytz.timezone(tz).localize(model_start_datetime)
 
     wrf_times  = pd.to_datetime(wrf_timeseries["time"]).tz_localize(tz="UTC").tz_convert(tz=tz)
-
+    
     ncss_times = pd.to_datetime(metar_data.index).tz_localize(tz="UTC").tz_convert(tz=tz)
 
 
 
-    wrf_time_seconds  =  wrf_times.minute*60+wrf_times.second
+    wrf_time_seconds  =  wrf_times.minute*60+wrf_times.second 
     on_the_hour       = np.where(wrf_time_seconds ==0)
     wrf_time_hrly     = wrf_times[on_the_hour]
     wrf_time_hrly_bar = wrf_times[on_the_hour]-datetime.timedelta(minutes=30)
@@ -482,12 +482,12 @@ for station in available_time_series_list.iterrows():
 
 
     obs_winddir   =  metar_data["wind_direction"].to_numpy() * units("deg")
-    obs_windspeed = (metar_data["wind_speed"].to_numpy() * units("m")/units("s")).to("knots")
+    obs_windspeed = (metar_data["wind_speed"].to_numpy() * units("m")/units("s")).to("knots") 
 
 
 
-    u_obs = (metar_data[ "eastward_wind"].to_numpy() * units("m")/units("s")).to("knots")
-    v_obs = (metar_data["northward_wind"].to_numpy() * units("m")/units("s")).to("knots")
+    u_obs = (metar_data[ "eastward_wind"].to_numpy() * units("m")/units("s")).to("knots") 
+    v_obs = (metar_data["northward_wind"].to_numpy() * units("m")/units("s")).to("knots") 
 
     #
     ###################################################################
@@ -498,21 +498,23 @@ for station in available_time_series_list.iterrows():
     #
 
     fig, ax = plt.subplots(figsize = (12, 8),
-                           nrows   =  2,
+                           nrows   =  2, 
                            ncols   =  2,
                            sharex  =  True)
 
     date_form = mdates.DateFormatter("%H %Z\n%d %b", tz=pytz.timezone(tz))
     xmajor = mdates.HourLocator(interval = 6)
     xminor = mdates.HourLocator(interval = 1)
-
-    print(metar_data)
+    
     print(ncss_times)
+    print(metar_data)
+    
+    
 
     #
     # Temperature and Humidity
     #
-
+    
     ax[0,0].plot(wrf_times,
              (wrf_timeseries["air_temperature_2m"]*units("K")).pint.to("degF"),
               color = "red")
@@ -522,44 +524,56 @@ for station in available_time_series_list.iterrows():
     ax[0,0].set_ylabel("Temperature/DewPoint (°F)")
 
 
-    ax[0,0].plot(ncss_times,
-             (metar_data["air_temperature"].to_numpy()*units("degC")).to("degF"),
-             marker = "o",
-             color="magenta",
-            linestyle = "None")
-    ax[0,0].plot(ncss_times,
-             (metar_data["dew_point_temperature"].to_numpy()*units("degC")).to("degF"),
-             marker = "o",
-             color="cyan",
-            linestyle = "None")
+    try:
+        ax[0,0].plot(ncss_times,
+                 (metar_data["air_temperature"].to_numpy()*units("degC")).to("degF"),
+                 marker = "o",
+                 color="magenta",
+                linestyle = "None")
+    except ValueError:
+        print("balls: air_temperature plot error")
+
+    try:
+        ax[0,0].plot(ncss_times,
+                 (metar_data["dew_point_temperature"].to_numpy()*units("degC")).to("degF"),
+                 marker = "o",
+                 color="cyan",
+                linestyle = "None")
+    except ValueError:
+        print("balls: dew_point_temperature plot error")
+
+
     ax[0,1].set_title("Sta-to-WRF dist: "+str(round(metar_to_wrf_distance,1)) +" km")
     ax[0,0].set_title("Nearest Sta: "+weather_station_name +" ("+x['station_id'][0] +")")
-
+        
 
 
     #
     # Total Atmos Column Water + Wind Speed
     #
-
+    
     ax[0,1].plot(wrf_times,
             wrf_timeseries["atmosphere_mass_content_of_water"],
               color = "steelblue")
     ax[0,1].set_ylabel("Total Columnar Water (mm)")
-
+ 
 
     ax01 = ax[0,1].twinx()
-
+    
     ax01.set_ylim(0,1)
     ax01.set_yticks([1/3.,2/3.])
     ax01.set_yticklabels(["WRF","OBS"])
 
-
+    
     ax01.barbs( wrf_time_hrly, 1/3.,  u_wrf, v_wrf )
 
-    ax01.barbs( ncss_times,    2/3.,  u_obs, v_obs, color="blue")
+    try:
+        ax01.barbs( ncss_times,    2/3.,  u_obs, v_obs, color="blue")
+    except ValueError:
+        print("balls: wind plotting error")
 
-
-
+   
+    
     #
     # Surface Energy Budget
     #
@@ -580,7 +594,7 @@ for station in available_time_series_list.iterrows():
     ax[1,0].set_ylabel("Surface Energy Flux (W/m²)")
 
     ax[1,0].axhline(y=0,color="grey", linewidth=0.5)
-
+ 
     #
     # Precipitation
     #
@@ -588,12 +602,12 @@ for station in available_time_series_list.iterrows():
     ax[1,1].bar(wrf_time_hrly_bar,
                 wrf_hrly_prec,
                 linewidth=0,
-                width=1/24,
+                width=1/24, 
                 color="lightgreen",
                 edgecolor=None)
     ax11 = ax[1,1].twinx()
     ax11.plot(wrf_times,
-              wrf_cum_prec,
+              wrf_cum_prec, 
               color="darkgreen")
     ax11.set_ylabel("Cumulative Precipitation (mm)")
     ax[1,1].set_ylabel("Hourly Precipitation (mm)")
@@ -627,7 +641,7 @@ for station in available_time_series_list.iterrows():
     ax[0,1].xaxis_date()
 
 
-
+    
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
@@ -647,13 +661,13 @@ for station in available_time_series_list.iterrows():
     #
     ###################################################################
     ###################################################################
-
+    
     print(" ")
 
 
-# ## Depart
+# ## Depart 
 
-# In[ ]:
+# In[8]:
 
 
 ####################################################
@@ -678,3 +692,7 @@ print("Ploting Meteogram Script complete.")
 
 
 # In[ ]:
+
+
+
+
