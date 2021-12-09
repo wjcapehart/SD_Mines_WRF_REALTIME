@@ -404,12 +404,15 @@ for domain in range(chosen_domain,chosen_domain+1):
     rain_maps          = rainc_maps.copy()
     rain_maps.values   = rainc_maps.values + rainnc_maps.values + rainsc_maps.values
     
-    rain_maps.values   = rain_maps.values / 25.4
-    
+    rain_maps.values         = rain_maps.values / 25.4
+    rain_maps.attrs['units'] = 'in'
+
+   
     hrly_rain_maps     = rain_maps.copy()
     hrly_rain_maps.values[1:,:,:] = hrly_rain_maps.values[1:,:,:] - hrly_rain_maps.values[0:-1,:,:]
     
-    hrly_rain_maps.values = hrly_rain_maps.values / 25.4
+
+
     
     #
     # DBZ
@@ -486,6 +489,9 @@ for domain in range(chosen_domain,chosen_domain+1):
     snow_fall_maps     = wrf.getvar(wrfin    =           ncf,
                                     varname  =      'SNOWNC',
                                     timeidx  = wrf.ALL_TIMES) 
+    
+    snow_fall_maps.values         = snow_fall_maps.values / 25.4    
+    snow_fall_maps.attrs['units'] = 'in'
 
     hrly_snowfall_maps                = snow_fall_maps.copy()
     hrly_snowfall_maps.values[1:,:,:] = snow_fall_maps.values[1:,:,:] - snow_fall_maps.values[0:-1,:,:]
@@ -495,8 +501,10 @@ for domain in range(chosen_domain,chosen_domain+1):
                                     varname  =        'SNOWH',
                                     timeidx  = wrf.ALL_TIMES) 
     
-    snow_depth_map.values         = snow_depth_map.values * 0.1     
-    snow_depth_map.attrs['units'] = 'cm'
+
+    snow_depth_map.values         = snow_depth_map.values * 39.3701 
+    snow_depth_map.attrs['units'] = 'in'
+
 
    
     hrly_snowdepth_maps                = snow_depth_map.copy()
@@ -995,7 +1003,7 @@ for domain in range(chosen_domain,chosen_domain+1):
                                      extend    = 'max',
                                      levels    = precip_levels_in)
         plt.colorbar(filled_cm, 
-                     label  = "Hourly Snow Depth (cm)",
+                     label  = "Hourly Snow Depth (in)",
                      shrink = 0.8,
                      ticks=precip_levels_in,
                      pad    = 0.012)
@@ -1368,7 +1376,7 @@ for domain in range(chosen_domain,chosen_domain+1):
                                  extend    = 'max',
                                  levels    = precip_levels_in)
     plt.colorbar(filled_cm, 
-                 label  = "36-hr Total Snowfall (in)",
+                 label  = "36-hr Total Snowfall Liquid-Water Equivalent (in)",
                  shrink = 0.8,
                  ticks = precip_levels_in,
                  pad    = 0.012)
