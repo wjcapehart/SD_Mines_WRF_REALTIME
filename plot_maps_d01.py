@@ -404,8 +404,12 @@ for domain in range(chosen_domain,chosen_domain+1):
     rain_maps          = rainc_maps.copy()
     rain_maps.values   = rainc_maps.values + rainnc_maps.values + rainsc_maps.values
     
+    rain_maps.values   = rain_maps.values * 25.4
+    
     hrly_rain_maps     = rain_maps.copy()
     hrly_rain_maps.values[1:,:,:] = hrly_rain_maps.values[1:,:,:] - hrly_rain_maps.values[0:-1,:,:]
+    
+    hrly_rain_maps.values = hrly_rain_maps.values * 25.4
     
     #
     # DBZ
@@ -798,7 +802,7 @@ for domain in range(chosen_domain,chosen_domain+1):
         
         ax1.set_title(valid_time + "  (" + local_time+")")
 
-        rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_mm, 
+        rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
                                                 ncolors    = 15)
 
         filled_cm     = ax1.contourf(lon2d, 
@@ -808,11 +812,11 @@ for domain in range(chosen_domain,chosen_domain+1):
                                      norm      = rain_norm,
                                      cmap      = precip_colormap,
                                      extend    = 'max',
-                                     levels    = precip_levels_mm)
+                                     levels    = precip_levels_in)
         plt.colorbar(filled_cm, 
-                     label  = "Hourly Precip (mm)",
+                     label  = "Hourly Precip (in)",
                      shrink = 0.8,
-                     ticks=precip_levels_mm,
+                     ticks=precip_levels_in,
                      pad    = 0.012)
 
 
@@ -888,7 +892,7 @@ for domain in range(chosen_domain,chosen_domain+1):
             
         ax1.set_title(valid_time + "  (" + local_time+")")
 
-        rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_mm, 
+        rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
                                                 ncolors    = 15)
 
         filled_cm     = ax1.contourf(lon2d, 
@@ -898,11 +902,11 @@ for domain in range(chosen_domain,chosen_domain+1):
                                      norm      = rain_norm,
                                      cmap      = precip_colormap,
                                      extend    = 'max',
-                                     levels    = precip_levels_mm)
+                                     levels    = precip_levels_in)
         plt.colorbar(filled_cm, 
-                     label  = "Hourly Snow-Water Equivalent (mm)",
+                     label  = "Hourly Snow-Water Equivalent (in)",
                      shrink = 0.8,
-                     ticks=precip_levels_mm,
+                     ticks=precip_levels_in,
                      pad    = 0.012)
 
 
@@ -979,7 +983,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
 
 
-        rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_mm, 
+        rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
                                                 ncolors    = 15)
 
         filled_cm     = ax1.contourf(lon2d, 
@@ -989,11 +993,11 @@ for domain in range(chosen_domain,chosen_domain+1):
                                      norm      = rain_norm,
                                      cmap      = precip_colormap,
                                      extend    = 'max',
-                                     levels    = precip_levels_mm)
+                                     levels    = precip_levels_in)
         plt.colorbar(filled_cm, 
                      label  = "Hourly Snow Depth (cm)",
                      shrink = 0.8,
-                     ticks=precip_levels_mm,
+                     ticks=precip_levels_in,
                      pad    = 0.012)
 
 
@@ -1067,7 +1071,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
 
 
-        rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_mm, 
+        rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
                                                 ncolors    = 15)
 
         filled_cm     = ax1.contourf(lon2d, 
@@ -1263,7 +1267,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
     ax1.set_title(valid_time0 + " - " + valid_timef + "  (" + local_time0 + " - " + local_timef+")")
 
-    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_mm, 
+    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
                                             ncolors    = 15)
 
     filled_cm     = ax1.contourf(lon2d, 
@@ -1273,11 +1277,11 @@ for domain in range(chosen_domain,chosen_domain+1):
                                  norm      = rain_norm,
                                  cmap      = precip_colormap,
                                  extend    = 'max',
-                                 levels    = precip_levels_mm)
+                                 levels    = precip_levels_in)
     plt.colorbar(filled_cm, 
-                 label  = "36-hr Total Precip (mm)",
+                 label  = "36-hr Total Precip (in)",
                  shrink = 0.8,
-                 ticks = precip_levels_mm,
+                 ticks = precip_levels_in,
                  pad    = 0.012)
 
 
@@ -1352,7 +1356,7 @@ for domain in range(chosen_domain,chosen_domain+1):
                         
     ax1.set_title(valid_time0 + " - " + valid_timef + "  (" + local_time0 + " - " + local_timef+")")
 
-    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_mm, 
+    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
                                             ncolors    = 15)
 
     filled_cm     = ax1.contourf(lon2d, 
@@ -1362,11 +1366,11 @@ for domain in range(chosen_domain,chosen_domain+1):
                                  norm      = rain_norm,
                                  cmap      = precip_colormap,
                                  extend    = 'max',
-                                 levels    = precip_levels_mm)
+                                 levels    = precip_levels_in)
     plt.colorbar(filled_cm, 
-                 label  = "36-hr Total Snowfall (mm)",
+                 label  = "36-hr Total Snowfall (in)",
                  shrink = 0.8,
-                 ticks = precip_levels_mm,
+                 ticks = precip_levels_in,
                  pad    = 0.012)
 
 
