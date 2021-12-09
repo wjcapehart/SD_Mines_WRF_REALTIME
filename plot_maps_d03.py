@@ -404,12 +404,12 @@ for domain in range(chosen_domain,chosen_domain+1):
     rain_maps          = rainc_maps.copy()
     rain_maps.values   = rainc_maps.values + rainnc_maps.values + rainsc_maps.values
     
-    rain_maps.values   = rain_maps.values * 25.4
+    rain_maps.values   = rain_maps.values / 25.4
     
     hrly_rain_maps     = rain_maps.copy()
     hrly_rain_maps.values[1:,:,:] = hrly_rain_maps.values[1:,:,:] - hrly_rain_maps.values[0:-1,:,:]
     
-    hrly_rain_maps.values = hrly_rain_maps.values * 25.4
+    hrly_rain_maps.values = hrly_rain_maps.values / 25.4
     
     #
     # DBZ

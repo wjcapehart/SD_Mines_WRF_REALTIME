@@ -468,8 +468,8 @@ for station in available_time_series_list.iterrows():
 
     wrf_hrly_prec[1:] = wrf_cum_hrly_prec[1:] - wrf_cum_hrly_prec[0:-1]
     
-    wrf_hrly_prec     = wrf_hrly_prec * 25.4
-    wrf_cum_hrly_prec = wrf_cum_hrly_prec * 25.4
+    wrf_hrly_prec     = wrf_hrly_prec / 25.4
+    wrf_cum_hrly_prec = wrf_cum_hrly_prec / 25.4
 
 
     #
