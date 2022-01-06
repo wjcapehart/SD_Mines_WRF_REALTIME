@@ -73,7 +73,7 @@ import matplotlib as mpl
 
 beta_on       = 0
 max_domains   = 3
-chosen_domain = 3
+chosen_domain = 1
 
 if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
@@ -570,30 +570,30 @@ for domain in range(chosen_domain,chosen_domain+1):
 
             plt.colorbar(cmh, orientation = "horizontal", label       = 'Height (km AGL)')
 
-            plt.figtext( 0.65, 0.60, 'LCL Height:')
-            plt.figtext( 0.80, 0.60, '{}'.format(lcl_hgt))
-            plt.figtext( 0.65, 0.58, 'LFC Height:')
-            plt.figtext( 0.80, 0.58, '{}'.format(lfc_hgt))
-            plt.figtext( 0.65, 0.56, 'MLLR:')
-            plt.figtext( 0.80, 0.56, '{}'.format(lr_700_500))
-            plt.figtext( 0.65, 0.54, 'SBCAPE:')
-            plt.figtext( 0.80, 0.54, '{0} J/kg'.format(sbcape))
-            plt.figtext( 0.65, 0.52, 'SBCIN:')
-            plt.figtext( 0.80, 0.52, '{}'.format(sbcin))
-            plt.figtext( 0.65, 0.50, 'MLCAPE:')
-            plt.figtext( 0.80, 0.50, '{}'.format(mlcape))
-            plt.figtext( 0.65, 0.48, 'MLCIN:')
-            plt.figtext( 0.80, 0.48, '{}'.format(mlcin))
-            plt.figtext( 0.65, 0.46, 'MUCAPE:')
-            plt.figtext( 0.80, 0.46, '{}'.format(mucape))
-            plt.figtext( 0.65, 0.44, 'Shear 0-1 km:')
-            plt.figtext( 0.80, 0.44, '{}'.format(shear01))
-            plt.figtext( 0.65, 0.42, 'Shear 0-6 km:')
-            plt.figtext( 0.80, 0.42, '{}'.format(shear06))
-            plt.figtext( 0.65, 0.40, 'SRH 0-1 km:')
-            plt.figtext( 0.80, 0.40, '{}'.format(srh_01))
-            plt.figtext( 0.65, 0.38, 'SRH 0-3 km:')
-            plt.figtext( 0.80, 0.38, '{}'.format(srh_03))
+            plt.figtext( 0.68, 0.60, 'LCL Height:')
+            plt.figtext( 0.80, 0.60, '{} m'.format(lcl_hgt.magnitude))
+            plt.figtext( 0.68, 0.58, 'LFC Height:')
+            plt.figtext( 0.80, 0.58, '{} m'.format(lfc_hgt.magnitude))
+            plt.figtext( 0.68, 0.56, 'MLLR:')
+            plt.figtext( 0.80, 0.56, '{} K'.format(lr_700_500.magnitude))
+            plt.figtext( 0.68, 0.54, 'SBCAPE:')
+            plt.figtext( 0.80, 0.54, '{} J/kg'.format(sbcape.magnitude))
+            plt.figtext( 0.68, 0.52, 'SBCIN:')
+            plt.figtext( 0.80, 0.52, '{} J/kg'.format(sbcin.magnitude.magnitude))
+            plt.figtext( 0.68, 0.50, 'MLCAPE:')
+            plt.figtext( 0.80, 0.50, '{} J/kg'.format(mlcape.magnitude.magnitude))
+            plt.figtext( 0.68, 0.48, 'MLCIN:')
+            plt.figtext( 0.80, 0.48, '{} J/kg'.format(mlcin.magnitude))
+            plt.figtext( 0.68, 0.46, 'MUCAPE:')
+            plt.figtext( 0.80, 0.46, '{} J/kg'.format(mucape.magnitude))
+            plt.figtext( 0.68, 0.44, 'Shear 0-1 km:')
+            plt.figtext( 0.80, 0.44, '{} m/s'.format(shear01.magnitude))
+            plt.figtext( 0.68, 0.42, 'Shear 0-6 km:')
+            plt.figtext( 0.80, 0.42, '{} m/s'.format(shear06.magnitude))
+            plt.figtext( 0.68, 0.40, 'SRH 0-1 km:')
+            plt.figtext( 0.80, 0.40, '{} m\u00b2/s\u00b2'.format(srh_01.magnitude))
+            plt.figtext( 0.68, 0.38, 'SRH 0-3 km:')
+            plt.figtext( 0.80, 0.38, '{} m\u00b2/s\u00b2'.format(srh_03.magnitude))
 
             plt.tight_layout()
 
