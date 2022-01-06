@@ -5,7 +5,7 @@
 
 # ## Libraries
 
-# In[ ]:
+# In[1]:
 
 
 ####################################################
@@ -18,6 +18,7 @@
 import numpy             as np
 import matplotlib.pyplot as plt
 import ftplib            as ftplib
+import urllib.request    as urllibreq
 import datetime          as datetime
 import os                as os
 import platform          as platform
@@ -67,11 +68,23 @@ WRF_EXE     = WRF_OVERALL_DIR + "./WRF4/WRF/test/em_real/"
 WRF_ARCHIVE = WRF_OVERALL_DIR + "./ARCHIVE/"
 WRF_IMAGES  = WRF_OVERALL_DIR + "./WEB_IMAGES/"
 
-NCEP_FTP_URLROOT       = "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/nam/prod/nam."
+NCEP_FTP_URLROOT        = "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/nam/prod/nam."
+NCEP_HTTP_URLROOT       = "https://nomads.ncep.noaa.gov/pub/data/nccf/com/nam/prod/nam."
 
-NCEP_FTP_SERVER        = "ftpprd.ncep.noaa.gov"
 
-NCEP_FTP_GRIB_DIR_ROOT = "/pub/data/nccf/com/nam/prod/nam."
+NCEP_FTP_SERVER         = "ftpprd.ncep.noaa.gov"
+NCEP_HTTP_SERVER        = "nomads.ncep.noaa.gov"
+
+
+NCEP_FTP_GRIB_DIR_ROOT  = "/pub/data/nccf/com/nam/prod/nam."
+NCEP_HTTP_GRIB_DIR_ROOT = "/pub/data/nccf/com/nam/prod/nam."
+
+
+
+
+
+
+
 
 #
 ####################################################
@@ -267,23 +280,33 @@ len(ncep_boundary_condition_hour)
 model_start_YYYYMMDD = model_start_datetime.strftime("%Y%m%d")
 model_start_HH       = model_start_datetime.strftime("%H")
 
-ftp_directory = NCEP_FTP_URLROOT + model_start_YYYYMMDD
+ftp_directory  = NCEP_FTP_URLROOT  + model_start_YYYYMMDD
+http_directory = NCEP_HTTP_URLROOT  + model_start_YYYYMMDD
+
 
 print(ftp_directory)
+print(http_directory)
+
 
 # nam.tHHz.conusnest.hiresfFF.tm00.grib2
 
-ncep_ftp_address = [ftp_directory + "/nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
+ncep_ftp_address  = [ftp_directory + "/nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
+ncep_http_address = [http_directory + "/nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
+
 
 # NCEP File Name Template
 # /pub/data/nccf/com/nam/prod/nam.20210904/nam.t00z.conusnest.hiresf03.tm00.grib2
 # ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
 
-ncep_ftp_dir = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
+ncep_ftp_dir  = NCEP_FTP_GRIB_DIR_ROOT  + model_start_YYYYMMDD 
+ncep_http_dir = NCEP_HTTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
+
 
 print(ncep_ftp_dir)
 
-ncep_ftp_file = ["./nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
+ncep_ftp_file  = ["./nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
+ncep_http_file = ["./nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
+
 
 local_ftp_file = ["./ncep_first_guess_grib_" + x + ".grib2" for x in ncep_boundary_condition_hour]
 
@@ -325,16 +348,24 @@ if (not beta_on):
     
     os.system("rm -frv " + WPS_WORK + "./ncep_first_guess_grib_*.grib2")
 
+    try:
+        ftp = ftplib.FTP(NCEP_FTP_SERVER)
+        ftp.login('Anonymous','William.Capehart@sdsmt.edu')
 
-    ftp = ftplib.FTP(NCEP_FTP_SERVER)
-    ftp.login('Anonymous','William.Capehart@sdsmt.edu')
+        for file in range(0,len(ncep_boundary_condition_hour)):
+            print("Downloading..." + ncep_ftp_file[file] + " to " + local_ftp_file[file])
+            ftp.retrbinary("RETR " + ncep_ftp_dir + "/" + ncep_ftp_file[file],
+                           open(WPS_WORK + local_ftp_file[file], 'wb').write)
 
-    for file in range(0,len(ncep_boundary_condition_hour)):
-        print("Downloading..." + ncep_ftp_file[file] + " to " + local_ftp_file[file])
-        ftp.retrbinary("RETR " + ncep_ftp_dir + "/" + ncep_ftp_file[file],
-                       open(WPS_WORK + local_ftp_file[file], 'wb').write)
+        ftp.close()
+    except TimeoutError:
+        print("-- Darn: FTP is down")
+        for file in range(0,len(ncep_boundary_condition_hour)):
+            print("Wgetting..." + ncep_http_file[file] + " to " + local_ftp_file[file])
+            urllibreq.urlretrieve(ncep_http_file[file], local_ftp_file[file])
 
-    ftp.close()
+        
+        
 
 # Link Files 
 
