@@ -353,7 +353,7 @@ if (not beta_on):
         ftp.login('Anonymous','William.Capehart@sdsmt.edu')
 
         for file in range(0,len(ncep_boundary_condition_hour)):
-            print("Downloading..." + ncep_ftp_file[file] + " to " + local_ftp_file[file])
+            print("Downloading " + ncep_ftp_file[file] + " to " + local_ftp_file[file])
             ftp.retrbinary("RETR " + ncep_ftp_dir + "/" + ncep_ftp_file[file],
                            open(WPS_WORK + local_ftp_file[file], 'wb').write)
 
@@ -361,8 +361,8 @@ if (not beta_on):
     except TimeoutError:
         print("-- Darn: FTP is down")
         for file in range(0,len(ncep_boundary_condition_hour)):
-            print("Wgetting..." + ncep_http_file[file] + " to " + local_ftp_file[file])
-            urllibreq.urlretrieve(ncep_http_file[file], local_ftp_file[file])
+            print("Wgetting " + ncep_http_address[file] + " to " + local_ftp_file[file])
+            urllibreq.urlretrieve(ncep_http_address[file], local_ftp_file[file])
 
         
         
