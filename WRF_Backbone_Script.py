@@ -305,7 +305,7 @@ ncep_http_dir = NCEP_HTTP_GRIB_DIR_ROOT + model_start_YYYYMMDD
 print(ncep_ftp_dir)
 
 ncep_ftp_file  = ["./nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
-ncep_http_file = ["./nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
+ncep_http_file = [ncep_http_dir + "./nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
 
 
 local_ftp_file = ["./ncep_first_guess_grib_" + x + ".grib2" for x in ncep_boundary_condition_hour]
