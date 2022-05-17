@@ -446,7 +446,7 @@ with open(WPS_WORK + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
     print("cd " + WPS_WORK, file =  f) 
-    print(WPS_EXE + "./ungrib.exe 2>&1 ungrib.log"), file =  f) 
+    print(WPS_EXE + "./ungrib.exe 2>&1 ungrib.log", file =  f) 
     print("echo WPS:UNGRIB::: We're Outahere Like Vladimir", file =  f) 
 
 os.system("chmod a+x " + WPS_WORK + "./preprocess_wps_ungrib.sh")
@@ -480,7 +480,7 @@ with open(WPS_WORK + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
     print("cd " + WPS_WORK, file =  f) 
-    print(WPS_EXE + "./metgrid.exe 2>&1 metgrid.log"), file =  f) 
+    print(WPS_EXE + "./metgrid.exe 2>&1 metgrid.log", file =  f) 
     print("echo WPS:METGRID::: We're Outahere Like Vladimir", file =  f) 
 
 os.system("chmod a+x " + WPS_WORK + "./preprocess_wps_metgrid.sh")
@@ -709,7 +709,7 @@ else:
         print("#!/bin/bash", file =  f)
         print("source ~/.bashrc", file =  f)
         print("cd " + WRF_EXE, file =  f) 
-        print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./real.exe 2>&1 real.log"), file =  f) 
+        print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./real.exe 2>&1 real.log", file =  f) 
         print("echo WRF:REAL::: We're Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_real.sh")
@@ -763,7 +763,7 @@ else:
         print("#!/bin/bash", file =  f)
         print("source ~/.bashrc", file =  f)
         print("cd " + WRF_EXE, file =  f) 
-        print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./wrf.exe 2>&1 wrf.log"), file =  f) 
+        print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./wrf.exe 2>&1 wrf.log", file =  f) 
         print("echo WRF:WRF::: We're Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
