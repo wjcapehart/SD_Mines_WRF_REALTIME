@@ -440,7 +440,18 @@ os.system("cat  NAMELIST_WPS_SHARE.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and
 print()
 print("Executing UnGrib.exe")
 os.system("date")
-os.system("source ~/.bashrc; nohup  " + WPS_EXE + "./ungrib.exe 2>&1 ungrib.log")
+
+print("creating " + WPS_WORK + "./preprocess_wps_ungrib.sh")
+with open(WPS_WORK + "./wrf_post_processing.sh", 'w') as f:
+    print("#!/bin/bash", file =  f)
+    print("source ~/.bashrc", file =  f)
+    print("cd " + WPS_WORK, file =  f) 
+    print(WPS_EXE + "./ungrib.exe 2>&1 ungrib.log"), file =  f) 
+    print("echo WPS:UNGRIB::: We're Outahere Like Vladimir", file =  f) 
+
+os.system("chmod a+x " + WPS_WORK + "./preprocess_wps_ungrib.sh")
+os.system(WPS_WORK + "./preprocess_wps_ungrib.sh > preprocess_wps_ungrib." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
+
 os.system("date")
 print()
 
@@ -463,7 +474,17 @@ print()
 print()
 print("Executing MetGrid.exe")
 os.system("date")
-os.system("source ~/.bashrc; nohup " + WPS_EXE + "./metgrid.exe 2>&1 metgrid.log")
+
+print("creating " + WPS_WORK + "./preprocess_wps_metgrid.sh")
+with open(WPS_WORK + "./wrf_post_processing.sh", 'w') as f:
+    print("#!/bin/bash", file =  f)
+    print("source ~/.bashrc", file =  f)
+    print("cd " + WPS_WORK, file =  f) 
+    print(WPS_EXE + "./metgrid.exe 2>&1 metgrid.log"), file =  f) 
+    print("echo WPS:METGRID::: We're Outahere Like Vladimir", file =  f) 
+
+os.system("chmod a+x " + WPS_WORK + "./preprocess_wps_metgrid.sh")
+os.system(WPS_WORK + "./preprocess_wps_metgrid.sh > preprocess_wps_metgrid." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
 os.system("date")
 print()
 
@@ -680,10 +701,22 @@ if (open_mp ==1) :
 else:
     print()
     print("Executing Real with MPICH")
+
     os.system("date")
-    os.system("nohup source ~/.bashrc; /opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./real.exe 2>&1 real.log")
+
+    print("creating " + WRF_EXE + "./processing_wrf_real.sh")
+    with open(WRF_EXE + "./processing_wrf_real.sh", 'w') as f:
+        print("#!/bin/bash", file =  f)
+        print("source ~/.bashrc", file =  f)
+        print("cd " + WRF_EXE, file =  f) 
+        print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./real.exe 2>&1 real.log"), file =  f) 
+        print("echo WRF:REAL::: We're Outahere Like Vladimir", file =  f) 
+
+    os.system("chmod a+x " + WRF_EXE + "./processing_wrf_real.sh")
+    os.system(WRF_EXE + "./processing_wrf_real.sh > processing_wrf_real." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
     os.system("date")
     print()
+    
 
 
 boundary_file = WRF_EXE + "wrfbdy_d01"
@@ -723,17 +756,21 @@ if (open_mp ==1) :
     os.system("date")
     print()   
 else:
-    print()
-    print("Executing WRF with MPICH")
     os.system("date")
-    os.system("nohup; source ~/.bashrc;  /opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64 ./wrf.exe 2>&1 wrf.log")
+
+    print("creating " + WRF_EXE + "./processing_wrf_wrf.sh")
+    with open(WRF_EXE + "./processing_wrf_wrf.sh", 'w') as f:
+        print("#!/bin/bash", file =  f)
+        print("source ~/.bashrc", file =  f)
+        print("cd " + WRF_EXE, file =  f) 
+        print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./wrf.exe 2>&1 wrf.log"), file =  f) 
+        print("echo WRF:WRF::: We're Outahere Like Vladimir", file =  f) 
+
+    os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
+    os.system(WRF_EXE + "./processing_wrf_wrf.sh > processing_wrf_wrf." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
     os.system("date")
     print()
-
-
-
-
-
+    
 wrfout_file = WRF_EXE + "wrfout_d01_" +  model_start_date_YYYY_MM_DD_HH + ":00:00"
 
 
