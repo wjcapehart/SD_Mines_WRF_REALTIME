@@ -428,7 +428,7 @@ os.system("cat  NAMELIST_WPS_SHARE.TXT "+ WRF_OVERALL_DIR +"./namelist_files_and
 
 # ### Execute UNGRIB.EXE 
 
-# In[ ]:
+# In[1]:
 
 
 ####################################################
@@ -444,10 +444,13 @@ os.system("date")
 print("creating " + WPS_WORK + "./preprocess_wps_ungrib.sh")
 with open(WPS_WORK + "./preprocess_wps_ungrib.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
-    print("source ~/.bashrc", file =  f)
+    print(". /", file =  f)
+    print("ulimit -s unlimited", file = f)
+    print(". /opt/intel/oneapi/setvars.sh --force", file = f)
+    print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}")
     print("cd " + WPS_WORK, file =  f) 
     print(WPS_EXE + "./ungrib.exe 2>&1 ungrib.log", file =  f) 
-    print("echo WPS:UNGRIB::: We're Outahere Like Vladimir", file =  f) 
+    print("echo WPS:UNGRIB::: We\'re Outahere Like Vladimir", file =  f) 
 
 os.system("chmod a+x " + WPS_WORK + "./preprocess_wps_ungrib.sh")
 os.system(WPS_WORK + "./preprocess_wps_ungrib.sh > preprocess_wps_ungrib." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
@@ -478,7 +481,9 @@ os.system("date")
 print("creating " + WPS_WORK + "./preprocess_wps_metgrid.sh")
 with open(WPS_WORK + "./preprocess_wps_metgrid.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
-    print("source ~/.bashrc", file =  f)
+    print("ulimit -s unlimited", file = f)
+    print(". /opt/intel/oneapi/setvars.sh --force", file = f)
+    print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}")
     print("cd " + WPS_WORK, file =  f) 
     print(WPS_EXE + "./metgrid.exe 2>&1 metgrid.log", file =  f) 
     print("echo WPS:METGRID::: We're Outahere Like Vladimir", file =  f) 
@@ -707,7 +712,9 @@ else:
     print("creating " + WRF_EXE + "./processing_wrf_real.sh")
     with open(WRF_EXE + "./processing_wrf_real.sh", 'w') as f:
         print("#!/bin/bash", file =  f)
-        print("source ~/.bashrc", file =  f)
+        print("ulimit -s unlimited", file = f)
+        print(". /opt/intel/oneapi/setvars.sh --force", file = f)
+        print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}")
         print("cd " + WRF_EXE, file =  f) 
         print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./real.exe 2>&1 real.log", file =  f) 
         print("echo WRF:REAL::: We're Outahere Like Vladimir", file =  f) 
@@ -761,7 +768,9 @@ else:
     print("creating " + WRF_EXE + "./processing_wrf_wrf.sh")
     with open(WRF_EXE + "./processing_wrf_wrf.sh", 'w') as f:
         print("#!/bin/bash", file =  f)
-        print("source ~/.bashrc", file =  f)
+        print("ulimit -s unlimited", file = f)
+        print(". /opt/intel/oneapi/setvars.sh --force", file = f)
+        print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}")
         print("cd " + WRF_EXE, file =  f) 
         print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./wrf.exe 2>&1 wrf.log", file =  f) 
         print("echo WRF:WRF::: We're Outahere Like Vladimir", file =  f) 
