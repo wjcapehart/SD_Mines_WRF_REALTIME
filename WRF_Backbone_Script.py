@@ -442,7 +442,7 @@ print("Executing UnGrib.exe")
 os.system("date")
 
 print("creating " + WPS_WORK + "./preprocess_wps_ungrib.sh")
-with open(WPS_WORK + "./wrf_post_processing.sh", 'w') as f:
+with open(WPS_WORK + "./preprocess_wps_ungrib.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
     print("cd " + WPS_WORK, file =  f) 
@@ -476,7 +476,7 @@ print("Executing MetGrid.exe")
 os.system("date")
 
 print("creating " + WPS_WORK + "./preprocess_wps_metgrid.sh")
-with open(WPS_WORK + "./wrf_post_processing.sh", 'w') as f:
+with open(WPS_WORK + "./preprocess_wps_metgrid.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print("source ~/.bashrc", file =  f)
     print("cd " + WPS_WORK, file =  f) 
