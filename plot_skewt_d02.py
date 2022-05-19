@@ -618,7 +618,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
         png_file_name    = "wrfout_dxx_" + model_start_date_YYYY_MM_DD_HH + "_F??_SKEWT_" + station_id + ".png"
         gif_file_name    = "wrfout_dxx_" + model_start_date_YYYY_MM_DD_HH + "_Fxx_SKEWT_" + station_id + ".gif"
-        os.system("convert -delay 25 " + graphics_directory + png_file_name + " " + graphics_directory + gif_file_name)
+        os.system(". ~/.bashrc; convert -delay 25 " + graphics_directory + png_file_name + " " + graphics_directory + gif_file_name)
 
         #
         ####################################################  

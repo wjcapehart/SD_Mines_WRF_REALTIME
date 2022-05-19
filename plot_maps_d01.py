@@ -1209,7 +1209,7 @@ for domain in range(chosen_domain,chosen_domain+1):
         fig_dir_name = graphics_directory + "/" + v_name + "/"
         png_file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F??_MAP_" + v_name + ".png"
         gif_file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_Fxx_MAP_" + v_name + ".gif"
-        os.system("convert -delay 25 " + fig_dir_name + png_file_name + " " + fig_dir_name + gif_file_name)
+        os.system(". ~/.bashrc; convert -delay 25 " + fig_dir_name + png_file_name + " " + fig_dir_name + gif_file_name)
     
     #
     ####################################################    
