@@ -716,7 +716,7 @@ else:
         print(". /opt/intel/oneapi/setvars.sh --force", file = f)
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
-        print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./real.exe 2>&1 real.log", file =  f) 
+        print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes -tune /home/wjc/tuning_wrf_1.dat -f ~wjc/nodes.wrf.1 -np 8  ./real.exe 2>&1 real.log", file =  f) 
         print("echo WRF:REAL::: We're Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_real.sh")
@@ -772,7 +772,7 @@ else:
         print(". /opt/intel/oneapi/setvars.sh --force", file = f)
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
-        print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1 -np 64  ./wrf.exe 2>&1 wrf.log", file =  f) 
+        print("/opt/intel/oneapi/mpi/latest/bin/mpirun  -print-rank-map  -print-all-exitcodes  -machinefile ~wjc/nodes.wrf.1  -tune /home/wjc/tuning_wrf_1.dat -f ~wjc/nodes.wrf.1 -np 8  ./wrf.exe 2>&1 wrf.log", file =  f) 
         print("echo WRF:WRF::: We're Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
