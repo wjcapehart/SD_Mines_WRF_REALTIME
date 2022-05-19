@@ -50,7 +50,7 @@ max_dom = 2
 open_mp = 0
 beta_on = 0
 
-if (socket.gethostname() == "hurricane"):
+if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
 else:
     if (platform.system() == "Darwin"):
