@@ -1,6 +1,9 @@
 #!/bin/ksh
 #
 set -x
+
+
+. ~/.bashrc
 #--------------------------------------------------------
 # Updates:
 #
@@ -71,7 +74,7 @@ set -x
 # and that your model output is in $DOMAINPATH/wrfprd
 # as recommended in the users guide where UPP will output.
 
-export TOP_DIR=/projects/SD_Mines_WRF_REALTIME/
+export TOP_DIR=/home/wjc/GitHub/SD_Mines_WRF_REALTIME/
 export DOMAINPATH=${TOP_DIR}/WRF4/WRF/test/em_real
 export UNIPOST_HOME=${TOP_DIR}/WRF4/UPPV4.1
 export POSTEXEC=${UNIPOST_HOME}/exec
@@ -106,16 +109,16 @@ export lastfhr=36
 export incrementhr=1
 
 # Set domain lists
-export domain_list="d01 d02 d03"
+export domain_list="d01 d02"
 
 # Set run command:
 
 # Serial command example
-export RUN_COMMAND="${POSTEXEC}/unipost.exe "
+#export RUN_COMMAND="/usr/local/bin/mpiexec -np 36 -machinefile ~/nodes.wrf ${POSTEXEC}/unipost.exe > upp_runme.LOG 2>&1  "
+export RUN_COMMAND=" ${POSTEXEC}/unipost.exe > upp_runme.LOG 2>&1  "
 
 # Parallel command examples:
-export RUN_COMMAND="mpirun -np 4 ${POSTEXEC}/unipost.exe "
-#export RUN_COMMAND="mpirun.lsf ${POSTEXEC}/unipost.exe "
+##export RUN_COMMAND="mpirun.lsf ${POSTEXEC}/unipost.exe "
 #export RUN_COMMAND="mpiexec_mpt ${POSTEXEC}/unipost.exe "
 
 # DEBUG command example found further below, search "DEBUG"
@@ -214,7 +217,7 @@ elif [[ ${outFormat} == "grib2" ]]; then
    # For GRIB2 the code reads postxconfig-NT.txt to select variables for output
    #   the available fields are defined in post_avlbflds.xml -- while we
    #   set a link to this file for reading during runtime it is not typical
-   #   for one to update this file, therefore the link goes back to the    
+   #   for one to update this file, therefore the link goes back to the
    #   program directory - this is true for params_grib2_tbl_new also - a
    #   file which defines the GRIB2 table value
    ln -fs ${txtCntrlFile} postxconfig-NT.txt
@@ -288,14 +291,14 @@ ln -fs $CRTMDIR/SpcCoeff/Big_Endian/abi_gr.SpcCoeff.bin            ./
 export NEWDATE=$startdate
 
 YYi=`echo $NEWDATE | cut -c1-4`
-MMi=`echo $NEWDATE | cut -c5-6`
-DDi=`echo $NEWDATE | cut -c7-8`
-HHi=`echo $NEWDATE | cut -c9-10`
+MMi=`echo $NEWDATE | cut -c6-7`
+DDi=`echo $NEWDATE | cut -c9-10`
+HHi=`echo $NEWDATE | cut -c12-13`
 
 YYY=`echo $startdate | cut -c1-4`
-MMM=`echo $startdate | cut -c5-6`
-DDD=`echo $startdate | cut -c7-8`
-HHH=`echo $startdate | cut -c9-10`
+MMM=`echo $startdate | cut -c6-7`
+DDD=`echo $startdate | cut -c9-10`
+HHH=`echo $startdate | cut -c12-13`
 
 while [ $((10#${fhr})) -le $((10#${lastfhr})) ] ; do
 
@@ -425,7 +428,7 @@ done
 
 
 for domain in ${domain_list}; do
-    cat ./WRFPRS_${domain}.?? > ${FINAL_GRIB}/wrfout_d${domain}_${YYi}-${MMi}-${DDi}_${HHi}.grib2
+    cat ./WRFPRS_${domain}.?? > ${FINAL_GRIB}/wrfout_${domain}_${YYi}-${MMi}-${DDi}_${HHi}.grib2
 done
 
 date
