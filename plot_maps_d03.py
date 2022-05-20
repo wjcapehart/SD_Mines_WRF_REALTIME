@@ -1209,8 +1209,20 @@ for domain in range(chosen_domain,chosen_domain+1):
         fig_dir_name = graphics_directory + "/" + v_name + "/"
         png_file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F??_MAP_" + v_name + ".png"
         gif_file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_Fxx_MAP_" + v_name + ".gif"
-        os.system(". ~/.bashrc; convert  -delay 25 " + fig_dir_name + png_file_name + " " + fig_dir_name + gif_file_name)
-    
+        print("creating " + WRF_OVERALL_DIR + "./processing_"+v_name+"3_gif.sh")
+        with open(WRF_OVERALL_DIR + "./processing_"+v_name+"3_gif.sh", 'w') as f:
+            print("#!/bin/bash", file =  f)
+            print("ulimit -s unlimited", file = f)
+            print(". /opt/intel/oneapi/setvars.sh --force", file = f)
+            print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
+            print("cd " + WRF_OVERALL_DIR, file =  f) 
+            print("convert -delay 25 " + fig_dir_name + png_file_name + " " + fig_dir_name + gif_file_name, file =  f) 
+            print("echo MAIN:MAPS_"+v_name+"1::: We\'re Outahere Like Vladimir", file =  f) 
+
+        os.system("chmod a+x " + WRF_OVERALL_DIR + "./processing_"+v_name+"3_gif.sh")
+        os.system(WRF_OVERALL_DIR + "./processing_"+v_name+"3_gif.sh > ./processing_"+v_name+"3_gif." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
+        os.system("date")
+        print()    
     #
     ####################################################    
     
