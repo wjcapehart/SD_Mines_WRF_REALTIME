@@ -623,12 +623,13 @@ for domain in range(chosen_domain,chosen_domain+1):
         print("creating " + WRF_OVERALL_DIR + "./processing_skewt2_gif.sh")
         with open(WRF_OVERALL_DIR + "./processing_skewt2_gif.sh", 'w') as f:
             print("#!/bin/bash", file =  f)
+            print(". ~/.bashrc", file =  f)
             print("ulimit -s unlimited", file = f)
             print(". /opt/intel/oneapi/setvars.sh --force", file = f)
             print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
             print("cd " + WRF_OVERALL_DIR, file =  f) 
             print("convert -delay 25 " + graphics_directory + png_file_name + " " + graphics_directory + gif_file_name, file =  f) 
-            print("echo MAIN:SKEWT2::: We\'re Outahere Like Vladimir", file =  f) 
+            print("echo MAIN:SKEWT2::: We^re Outahere Like Vladimir", file =  f) 
 
         os.system("chmod a+x " + WRF_OVERALL_DIR + "./processing_skewt2_gif.sh")
         os.system(WRF_OVERALL_DIR + "./processing_skewt2_gif.sh > ./processing_skewt2_gif." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")

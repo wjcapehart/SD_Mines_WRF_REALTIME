@@ -546,6 +546,7 @@ for station in available_time_series_list.iterrows():
     print(" ")
 
 
+
 # ## Depart 
 
 # In[6]:

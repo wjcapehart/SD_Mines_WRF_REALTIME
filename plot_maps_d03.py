@@ -1212,12 +1212,12 @@ for domain in range(chosen_domain,chosen_domain+1):
         print("creating " + WRF_OVERALL_DIR + "./processing_"+v_name+"3_gif.sh")
         with open(WRF_OVERALL_DIR + "./processing_"+v_name+"3_gif.sh", 'w') as f:
             print("#!/bin/bash", file =  f)
+            print(". ~/.bashrc", file =  f)                                  
             print("ulimit -s unlimited", file = f)
-            print(". /opt/intel/oneapi/setvars.sh --force", file = f)
             print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
             print("cd " + WRF_OVERALL_DIR, file =  f) 
             print("convert -delay 25 " + fig_dir_name + png_file_name + " " + fig_dir_name + gif_file_name, file =  f) 
-            print("echo MAIN:MAPS_"+v_name+"1::: We\'re Outahere Like Vladimir", file =  f) 
+            print("echo MAIN:MAPS_"+v_name+"3::: We^re Outahere Like Vladimir", file =  f) 
 
         os.system("chmod a+x " + WRF_OVERALL_DIR + "./processing_"+v_name+"3_gif.sh")
         os.system(WRF_OVERALL_DIR + "./processing_"+v_name+"3_gif.sh > ./processing_"+v_name+"3_gif." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
