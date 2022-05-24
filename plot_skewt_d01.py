@@ -628,9 +628,9 @@ for domain in range(chosen_domain,chosen_domain+1):
             print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
             print("cd " + WRF_OVERALL_DIR, file =  f) 
             print("convert -delay 25 " + graphics_directory + png_file_name + " " + graphics_directory + gif_file_name, file =  f) 
-            print("echo MAIN:SKEWT1::: We\'re Outahere Like Vladimir", file =  f) 
+            print("echo MAIN:SKEWT1::: We^re Outahere Like Vladimir", file =  f) 
 
-        os.system("chmod a+x " + WRF_OVERALL_DIR + "./processing_skewt2_gif.sh")
+        os.system("chmod a+x " + WRF_OVERALL_DIR + "./processing_skewt1_gif.sh")
         os.system(WRF_OVERALL_DIR + "./processing_skewt1_gif.sh > ./processing_skewt1_gif." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
         os.system("date")
         print()

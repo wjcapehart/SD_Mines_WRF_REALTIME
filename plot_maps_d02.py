@@ -1221,7 +1221,7 @@ for domain in range(chosen_domain,chosen_domain+1):
             print("convert -delay 25 " + fig_dir_name + png_file_name + " " + fig_dir_name + gif_file_name, file =  f) 
             print("echo MAIN:MAPS_"+v_name+"2::: We^re Outahere Like Vladimir", file =  f) 
 
-        os.system("chmod a+x " + WRF_OVERALL_DIR + "./processing_"+v_name+"1_gif.sh")
+        os.system("chmod a+x " + WRF_OVERALL_DIR + "./processing_"+v_name+"2_gif.sh")
         os.system(WRF_OVERALL_DIR + "./processing_"+v_name+"2_gif.sh > ./processing_"+v_name+"2_gif." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
         os.system("date")
         print()

@@ -1214,7 +1214,7 @@ for domain in range(chosen_domain,chosen_domain+1):
         print("creating " + WRF_OVERALL_DIR + "./processing_"+v_name+"1_gif.sh")
         with open(WRF_OVERALL_DIR + "./processing_"+v_name+"1_gif.sh", 'w') as f:
             print("#!/bin/bash", file =  f)
-            print(". ~/.bashrc", file =  f)                                  
+            print(". ~/.bashrc", file =  f)                                
             print("ulimit -s unlimited", file = f)
             print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
             print("cd " + WRF_OVERALL_DIR, file =  f) 
