@@ -251,7 +251,10 @@ sigma = xr.DataArray(xr.open_dataset(wrf_file, engine="netcdf4")["ZNU"][0][0:15]
 sigma = sigma.assign_coords({"sigma":sigma.values})
 
 
-wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file["P_TOP"].values),
+
+                   
+                           
+wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file)["P_TOP"].values,
                         name  = "wrf_ptop",
                              dims=["wrf_ptop"],
                              attrs = {"description"   : "Top-most Model Pressure",
@@ -506,7 +509,6 @@ for station in available_time_series_list.iterrows():
                                     "standard_name" : "dew_point_temperature",
                                     "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
                                     "units"         : "K"})     
-
 
     #
     #  Pull Geopotential Height
@@ -763,7 +765,7 @@ for station in available_time_series_list.iterrows():
                                       "wrf_grid_elevation" : wrf_grid_elevation},
                             data_vars = {"air_temperature_2m"                  : t_air,
                                           "specific_humidity_2m"                : q_air,
-                                          "dew_point_temperature_2m"            : td_2m,
+                                          "dew_point_temperature_2m"            : td_2m.as_numpy(),
                                           "eastward_wind_10m"                   : u_10m,
                                           "northward_wind_10m"                  : v_10m,
                                           "surface_air_pressure"                : p_sfc,
@@ -847,6 +849,18 @@ print("tslist_to_netcdf complete.")
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

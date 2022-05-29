@@ -238,7 +238,7 @@ wrf_file  = WRF_EXE  + "./wrfout_d01_" + model_start_date_YYYY_MM_DD_HH0000
 # Extract Sigma Coordinates
 #
 
-sigma = xr.DataArray(xr.open_dataset(wrf_file)["ZNU"][0][0:15].values, 
+sigma = xr.DataArray(xr.open_dataset(wrf_file, engine="netcdf4")["ZNU"][0][0:15].values, 
                           name  =  "sigma",
                           dims  = ["sigma"],
                           attrs = {"description"   : "vertical sigma coordinates on mass points",
@@ -251,14 +251,15 @@ sigma = xr.DataArray(xr.open_dataset(wrf_file)["ZNU"][0][0:15].values,
 sigma = sigma.assign_coords({"sigma":sigma.values})
 
 
-wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file)["P_TOP"].values,
-                             name  = "wrf_ptop",
+wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file["P_TOP"].values),
+                        name  = "wrf_ptop",
                              dims=["wrf_ptop"],
                              attrs = {"description"   : "Top-most Model Pressure",
                                       "long_name"     : "Top-most Model Pressure",
                                       "standard_name" : "air_pressure",
                                       "units"         : "Pa",
                                       "positive"      : "down"})
+
 wrf_ptop = wrf_ptop.assign_coords({"wrf_ptop":wrf_ptop.values})
 
 #
