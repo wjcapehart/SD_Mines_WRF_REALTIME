@@ -254,7 +254,13 @@ sigma = sigma.assign_coords({"sigma":sigma.values})
 wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file["P_TOP"].values,
                              name  = "wrf_ptop",
                              dims=["wrf_ptop"],
-                             attrs = {"description"   : "Top-most Model Pressure","long_name"     : "Top-most Model Pressure","standard_name" : "air_pressure","units"         : "Pa","positive"      : "down"})
+                             attrs = {"description"   : "Top-most Model Pressure",
+                                      "long_name"     : "Top-most Model Pressure",
+                                      "standard_name" :            "air_pressure",
+                                      "units"         :                       "Pa",
+                                      "positive"      :                    "down"})
+                        
+print( wrf_ptop)                       
                         
 wrf_ptop = wrf_ptop.assign_coords({"wrf_ptop":wrf_ptop.values})
 
