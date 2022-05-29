@@ -81,13 +81,6 @@ NCEP_HTTP_SERVER        = "nomads.ncep.noaa.gov"
 NCEP_FTP_GRIB_DIR_ROOT  = "/pub/data/nccf/com/nam/prod/nam."
 NCEP_HTTP_GRIB_DIR_ROOT = "/pub/data/nccf/com/nam/prod/nam."
 
-
-
-
-
-
-
-
 #
 ####################################################
 ####################################################
@@ -707,7 +700,7 @@ if (open_mp ==1) :
     print()
     print("Executing Real with OMP")
     os.system("date")
-    os.system(". ~/.bashrc; nohup ./real.exe 2>&1 reallog.txt")
+    os.system(". ~/.bashrc; nohup ./REAL.EXE 2>&1 reallog.txt")
     os.system("date")
     print()   
 else:
@@ -726,7 +719,7 @@ else:
         print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 54 -ppn 18 ./real.exe 2>&1 real.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 54 -ppn 18 ./REAL.EXE 2>&1 real.log", file =  f) 
         print("echo WRF:REAL::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_real.sh")
@@ -769,7 +762,7 @@ if (open_mp ==1) :
     print()
     print("Executing WRF with OMP")
     os.system("date")
-    os.system(". ~/.bashrc; nohup ./wrf.exe 2>&1 wrflog.txt")
+    os.system(". ~/.bashrc; nohup ./WRF.EXE 2>&1 wrflog.txt")
     os.system("date")
     print()   
 else:
@@ -785,7 +778,7 @@ else:
         print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 54 -ppn 18  ./wrf.exe 2>&1 wrf.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 54 -ppn 18  ./WRF.EXE 2>&1 wrf.log", file =  f) 
         print("echo WRF:WRF::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
@@ -874,9 +867,7 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print(". ~/.bashrc", file =  f)
     print("cd " + WRF_OVERALL_DIR, file =  f) 
     print("(.  ~/.bashrc ;  /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py > ./TS2NC."     + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ;  . ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py > ./METOGRAMS." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_maps_d01.py    > ./MAPS_D01."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_maps_d02.py    > ./MAPS_D02."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    # print("(. ~/.bashrc ;   python " + WRF_OVERALL_DIR+ "./plot_maps_d03.py    > ./MAPS_D03."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_maps_dxx.py    > ./MAPS_DXX."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
     print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py   > ./SKEWT_D01." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
     print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py   > ./SKEWT_D02." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
     # print("(. ~/.bashrc ;   python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py   > ./SKEWT_D03." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
