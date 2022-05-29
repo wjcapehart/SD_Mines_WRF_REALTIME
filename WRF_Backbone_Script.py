@@ -46,6 +46,8 @@ import pathlib           as pathlib
 # Directory Workspaces
 #
 
+intel = True
+
 max_dom = 2
 open_mp = 0
 beta_on = 0
@@ -446,6 +448,9 @@ with open(WPS_WORK + "./preprocess_wps_ungrib.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print(". ~/.bashrc", file =  f)
     print("ulimit -s unlimited", file = f)
+    if intel:
+        print(". /opt/intel/oneapi/setvars.sh", file = f)
+    print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
     print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
     print("cd " + WPS_WORK, file =  f) 
     print(WPS_EXE + "./ungrib.exe 2>&1 ungrib.log", file =  f) 
@@ -482,7 +487,10 @@ with open(WPS_WORK + "./preprocess_wps_metgrid.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print(". ~/.bashrc", file =  f)
     print("ulimit -s unlimited", file = f)
+    if intel:
+        print(". /opt/intel/oneapi/setvars.sh", file = f)
     print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
+    print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
     print("cd " + WPS_WORK, file =  f) 
     print(WPS_EXE + "./metgrid.exe 2>&1 metgrid.log", file =  f) 
     print("echo WPS:METGRID::: We^re Outahere Like Vladimir", file =  f) 
@@ -713,9 +721,12 @@ else:
         print("#!/bin/bash", file =  f)
         print(". ~/.bashrc", file =  f)
         print("ulimit -s unlimited", file = f)
+        if intel:
+            print(". /opt/intel/oneapi/setvars.sh", file = f)
+        print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
-        print("mpirun   -print-all-exitcodes -f ~wjc/nodes.wrf.1 -np 8  ./real.exe 2>&1 real.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 54 -ppn 18 ./real.exe 2>&1 real.log", file =  f) 
         print("echo WRF:REAL::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_real.sh")
@@ -769,9 +780,12 @@ else:
         print("#!/bin/bash", file =  f)
         print(". ~/.bashrc", file =  f)                
         print("ulimit -s unlimited", file = f)
+        if intel:
+            print(". /opt/intel/oneapi/setvars.sh", file = f)
+        print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
-        print("mpirun  -print-all-exitcodes  -f ~wjc/nodes.wrf.1 -np 8  ./wrf.exe 2>&1 wrf.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 54 -ppn 18  ./wrf.exe 2>&1 wrf.log", file =  f) 
         print("echo WRF:WRF::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
