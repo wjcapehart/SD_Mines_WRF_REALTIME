@@ -73,7 +73,7 @@ import matplotlib as mpl
 #
 # Directory Workspaces
 #
-
+intel         = True
 beta_on       = 0
 max_domains   = 2
 chosen_domain = 2
@@ -673,7 +673,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
         print(fig_dir_name + file_name)
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=figure_domain_size)
 
         fig.suptitle(model_run_label)
 
@@ -762,7 +762,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
         print(fig_dir_name + file_name)
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=figure_domain_size)
 
         fig.suptitle(model_run_label)
 
@@ -855,7 +855,7 @@ for domain in range(chosen_domain,chosen_domain+1):
         print(fig_dir_name + file_name)
 
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=figure_domain_size)
 
         fig.suptitle(model_run_label)
 
@@ -944,7 +944,7 @@ for domain in range(chosen_domain,chosen_domain+1):
         print(fig_dir_name + file_name)
 
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=figure_domain_size)
 
         fig.suptitle(model_run_label)
 
@@ -1032,7 +1032,7 @@ for domain in range(chosen_domain,chosen_domain+1):
         fig_dir_name = graphics_directory + "/" + v_name + "/"
         file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=figure_domain_size)
 
         fig.suptitle(model_run_label)
 
@@ -1124,7 +1124,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
         pbl_height_levels = np.arange(0,5000,100)
 
-        fig = plt.figure(figsize=(7,6))
+        fig = plt.figure(figsize=figure_domain_size)
 
         fig.suptitle(model_run_label)
 
@@ -1216,7 +1216,8 @@ for domain in range(chosen_domain,chosen_domain+1):
             print("#!/bin/bash", file =  f)
             print(". ~/.bashrc", file =  f)                                  
             print("ulimit -s unlimited", file = f)
-            print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
+            if intel:
+                print(". /opt/intel/oneapi/setvars.sh", file = f)
             print("cd " + WRF_OVERALL_DIR, file =  f) 
             print("convert -delay 25 " + fig_dir_name + png_file_name + " " + fig_dir_name + gif_file_name, file =  f) 
             print("echo MAIN:MAPS_"+v_name+"2::: We^re Outahere Like Vladimir", file =  f) 
@@ -1244,7 +1245,7 @@ for domain in range(chosen_domain,chosen_domain+1):
     print(fig_dir_name + file_name)
 
 
-    fig = plt.figure(figsize=(7,6))
+    fig = plt.figure(figsize=figure_domain_size)
 
     fig.suptitle(model_run_label)
 
@@ -1297,7 +1298,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
     filled_cm     = ax1.contourf(lon2d, 
                                  lat2d, 
-                                 rain_maps.isel(Time=36),
+                                 rain_maps[-1,:,:],
                                  transform = ccrs.PlateCarree(),
                                  norm      = rain_norm,
                                  cmap      = precip_colormap,
@@ -1336,7 +1337,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
     print(fig_dir_name + file_name)
 
-    fig = plt.figure(figsize=(7,6))
+    fig = plt.figure(figsize=figure_domain_size)
 
     fig.suptitle(model_run_label)
 
@@ -1386,7 +1387,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 
     filled_cm     = ax1.contourf(lon2d, 
                                  lat2d, 
-                                 snow_fall_maps.isel(Time=36),
+                                 snow_fall_maps[-1,:,:],
                                  transform = ccrs.PlateCarree(),
                                  norm      = rain_norm,
                                  cmap      = precip_colormap,
