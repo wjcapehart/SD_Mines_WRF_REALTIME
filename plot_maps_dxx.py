@@ -5,7 +5,7 @@
 
 # ## Libraries
 
-# In[1]:
+# In[ ]:
 
 
 ####################################################
@@ -68,7 +68,7 @@ from joblib import Parallel, delayed
 # 
 # ### Making Time Series Maps
 
-# In[2]:
+# In[ ]:
 
 
 def plot_time_series_maps_func(t):
@@ -736,7 +736,7 @@ def plot_time_series_maps_func(t):
 
 # ### PNG to Animated GIF
 
-# In[3]:
+# In[ ]:
 
 
 # for v_name in ("DBZ", "PBL", "RAIN", "SFCT", "SNOWH", "WIND", "WEASD"):   
@@ -768,7 +768,7 @@ def png_to_gif_func(v_name):
 
 # ## File Organization
 
-# In[4]:
+# In[ ]:
 
 
 ####################################################
@@ -841,7 +841,7 @@ os.chdir(WRF_EXE)
 
 # ## Time Control
 
-# In[5]:
+# In[ ]:
 
 
 ####################################################
@@ -891,7 +891,7 @@ tzabbr = pytz.timezone(tz).localize(model_start_datetime)
 ####################################################
 
 
-# In[6]:
+# In[ ]:
 
 
 ###################################################
@@ -932,7 +932,7 @@ precip_levels_mm = [  0.25,   2.50,   5.00,  10.00,
 ###################################################
 
 
-# In[7]:
+# In[ ]:
 
 
 ###################################################
@@ -995,7 +995,7 @@ temperature_levels_degF = temperature_levels_degC * 9./5. + 32.
 ###################################################
 
 
-# In[8]:
+# In[ ]:
 
 
 ####################################################
@@ -1019,7 +1019,7 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 
 # ## Crack WRF Files
 
-# In[9]:
+# In[ ]:
 
 
 ####################################################
@@ -1029,7 +1029,7 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 # Rotate through Available Files
 #
 
-for domain in range(1,max_domains):
+for domain in range(1,max_domains+1):
     
     
     if (domain == 1): 
@@ -1475,7 +1475,7 @@ print("done")
 
 # ## Ending Script
 
-# In[10]:
+# In[ ]:
 
 
 ####################################################
