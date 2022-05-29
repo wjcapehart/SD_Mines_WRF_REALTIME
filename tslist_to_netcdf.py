@@ -259,6 +259,7 @@ wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file["P_TOP"].values,
                                       "standard_name" : "air_pressure",
                                       "units"         : "Pa",
                                       "positive"      : "down"})
+                        
 wrf_ptop = wrf_ptop.assign_coords({"wrf_ptop":wrf_ptop.values})
 
 #
