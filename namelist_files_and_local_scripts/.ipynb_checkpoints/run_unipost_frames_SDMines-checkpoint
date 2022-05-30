@@ -4,6 +4,11 @@ set -x
 
 
 . ~/.bashrc
+
+. /opt/intel/oneapi/setvars.sh
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}
+
 #--------------------------------------------------------
 # Updates:
 #
@@ -114,12 +119,11 @@ export domain_list="d01 d02"
 # Set run command:
 
 # Serial command example
-#export RUN_COMMAND="/usr/local/bin/mpiexec -np 36 -machinefile ~/nodes.wrf ${POSTEXEC}/unipost.exe > upp_runme.LOG 2>&1  "
 export RUN_COMMAND=" ${POSTEXEC}/unipost.exe > upp_runme.LOG 2>&1  "
 
 # Parallel command examples:
-##export RUN_COMMAND="mpirun.lsf ${POSTEXEC}/unipost.exe "
-#export RUN_COMMAND="mpiexec_mpt ${POSTEXEC}/unipost.exe "
+
+export RUN_COMMAND="mpirun -print-all-exitcodes -print-rank-map -f /home/wjc/nodes.wrf.1 -np 8 ${POSTEXEC}/unipost.exe > unipost_${domain}.${fhr}.out 2>&1"
 
 # DEBUG command example found further below, search "DEBUG"
 
@@ -380,7 +384,7 @@ EOF
         # RUN the unipost.exe executable.
         #----------------------------------------------------------------------
 
-        ${RUN_COMMAND} > unipost_${domain}.${fhr}.out 2>&1
+        ${RUN_COMMAND} 
 
         #----------------------------------------------------------------------
         # DEBUG Example, uncomment below and comment ${RUN_COMMAND} line above.
