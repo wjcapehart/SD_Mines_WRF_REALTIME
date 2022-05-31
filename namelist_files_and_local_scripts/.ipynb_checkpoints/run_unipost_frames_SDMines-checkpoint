@@ -9,6 +9,19 @@ set -x
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}
 
+## 
+
+ecbo
+echo #######################################################
+echo
+echo Script Begins
+echo
+date -u
+echo 
+echo #######################################################
+echo
+
+
 #--------------------------------------------------------
 # Updates:
 #
@@ -438,5 +451,17 @@ done
 date
 
 echo "End of Output Job"
+
+ecbo
+echo #######################################################
+echo
+echo Script Ends
+echo
+date -u
+echo 
+echo #######################################################
+echo
+
+
 
 exit

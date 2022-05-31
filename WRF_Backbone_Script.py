@@ -870,10 +870,7 @@ with open(WRF_OVERALL_DIR + "./wrf_post_upp.sh", 'w') as f:
         print(". /opt/intel/oneapi/setvars.sh", file = f)
     print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
     print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
-    print(".  ~/.bashrc ;   /home/wjc/miniconda3/bin/python ;   " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines     > ./UPP."    +model_start_date_YYYY_MM_DD_HH+".LOG 2>&1   & ", file =  f) 
-    #print(".  ~/.bashrc ;   /home/wjc/miniconda3/bin/python ;   " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines_d01 > ./UPP_D01."+model_start_date_YYYY_MM_DD_HH+".LOG 2>&1   & ", file =  f) 
-    #print(".  ~/.bashrc ;   /home/wjc/miniconda3/bin/python ;   " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines_d02 > ./UPP_D02."+model_start_date_YYYY_MM_DD_HH+".LOG 2>&1   & ", file =  f) 
-
+    print(".  ~/.bashrc ; " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines     > ./UPP."    +model_start_date_YYYY_MM_DD_HH+".LOG 2>&1   & ", file =  f) 
     print("echo We^re Outahere Like Vladimir", file =  f) 
 os.system("chmod a+x " + WRF_OVERALL_DIR + "./wrf_post_upp.sh")
 os.system(WRF_OVERALL_DIR + "./wrf_post_upp.sh > wrf_post_upp." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
@@ -890,7 +887,6 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_maps_dxx.py    > ./MAPS_DXX."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
     print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py   > ./SKEWT_D01." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
     print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py   > ./SKEWT_D02." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    # print("(. ~/.bashrc ;   python " + WRF_OVERALL_DIR+ "./plot_skewt_d03.py   > ./SKEWT_D03." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
     print("wait", file =  f) 
     print("echo We^re Outahere Like Vladimir", file =  f) 
     
