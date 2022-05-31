@@ -55,13 +55,19 @@ import matplotlib.font_manager as fm
 import matplotlib as mpl
 
 
-from joblib import Parallel, delayed
+from      joblib import Parallel, delayed
 
-
+from metpy.plots import colortables
 #
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
 
 
 # ## Parallel Code Area
@@ -70,6 +76,8 @@ from joblib import Parallel, delayed
 
 # In[ ]:
 
+
+####################################################
 
 def plot_time_series_maps_func(t):
 
@@ -615,18 +623,22 @@ def plot_time_series_maps_func(t):
     rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
                                             ncolors    = 15)
 
-    filled_cm     = ax1.contourf(lon2d, 
-                                 lat2d, 
-                                 dbz_maps.isel(Time=t),
-                                 transform = ccrs.PlateCarree(),
-                                 levels    = stormy_dbz_values,
-                                 cmap      =  nws_dbz_colors,
-                                 extend    = 'max')
-    plt.colorbar(filled_cm, 
-                 label  = "Max Columnar Storm Reflectivity (dbZ)",
+    filled_cm = ax1.pcolormesh(lon2d, 
+                              lat2d, 
+                              dbz_maps.isel(Time=t),
+                              transform = ccrs.PlateCarree(),
+                              norm      = norm_radar, 
+                              cmap      = cmap_radar)
+
+    color_bar = plt.colorbar(filled_cm, 
+                 label  = "Reflectivity (dbZ)",
                  shrink = 0.8,
-                 ticks = stormy_dbz_values,
                  pad    = 0.012)
+
+    
+    
+ 
+
 
 
 
@@ -1008,6 +1020,16 @@ temperature_levels_degF = temperature_levels_degC * 9./5. + 32.
 nws_dbz_colors = colortables.get_colortable("NWSReflectivity")
 nws_rainbow    = colortables.get_colortable("ir_rgbv")
 
+## radar colormap
+
+norm_radar, cmap_radar = colortables.get_with_steps("NWSStormClearReflectivity", 
+                                        -20, 
+                                        0.5)
+
+
+
+
+
 clearsky_dbz_values = np.arange(-28, 28.1, 2)
 stormy_dbz_values   = np.arange(  5, 75.1, 5)
 
@@ -1126,6 +1148,8 @@ for domain in range(1,max_domains+1):
     dbz_maps           = wrf.getvar(wrfin    =           ncf,
                                     varname  =          'mdbz',
                                     timeidx  = wrf.ALL_TIMES)
+    
+    
     #
     # Helicity
     #
@@ -1491,6 +1515,18 @@ print("End Sounding Plotting Script")
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
