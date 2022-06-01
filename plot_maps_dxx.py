@@ -5,7 +5,7 @@
 
 # ## Libraries
 
-# In[1]:
+# In[ ]:
 
 
 ####################################################
@@ -74,7 +74,7 @@ from metpy.plots import colortables
 # 
 # ### Making Time Series Maps
 
-# In[2]:
+# In[ ]:
 
 
 ####################################################
@@ -89,7 +89,7 @@ def plot_time_series_maps_func(t):
     valid_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").strftime("%Y-%m-%d %H %Z")
     local_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%Y-%m-%d %H %Z")
 
-
+    percent_done = 1.0 * t / (nt-1.)
 
     model_run_label    = "Model Run " + wrf_skewt_time + "; WRF Domain " + str(domain).zfill(2)
 
@@ -188,7 +188,14 @@ def plot_time_series_maps_func(t):
               transform = ccrs.PlateCarree(), 
               length=5)
 
-
+        
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = 'black', 
+                              facecolor = "black",
+                              transform = ax1.transAxes)
+    
     # plt.show()
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
@@ -277,7 +284,13 @@ def plot_time_series_maps_func(t):
                  shrink = 0.8,
                  pad    = 0.012)
 
-
+        
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = 'black', 
+                              facecolor = "black",
+                              transform = ax1.transAxes)
 
     # plt.show()
     plt.tight_layout()
@@ -369,7 +382,13 @@ def plot_time_series_maps_func(t):
                  shrink = 0.8,
                  pad    = 0.012)
 
-
+        
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = 'black', 
+                              facecolor = "black",
+                              transform = ax1.transAxes)
 
     # plt.show()
     plt.tight_layout()
@@ -462,7 +481,13 @@ def plot_time_series_maps_func(t):
                  ticks=precip_levels_in,
                  pad    = 0.012)
 
-
+        
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = 'black', 
+                              facecolor = "black",
+                              transform = ax1.transAxes)
 
     # plt.show()
     plt.tight_layout()
@@ -552,7 +577,13 @@ def plot_time_series_maps_func(t):
                  ticks=precip_levels_in,
                  pad    = 0.012)
 
-
+        
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = 'black', 
+                              facecolor = "black",
+                              transform = ax1.transAxes)
 
     # plt.show()
     plt.tight_layout()
@@ -649,7 +680,14 @@ def plot_time_series_maps_func(t):
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
-
+        
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = 'black', 
+                              facecolor = "black",
+                              transform = ax1.transAxes)
+    
     fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
@@ -731,7 +769,13 @@ def plot_time_series_maps_func(t):
 
     
     
- 
+         
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = 'black', 
+                              facecolor = "black",
+                              transform = ax1.transAxes)
 
 
 
@@ -825,6 +869,17 @@ def plot_time_series_maps_func(t):
                  pad    = 0.012)
 
 
+   
+         
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = 'black', 
+                              facecolor = "black",
+                              transform = ax1.transAxes)
+
+
+
 
 
     # plt.show()
@@ -842,7 +897,7 @@ def plot_time_series_maps_func(t):
 
 # ### PNG to Animated GIF
 
-# In[3]:
+# In[ ]:
 
 
 # for v_name in ("DBZ", "PBL", "RAIN", "SFCT", "DEWP",  "SNOWH", "WIND", "WEASD"):   
@@ -874,7 +929,7 @@ def png_to_gif_func(v_name):
 
 # ## File Organization
 
-# In[4]:
+# In[ ]:
 
 
 ####################################################
@@ -947,7 +1002,7 @@ os.chdir(WRF_EXE)
 
 # ## Time Control
 
-# In[5]:
+# In[ ]:
 
 
 ####################################################
@@ -997,7 +1052,7 @@ tzabbr = pytz.timezone(tz).localize(model_start_datetime)
 ####################################################
 
 
-# In[6]:
+# In[ ]:
 
 
 ###################################################
@@ -1038,7 +1093,7 @@ precip_levels_mm = [  0.25,   2.50,   5.00,  10.00,
 ###################################################
 
 
-# In[7]:
+# In[ ]:
 
 
 ###################################################
@@ -1103,13 +1158,13 @@ dewpoint_levels_degF = np.linspace(30,70,41) # in DegF
 ###################################################
 
 
-# In[8]:
+# In[ ]:
 
 
 np.linspace(30,70,41) 
 
 
-# In[9]:
+# In[ ]:
 
 
 ####################################################
@@ -1143,7 +1198,7 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 
 # ## Crack WRF Files
 
-# In[10]:
+# In[ ]:
 
 
 ####################################################
@@ -1621,7 +1676,7 @@ print("done")
 
 # ## Ending Script
 
-# In[11]:
+# In[ ]:
 
 
 ####################################################
@@ -1651,10 +1706,9 @@ print("End Sounding Plotting Script")
 
 
 
-# In[20]:
+# In[ ]:
 
 
-helic_maps.plot.hist()
 
 
 
