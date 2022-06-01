@@ -193,7 +193,7 @@ def plot_time_series_maps_func(t):
         
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
-                              height    = 0.01, 
+                              height    = 0.05, 
                               edgecolor = 'black', 
                               facecolor = "black",
                               transform = ax1.transAxes)
@@ -289,7 +289,7 @@ def plot_time_series_maps_func(t):
         
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
-                              height    = 0.01, 
+                              height    = 0.05, 
                               edgecolor = 'black', 
                               facecolor = "black",
                               transform = ax1.transAxes)
@@ -387,7 +387,7 @@ def plot_time_series_maps_func(t):
         
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
-                              height    = 0.01, 
+                              height    = 0.05, 
                               edgecolor = 'black', 
                               facecolor = "black",
                               transform = ax1.transAxes)
@@ -486,7 +486,7 @@ def plot_time_series_maps_func(t):
         
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
-                              height    = 0.01, 
+                              height    = 0.05, 
                               edgecolor = 'black', 
                               facecolor = "black",
                               transform = ax1.transAxes)
@@ -582,7 +582,7 @@ def plot_time_series_maps_func(t):
         
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
-                              height    = 0.01, 
+                              height    = 0.05, 
                               edgecolor = 'black', 
                               facecolor = "black",
                               transform = ax1.transAxes)
@@ -685,7 +685,7 @@ def plot_time_series_maps_func(t):
         
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
-                              height    = 0.01, 
+                              height    = 0.05, 
                               edgecolor = 'black', 
                               facecolor = "black",
                               transform = ax1.transAxes)
@@ -774,7 +774,7 @@ def plot_time_series_maps_func(t):
          
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
-                              height    = 0.01, 
+                              height    = 0.05, 
                               edgecolor = 'black', 
                               facecolor = "black",
                               transform = ax1.transAxes)
@@ -875,7 +875,7 @@ def plot_time_series_maps_func(t):
          
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
-                              height    = 0.01, 
+                              height    = 0.05, 
                               edgecolor = 'black', 
                               facecolor = "black",
                               transform = ax1.transAxes)
