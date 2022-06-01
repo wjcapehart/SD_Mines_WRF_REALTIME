@@ -5,7 +5,7 @@
 
 # ## Libraries
 
-# In[ ]:
+# In[1]:
 
 
 ####################################################
@@ -74,7 +74,7 @@ from metpy.plots import colortables
 # 
 # ### Making Time Series Maps
 
-# In[ ]:
+# In[2]:
 
 
 ####################################################
@@ -292,6 +292,100 @@ def plot_time_series_maps_func(t):
     #
     ####################################################
 
+    ####################################################
+    #
+    # Dew Points
+    #
+
+    v_name       = "DEWP"
+    fig_dir_name = graphics_directory + "/" + v_name + "/"
+    file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+
+    print(fig_dir_name + file_name)
+
+    fig = plt.figure(figsize=figure_domain_size)
+
+    fig.suptitle(model_run_label)
+
+    ax1 = fig.add_subplot(1,  # nrows
+                          1,  # ncols 
+                          1,  # index of figure you're installing
+                          projection = cart_proj) # cartopy CRS Projection
+
+    ax1.set_xlim(  west_east_range)
+    ax1.set_ylim(south_north_range)
+
+
+    ax1.add_feature(cfeature.LAKES, 
+                    linewidths =     0.5, 
+                    edgecolor  = 'black',
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.RIVERS, 
+                    linewidths =     0.5, 
+                    edgecolor  = 'black',
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.BORDERS, 
+                    linewidths =     1.0, 
+                    edgecolor  = 'black',
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.COASTLINE, 
+                    linewidths =     1.0, 
+                    edgecolor  = 'black',
+                    facecolor  =  'none')
+
+    ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
+                                                 'admin_1_states_provinces_lines',
+                                                 '50m',
+                                                 linewidths = 0.75,
+                                                 facecolor  = 'none',
+                                                 edgecolor  = 'black'))
+
+    if (domain > 1) :
+        ax1.add_feature(USCOUNTIES, 
+                        linewidths=0.5,
+                        edgecolor  = 'black',
+                        facecolor='none')
+
+    ax1.set_title(valid_time + "  (" + local_time+")")
+    
+    lw = 5 * m10_maps.isel(Time=t) / np.nanmax(m10_maps.isel(Time=t).values)
+    ax1.streamplot(wrf.to_np(lon2d),
+                   wrf.to_np(lat2d), 
+                   wrf.to_np(u10_maps.isel(Time=t)),
+                   wrf.to_np(v10_maps.isel(Time=t)),
+                   linewidth = lw.values,
+                   transform = ccrs.PlateCarree(),
+                   color = "black")
+
+    filled_cm     = ax1.contourf(lon2d, 
+                                 lat2d, 
+                                 td2m_maps.isel(Time=t),
+                                 transform = ccrs.PlateCarree(),
+                                 cmap      = mpl.cm.YlGn,
+                                 extend      = 'both',
+                                 levels    = dewpoint_levels_degF)
+    plt.colorbar(filled_cm, 
+                 label  = r"2-m Dew Point Temperatuere (°F)",
+                 shrink = 0.8,
+                 pad    = 0.012)
+
+
+
+    # plt.show()
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
+
+
+    fig.savefig(fig_dir_name + file_name)
+
+    plt.close('all')
+
+
+    #
+    ####################################################       
+
+
+    
     ####################################################
     #
     # Hourly Rainfall
@@ -748,10 +842,10 @@ def plot_time_series_maps_func(t):
 
 # ### PNG to Animated GIF
 
-# In[ ]:
+# In[3]:
 
 
-# for v_name in ("DBZ", "PBL", "RAIN", "SFCT", "SNOWH", "WIND", "WEASD"):   
+# for v_name in ("DBZ", "PBL", "RAIN", "SFCT", "DEWP",  "SNOWH", "WIND", "WEASD"):   
         
         
 def png_to_gif_func(v_name):
@@ -780,7 +874,7 @@ def png_to_gif_func(v_name):
 
 # ## File Organization
 
-# In[ ]:
+# In[4]:
 
 
 ####################################################
@@ -853,7 +947,7 @@ os.chdir(WRF_EXE)
 
 # ## Time Control
 
-# In[ ]:
+# In[5]:
 
 
 ####################################################
@@ -903,7 +997,7 @@ tzabbr = pytz.timezone(tz).localize(model_start_datetime)
 ####################################################
 
 
-# In[ ]:
+# In[6]:
 
 
 ###################################################
@@ -944,7 +1038,7 @@ precip_levels_mm = [  0.25,   2.50,   5.00,  10.00,
 ###################################################
 
 
-# In[ ]:
+# In[7]:
 
 
 ###################################################
@@ -1002,12 +1096,20 @@ temperature_colormap = mpl.colors.ListedColormap(colors = bom_temp_colors)
 temperature_levels_degC = np.linspace(-32,54,44) # in degC
 temperature_levels_degF = temperature_levels_degC * 9./5. + 32.
 
+dewpoint_levels_degF = np.linspace(30,70,41) # in DegF
+
 
 #
 ###################################################
 
 
-# In[ ]:
+# In[8]:
+
+
+np.linspace(30,70,41) 
+
+
+# In[9]:
 
 
 ####################################################
@@ -1041,7 +1143,7 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 
 # ## Crack WRF Files
 
-# In[ ]:
+# In[10]:
 
 
 ####################################################
@@ -1071,6 +1173,10 @@ for domain in range(1,max_domains+1):
     
     os.system("mkdir -pv " + graphics_directory + "PBL")
     os.system("mkdir -pv " + graphics_directory + "DBZ")
+
+    os.system("mkdir -pv " + graphics_directory + "DEWP")
+    os.system("mkdir -pv " + graphics_directory + "HELI")
+
 
 
     os.system("mkdir -pv " + graphics_directory + "SNOWH")
@@ -1169,6 +1275,18 @@ for domain in range(1,max_domains+1):
     t2m_maps.values         = (t2m_maps.values - 273.15) * 9./5. + 32.
     t2m_maps.attrs['units'] = 'degF'
 
+    #
+    # TD2M
+    # 
+    
+    td2m_maps           = wrf.getvar(wrfin    =           ncf,
+                                    varname  =          'td2',
+                                    timeidx  = wrf.ALL_TIMES, 
+                                    units    =          'degF')
+    
+    td2m_maps.attrs['units'] = 'degF'
+
+
 
 
     #
@@ -1185,8 +1303,12 @@ for domain in range(1,max_domains+1):
     
     u10_maps.values         = u10_maps.values * 1.9438444924406     
     v10_maps.values         = v10_maps.values * 1.9438444924406     
-    t2m_maps.attrs['units'] = 'kt'
+    u10_maps.attrs['units'] = 'kt'
+    v10_maps.attrs['units'] = 'kt'
 
+    helic_maps         = wrf.getvar(wrfin    =           ncf,
+                                    varname  =         'helicity',
+                                    timeidx  = wrf.ALL_TIMES) 
 
 
     m10_maps, d10_maps = wrf.getvar(wrfin    =           ncf,
@@ -1284,7 +1406,7 @@ for domain in range(1,max_domains+1):
     # making gifs
     #
     
-    animation_list = ("DBZ", "PBL", "RAIN", "SFCT", "SNOWH", "WIND", "WEASD")
+    animation_list = ("DBZ", "PBL", "RAIN", "SFCT", "DEWP", "SNOWH", "WIND", "WEASD")
     
     n_jobs = len(animation_list)
     
@@ -1499,7 +1621,7 @@ print("done")
 
 # ## Ending Script
 
-# In[ ]:
+# In[11]:
 
 
 ####################################################
@@ -1529,7 +1651,13 @@ print("End Sounding Plotting Script")
 
 
 
-# In[ ]:
+# In[20]:
+
+
+helic_maps.plot.hist()
+
+
+
 
 
 
