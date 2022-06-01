@@ -91,11 +91,11 @@ def plot_time_series_maps_func(t):
     valid_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").strftime("%Y-%m-%d %H %Z")
     local_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%Y-%m-%d %H %Z")
 
-    percent_done = 1.0 * t / (nt-1.)
+    percent_done = (1.0 * t) / (nt-1.)
 
     model_run_label    = "Model Run " + wrf_skewt_time + "; WRF Domain " + str(domain).zfill(2)
 
-    print(valid_time, "     -- " + model_run_label)
+    print(valid_time, "     -- " + model_run_label, " :: ", (percent_done*100) )
 
     #
     ####################################################
