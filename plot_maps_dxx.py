@@ -23,6 +23,8 @@ import platform          as platform
 
 import matplotlib        as mpl
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
 import pandas            as pd
 import xarray            as xr
 import pint_xarray       as px
