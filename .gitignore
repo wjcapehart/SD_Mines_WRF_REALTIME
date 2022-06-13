@@ -26,6 +26,7 @@ current_run.txt
 deleteme.txt
 current_run.txt
 current_run.txt
+processing_DEWP1_gif.sh
 processing_DBZ1_gif.sh
 processing_PBL1_gif.sh
 processing_RAIN1_gif.sh
@@ -36,6 +37,7 @@ processing_WEASD1_gif.sh
 wrf_post_upp.sh
 wrf_post_processing.sh
 processing_skewt1_gif.sh
+processing_DEWP2_gif.sh
 processing_DBZ2_gif.sh
 processing_PBL2_gif.sh
 processing_RAIN2_gif.sh
