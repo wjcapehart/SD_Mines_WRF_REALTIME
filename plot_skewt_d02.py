@@ -21,7 +21,13 @@ import os                as os
 import platform          as platform
 
 
-import matplotlib.pyplot as plt
+import matplotlib              as mpl
+import matplotlib.pyplot       as plt
+import matplotlib.patches      as patches
+import matplotlib.font_manager as fm
+import matplotlib              as mpl
+
+
 import pandas            as pd
 import xarray            as xr
 import pint_xarray       as px
@@ -70,7 +76,7 @@ import matplotlib as mpl
 #
 # File Organization
 #
-
+intel         = True
 beta_on       = 0
 max_domains   = 2
 chosen_domain = 2
@@ -542,15 +548,7 @@ for domain in range(chosen_domain,chosen_domain+1):
             #
             ###################################################
 
-            ###################################################
-            #
-            # Add Heights
-            #
 
-
-
-            #
-            ###################################################
 
             ###################################################
             #
@@ -570,6 +568,42 @@ for domain in range(chosen_domain,chosen_domain+1):
 
             plt.colorbar(cmh, orientation = "horizontal", label       = 'Height (km AGL)')
 
+            #
+            ###################################################    
+            
+            ###################################################
+            #
+            # Add Status Bars 
+            #
+            
+            percent_done = (1.0 * t) / (nt-1.)
+            
+            
+            rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = 'black', 
+                              facecolor = "black",
+                              transform = skew.ax.transAxes)
+            skew.ax.add_patch(rect1)
+            
+            rect2 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = 'black', 
+                              facecolor = "black",
+                              transform = ax.transAxes)
+            ax.add_patch(rect2)
+
+
+            #
+            ###################################################
+    
+            ###################################################
+            #
+            # Add Descriptive Statistics
+            #            
+            
             plt.figtext( 0.68, 0.60, 'LCL Height:')
             plt.figtext( 0.80, 0.60, '{} m'.format(lcl_hgt.magnitude))
             plt.figtext( 0.68, 0.58, 'LFC Height:')
@@ -595,13 +629,27 @@ for domain in range(chosen_domain,chosen_domain+1):
             plt.figtext( 0.68, 0.38, 'SRH 0-3 km:')
             plt.figtext( 0.80, 0.38, '{} m\u00b2/s\u00b2'.format(srh_03.magnitude))
 
+            #
+            ###################################################           
+    
+            ###################################################
+            #
+            # Close SkewT
+            #
+            
             plt.tight_layout()
 
             plt.subplots_adjust(top=0.93)    
             
-            plt.savefig(graphics_directory + sounding_file_name_png)
+            plt.savefig(graphics_directory + sounding_file_name_png,
+                        facecolor   = 'white', 
+                        transparent =   False)
+            
+            #print(1/0)
             
             plt.close('all')
+            
+            
 
             #
             ###################################################
@@ -625,10 +673,10 @@ for domain in range(chosen_domain,chosen_domain+1):
             print("#!/bin/bash", file =  f)
             print(". ~/.bashrc", file =  f)
             print("ulimit -s unlimited", file = f)
-            print(". /opt/intel/oneapi/setvars.sh --force", file = f)
-            print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
+            if intel:
+                print(". /opt/intel/oneapi/setvars.sh", file = f)
             print("cd " + WRF_OVERALL_DIR, file =  f) 
-            print("convert -delay 25 " + graphics_directory + png_file_name + " " + graphics_directory + gif_file_name, file =  f) 
+            print("convert -delay 50 " + graphics_directory + png_file_name + " " + graphics_directory + gif_file_name, file =  f) 
             print("echo MAIN:SKEWT2::: We^re Outahere Like Vladimir", file =  f) 
 
         os.system("chmod a+x " + WRF_OVERALL_DIR + "./processing_skewt2_gif.sh")
@@ -679,6 +727,12 @@ print("End Sounding Plotting Scriot")
 
 
 
+
+
+# In[ ]:
+
+
+plt.show()
 
 
 # In[ ]:
