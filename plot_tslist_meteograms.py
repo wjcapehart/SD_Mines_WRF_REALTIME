@@ -527,7 +527,9 @@ for station in available_time_series_list.iterrows():
 
     # plt.show()
     
-    fig.savefig(graphics_directory + "./wrfout_dxx_"+file_time+"_"+station_id+".png")
+    fig.savefig(graphics_directory + "./wrfout_dxx_"+file_time+"_"+station_id+".png",
+                        facecolor   = 'white', 
+                        transparent =   False)
 
     plt.close('all')
 
@@ -540,6 +542,7 @@ for station in available_time_series_list.iterrows():
     ###################################################################
     
     print(" ")
+
 
 
 # ## Depart 

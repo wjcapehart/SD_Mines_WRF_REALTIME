@@ -205,9 +205,7 @@ def plot_time_series_maps_func(t):
     plt.subplots_adjust(top=0.90)
 
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
 
@@ -305,9 +303,7 @@ def plot_time_series_maps_func(t):
     plt.subplots_adjust(top=0.90)
 
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
 
@@ -407,9 +403,7 @@ def plot_time_series_maps_func(t):
     plt.subplots_adjust(top=0.90)
 
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
 
@@ -489,26 +483,13 @@ def plot_time_series_maps_func(t):
                                  cmap      = precip_colormap,
                                  extend    = 'max',
                                  levels    = precip_levels_in)
-    
-    
-    
-    
     plt.colorbar(filled_cm, 
                  label  = "Hourly Precip (in)",
                  shrink = 0.8,
                  ticks=precip_levels_in,
                  pad    = 0.012)
 
-    contour_plot2 = ax1.contour(lon2d, 
-                                 lat2d, 
-                                 hrly_rain_maps.isel(Time=t),
-                                 transform = ccrs.PlateCarree(),
-                                 colors    =            "cyan",
-                                 linewidths=1,
-                                 levels    = np.array([0.002]))
-    
- 
-    
+        
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
@@ -522,9 +503,7 @@ def plot_time_series_maps_func(t):
     plt.subplots_adjust(top=0.90)
 
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
 
@@ -622,9 +601,7 @@ def plot_time_series_maps_func(t):
     plt.subplots_adjust(top=0.90)
 
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
 
@@ -724,9 +701,7 @@ def plot_time_series_maps_func(t):
     ax1.add_patch(rect1)
 
     
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
 
@@ -826,9 +801,7 @@ def plot_time_series_maps_func(t):
     plt.subplots_adjust(top=0.90)
 
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
 
@@ -931,9 +904,7 @@ def plot_time_series_maps_func(t):
     plt.subplots_adjust(top=0.90)
 
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
 
@@ -1604,14 +1575,6 @@ for domain in range(1,max_domains+1):
                  ticks = precip_levels_in,
                  pad    = 0.012)
 
-    
-    contour_plot2 = ax1.contour(lon2d, 
-                                 lat2d, 
-                                 rain_maps[-1,:,:],
-                                 transform = ccrs.PlateCarree(),
-                                 colors    =            "cyan",
-                                 linewidths=1,
-                                 levels    = np.array([0.002]))    
 
 
 
@@ -1620,9 +1583,7 @@ for domain in range(1,max_domains+1):
     plt.subplots_adjust(top=0.90)
 
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
 
@@ -1711,9 +1672,7 @@ for domain in range(1,max_domains+1):
     plt.subplots_adjust(top=0.90)
 
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fig_dir_name + file_name)
 
     plt.close('all')
 

@@ -652,7 +652,9 @@ for station in available_time_series_list.iterrows():
 
     # plt.show()
     if (platform.system() != "Darwin"):
-        fig.savefig(graphics_directory + "./wrfout_dxx_"+file_time+"_"+station_id+".png")
+        fig.savefig(graphics_directory + "./wrfout_dxx_"+file_time+"_"+station_id+".png",
+                        facecolor   = 'white', 
+                        transparent =   False)
     else:
         plt.show()
 
@@ -667,6 +669,7 @@ for station in available_time_series_list.iterrows():
     ###################################################################
     
     print(" ")
+
 
 
 # ## Depart 
