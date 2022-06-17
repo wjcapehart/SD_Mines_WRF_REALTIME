@@ -883,7 +883,7 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print(". ~/.bashrc", file =  f)
     print("cd " + WRF_OVERALL_DIR, file =  f) 
-    print("(.  ~/.bashrc ;  /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py > ./TS2NC."     + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ;  . ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR + "./plot_tslist_meteograms.py > ./METOGRAMS." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py > ./TS2NC."     + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
     print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_maps_dxx.py    > ./MAPS_DXX."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
     print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py   > ./SKEWT_D01." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
     print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py   > ./SKEWT_D02." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
