@@ -277,7 +277,6 @@ for datehour in siphon_pulls_YYYYMMDD_HH:
 
 metar_station_locs = metar_dataframe[["station_id","latitude","longitude"]].drop_duplicates()
 
-display(metar_dataframe)
 #
 ####################################################
 ####################################################
@@ -590,7 +589,10 @@ for station in available_time_series_list.iterrows():
     ax[1,0].plot(wrf_times,
                  wrf_timeseries["surface_upward_latent_heat_flux"],
                  color = "blue")
-    ax[1,0].legend(["S","L","H","LE"])
+    ax[1,0].legend(["Solar↓",
+                    "LongWave↓",
+                    "Heat↑",
+                    "Evap↑"])
     ax[1,0].set_ylabel("Surface Energy Flux (W/m²)")
 
     ax[1,0].axhline(y=0,color="grey", linewidth=0.5)
