@@ -5,7 +5,7 @@
 
 # ## Libraries
 
-# In[1]:
+# In[ ]:
 
 
 ####################################################
@@ -76,7 +76,7 @@ from metpy.plots import colortables
 # 
 # ### Making Time Series Maps
 
-# In[2]:
+# In[ ]:
 
 
 ####################################################
@@ -110,6 +110,20 @@ def plot_time_series_maps_func(t):
     fig_dir_name = graphics_directory + "/" + v_name + "/"
     file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
 
+    bom_colorset = ['#ccebff', '#b3cde3', '#a0b2d4', '#8c96c6', 
+                    '#8856a7', '#810f7c', '#081d58', '#132778', 
+                    '#253494', '#23479e', '#225ca7', '#1f76b4', 
+                    '#1d91c0', '#2ca7c5', '#43b5c5', '#63c8c5', 
+                    '#7fcdbb', '#98dca6', '#c7e9b4', '#dcf2c6', 
+                    '#edf8d9', '#f5fcd3', '#fcffcc', '#fff9b6', 
+                    '#ffeda0', '#ffe48b', '#fed976', '#fec761', 
+                    '#feb24c', '#fea044', '#fd8d3c', '#fd6e33', 
+                    '#fc4e2a', '#f23120', '#e31a1c', '#d20b20', 
+                    '#bd0026', '#9f0027', '#73001f', '#4c0019', 
+                    '#19000d', '#4c0099', '#cc00cc']
+    
+    temp_range_degF =  np.linspace(-15, 120, 44)
+    
     print(fig_dir_name + file_name)
 
     fig = plt.figure(figsize=figure_domain_size)
@@ -175,12 +189,14 @@ def plot_time_series_maps_func(t):
                                  lat2d, 
                                  t2m_maps.isel(Time=t),
                                  transform = ccrs.PlateCarree(),
-                                 cmap      = temperature_colormap,
-                                 levels    = temperature_levels_degF)
+                                 colors    = bom_colorset,
+                                 levels    = temp_range_degF)
     plt.colorbar(filled_cm, 
                  label  = r"2-m Temperature (°F)",
                  shrink = 0.8,
                  pad    = 0.012,
+                 values = temp_range_degF,
+                 ticks  = np.arange(-15, 121, 5),
                  format = '%+d')
     gap = 10
     plt.barbs(wrf.to_np(lon2d[::gap,::gap]),
@@ -943,7 +959,7 @@ def plot_time_series_maps_func(t):
 
 # ### PNG to Animated GIF
 
-# In[3]:
+# In[ ]:
 
 
 # for v_name in ("DBZ", "PBL", "RAIN", "SFCT", "DEWP",  "SNOWH", "WIND", "WEASD"):   
@@ -975,7 +991,7 @@ def png_to_gif_func(v_name):
 
 # ## File Organization
 
-# In[4]:
+# In[ ]:
 
 
 ####################################################
@@ -1048,7 +1064,7 @@ os.chdir(WRF_EXE)
 
 # ## Time Control
 
-# In[5]:
+# In[ ]:
 
 
 ####################################################
@@ -1098,7 +1114,7 @@ tzabbr = pytz.timezone(tz).localize(model_start_datetime)
 ####################################################
 
 
-# In[6]:
+# In[ ]:
 
 
 ###################################################
@@ -1139,7 +1155,7 @@ precip_levels_mm = [  0.25,   2.50,   5.00,  10.00,
 ###################################################
 
 
-# In[7]:
+# In[ ]:
 
 
 ###################################################
@@ -1204,13 +1220,13 @@ dewpoint_levels_degF = np.linspace(30,70,41) # in DegF
 ###################################################
 
 
-# In[8]:
+# In[ ]:
 
 
 np.linspace(30,70,41) 
 
 
-# In[9]:
+# In[ ]:
 
 
 ####################################################
@@ -1244,7 +1260,7 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 
 # ## Crack WRF Files
 
-# In[10]:
+# In[ ]:
 
 
 ####################################################
@@ -1701,6 +1717,7 @@ for domain in range(1,max_domains+1):
                  label  = "36-hr Total Snowfall Liquid-Water Equivalent (in)",
                  shrink = 0.8,
                  ticks = precip_levels_in,
+
                  pad    = 0.012)
 
 
@@ -1734,7 +1751,7 @@ print("done")
 
 # ## Ending Script
 
-# In[11]:
+# In[ ]:
 
 
 ####################################################
