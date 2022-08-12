@@ -24,7 +24,7 @@
  feedback                            = 1,
  smooth_option                       = 0,
  nproc_x                             = 6,
- nproc_y                             = 9,
+ nproc_y                             = 6,
  /
 
 
