@@ -231,54 +231,55 @@ airport_database = airpt.load('ICAO')
 #
 # Pull METARS from UNIDATA NOAAPORT Experimental Site
 #
+
 # https://thredds-test.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_20210924_0000.txt
 
-
-try: 
-    cat = siphcat.TDSCatalog('https://thredds-dev.unidata.ucar.edu/thredds/catalog/noaaport/text/metar/catalog.xml')
-
-    first = True
-    for datehour in siphon_pulls_YYYYMMDD_HH:
-
-
-
-        metar_url  = "https://thredds-dev.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_"+datehour+".txt"
-        metar_file = METAR_DIR + "./metar_"+datehour+".txt"
-
-
-        path_to_file = pathlib.Path(metar_file)
-
-        print(path_to_file, path_to_file.is_file())
-
-
-
-        if (not path_to_file.is_file()) :
-
-            print("downloading "+ metar_url)
-            with urllib.request.urlopen(metar_url) as response, open(metar_file, 'wb') as out_file:
-                shutil.copyfileobj(response, out_file)
-        print("cracking "+metar_file)
-        try:
-            indata = mpio.metar.parse_metar_file(metar_file)
-            if first:
-                first = False
-                metar_dataframe = indata
-            else:
-                metar_dataframe = pd.concat([metar_dataframe,indata])
-                metar_dataframe = metar_dataframe.drop_duplicates()
-        except ValueError:
-            print("BALLS! Parse Error")
-            error_404 = True
-            pass
-
-
-
-
-    metar_station_locs = metar_dataframe[["station_id","latitude","longitude"]].drop_duplicates()
-
-except:
+try:
+    
+    cat = siphcat.TDSCatalog('https://thredds-test.unidata.ucar.edu/thredds/catalog/noaaport/text/metar/catalog.xml')
+except HTTPSConnectionPool:
     print("Balls - we cannot access the thredds server")
-    metar_dataframe = pd.DataFrame()
+
+
+
+first = True
+for datehour in siphon_pulls_YYYYMMDD_HH:
+    
+
+    
+    metar_url  = "https://thredds-test.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_"+datehour+".txt"
+    metar_file = METAR_DIR + "./metar_"+datehour+".txt"
+    
+    
+    path_to_file = pathlib.Path(metar_file)
+    
+    print(path_to_file, path_to_file.is_file())
+
+    
+    
+    if (not path_to_file.is_file()) :
+
+        print("downloading "+ metar_url)
+        with urllib.request.urlopen(metar_url) as response, open(metar_file, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
+    print("cracking "+metar_file)
+    try:
+        indata = mpio.metar.parse_metar_file(metar_file)
+        if first:
+            first = False
+            metar_dataframe = indata
+        else:
+            metar_dataframe = pd.concat([metar_dataframe,indata])
+            metar_dataframe = metar_dataframe.drop_duplicates()
+    except ValueError:
+        print("BALLS! Parse Error")
+        error_404 = True
+        pass
+
+
+
+
+metar_station_locs = metar_dataframe[["station_id","latitude","longitude"]].drop_duplicates()
 
 #
 ####################################################
