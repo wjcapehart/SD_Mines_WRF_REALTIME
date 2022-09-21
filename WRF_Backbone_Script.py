@@ -719,7 +719,7 @@ else:
         print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.2 -np 36 -ppn 18 ./REAL.EXE 2>&1 real.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.2 -np 54 -ppn 18 ./REAL.EXE 2>&1 real.log", file =  f) 
         print("echo WRF:REAL::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_real.sh")
@@ -778,7 +778,7 @@ else:
         print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.2 -np 36 -ppn 18  ./WRF.EXE 2>&1 wrf.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.2 -np 54 -ppn 18  ./WRF.EXE 2>&1 wrf.log", file =  f) 
         print("echo WRF:WRF::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
