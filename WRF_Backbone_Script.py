@@ -782,7 +782,7 @@ else:
         print("cd " + WRF_EXE, file =  f) 
         print("export OMP_NUM_THREADS=18")
         print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 2  -ppn 1  " + WRF_EXE + "./WRF_INTEL_DMSM_AVX.EXE 2>&1  wrf.log", file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 36 -ppn 18 " + WRF_EXE + "./WRF_INTEL_DM_AVX.EXE   2>&1  wrf.log", file =  f) 
+        print("# mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 36 -ppn 18 " + WRF_EXE + "./WRF_INTEL_DM_AVX.EXE   2>&1  wrf.log", file =  f) 
         print("echo WRF:WRF::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
