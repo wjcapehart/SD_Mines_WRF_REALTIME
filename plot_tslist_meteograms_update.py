@@ -286,6 +286,12 @@ except:
 ####################################################
 
 
+# In[ ]:
+
+
+
+
+
 # ## Rotate through Available Files
 
 # In[ ]:
@@ -645,6 +651,17 @@ for station in available_time_series_list.iterrows():
     ax[0,1].xaxis.set_minor_locator(xminor)
     ax[0,1].xaxis_date()
 
+    ax[0,0].spines["top"].set_visible(False)
+    ax[1,0].spines["top"].set_visible(False)
+    ax[0,1].spines["top"].set_visible(False)
+    ax[1,1].spines["top"].set_visible(False)
+    ax11.spines[   "top"].set_visible(False)
+    ax01.spines[   "top"].set_visible(False)
+
+    ax[0,0].spines["right"].set_visible(False)
+    ax[1,0].spines["right"].set_visible(False)
+    ax[0,1].spines["right"].set_visible(False)
+    ax01.spines[   "right"].set_visible(False)
 
     
     plt.tight_layout()
@@ -691,6 +708,12 @@ print("Ploting Meteogram Script complete.")
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

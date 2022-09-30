@@ -5,7 +5,7 @@
 
 # ## Libraries
 
-# In[ ]:
+# In[1]:
 
 
 ####################################################
@@ -76,7 +76,7 @@ from metpy.plots import colortables
 # 
 # ### Making Time Series Maps
 
-# In[ ]:
+# In[2]:
 
 
 ####################################################
@@ -220,6 +220,7 @@ def plot_time_series_maps_func(t):
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
+    ax1.set_frame_on(False)
 
     fig.savefig(fig_dir_name + file_name,
                         facecolor   = 'white', 
@@ -314,11 +315,14 @@ def plot_time_series_maps_func(t):
                               facecolor = "black",
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
+    ax1.set_frame_on(False)
 
 
     # plt.show()
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
+    
+    ax1.set_frame_on(False)
 
 
     fig.savefig(fig_dir_name + file_name,
@@ -421,6 +425,8 @@ def plot_time_series_maps_func(t):
     # plt.show()
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
+    
+    ax1.set_frame_on(False)
 
 
     fig.savefig(fig_dir_name + file_name,
@@ -537,6 +543,7 @@ def plot_time_series_maps_func(t):
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
+    ax1.set_frame_on(False)
 
     fig.savefig(fig_dir_name + file_name,
                         facecolor   = 'white', 
@@ -632,11 +639,13 @@ def plot_time_series_maps_func(t):
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
 
+    ax1.set_frame_on(False)
 
     # plt.show()
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
+    ax1.set_frame_on(False)
 
     fig.savefig(fig_dir_name + file_name,
                         facecolor   = 'white', 
@@ -738,6 +747,8 @@ def plot_time_series_maps_func(t):
                               facecolor = "black",
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
+    
+    ax1.set_frame_on(False)
 
     
     fig.savefig(fig_dir_name + file_name,
@@ -841,6 +852,7 @@ def plot_time_series_maps_func(t):
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
+    ax1.set_frame_on(False)
 
     fig.savefig(fig_dir_name + file_name,
                         facecolor   = 'white', 
@@ -946,6 +958,7 @@ def plot_time_series_maps_func(t):
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
+    ax1.set_frame_on(False)
 
     fig.savefig(fig_dir_name + file_name,
                         facecolor   = 'white', 
@@ -959,7 +972,7 @@ def plot_time_series_maps_func(t):
 
 # ### PNG to Animated GIF
 
-# In[ ]:
+# In[3]:
 
 
 # for v_name in ("DBZ", "PBL", "RAIN", "SFCT", "DEWP",  "SNOWH", "WIND", "WEASD"):   
@@ -991,7 +1004,7 @@ def png_to_gif_func(v_name):
 
 # ## File Organization
 
-# In[ ]:
+# In[4]:
 
 
 ####################################################
@@ -1064,7 +1077,7 @@ os.chdir(WRF_EXE)
 
 # ## Time Control
 
-# In[ ]:
+# In[5]:
 
 
 ####################################################
@@ -1114,7 +1127,7 @@ tzabbr = pytz.timezone(tz).localize(model_start_datetime)
 ####################################################
 
 
-# In[ ]:
+# In[6]:
 
 
 ###################################################
@@ -1155,7 +1168,7 @@ precip_levels_mm = [  0.25,   2.50,   5.00,  10.00,
 ###################################################
 
 
-# In[ ]:
+# In[7]:
 
 
 ###################################################
@@ -1220,13 +1233,13 @@ dewpoint_levels_degF = np.linspace(30,70,41) # in DegF
 ###################################################
 
 
-# In[ ]:
+# In[8]:
 
 
 np.linspace(30,70,41) 
 
 
-# In[ ]:
+# In[9]:
 
 
 ####################################################
@@ -1260,7 +1273,7 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 
 # ## Crack WRF Files
 
-# In[ ]:
+# In[10]:
 
 
 ####################################################
@@ -1634,6 +1647,8 @@ for domain in range(1,max_domains+1):
     # plt.show()
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
+    
+    ax1.set_frame_on(False)
 
 
     fig.savefig(fig_dir_name + file_name,
@@ -1727,6 +1742,7 @@ for domain in range(1,max_domains+1):
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
+    ax1.set_frame_on(False)
 
     fig.savefig(fig_dir_name + file_name,
                         facecolor   = 'white', 
@@ -1751,7 +1767,7 @@ print("done")
 
 # ## Ending Script
 
-# In[ ]:
+# In[11]:
 
 
 ####################################################

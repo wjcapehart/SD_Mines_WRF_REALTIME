@@ -544,6 +544,11 @@ for domain in range(chosen_domain,chosen_domain+1):
                              color           = 'blue', 
                              markersize      =     30, 
                              markeredgewidth =      3)
+                
+                
+            skew.ax.spines["right"].set_visible(False)
+            skew.ax.spines[  "top"].set_color("white")
+
 
             #
             ###################################################
@@ -565,6 +570,9 @@ for domain in range(chosen_domain,chosen_domain+1):
 
             cmh = h.plot_colormapped(sounding_df["u_wind"][mask], sounding_df["v_wind"][mask], sounding_df[   "agl"][mask].to(units.km), cmap = "jet")
             cmh.set_clim(0, 10)
+
+            ax.spines["right"].set_visible(False)
+            ax.spines[  "top"].set_color("white")
 
             plt.colorbar(cmh, orientation = "horizontal", label       = 'Height (km AGL)')
 
