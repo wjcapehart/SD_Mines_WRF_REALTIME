@@ -601,7 +601,8 @@ for station in available_time_series_list.iterrows():
     ax[1,0].legend(["Solar↓",
                     "LongWave↓",
                     "Heat↑",
-                    "Evap↑"])
+                    "Evap↑"],
+                  frameon=False)
     ax[1,0].set_ylabel("Surface Energy Flux (W/m²)")
 
     ax[1,0].axhline(y=0,color="grey", linewidth=0.5)
