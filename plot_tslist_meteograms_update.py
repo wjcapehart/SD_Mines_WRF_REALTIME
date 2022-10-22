@@ -467,6 +467,10 @@ for station in available_time_series_list.iterrows():
     #
 
     wrf_cum_prec      = wrf_timeseries["stratiform_precipitation_amount"].values + wrf_timeseries["convective_precipitation_amount"].values
+    if (np.sum(wrf_cum_prec)/25.4 < 0.005):
+        print("No Significant Rainfall")
+        wrf_cum_prec.values[:] = 0.000
+    
     wrf_cum_hrly_prec = wrf_cum_prec[on_the_hour]
     wrf_hrly_prec     = wrf_cum_hrly_prec.copy()
 
