@@ -90,7 +90,7 @@ function load_figures() {
     .then(response => response.text())
     .then(json => {
     date_string = JSON.stringify(json).replace(/"/g, '').replace(/\\n/g, '')
-    document.getElementById('HRLY_PBL').src = "http://kyrill.ias.sdsmt.edu/WRF/WEB_IMAGES/MAPS/" + domain_string + "/PBL/wrfout_" + domain_string + "_" + date_string + "_"+fx_hour+"_MAP_PBL.gif";
+    document.getElementById('HRLY_SNOW').src = "http://kyrill.ias.sdsmt.edu/WRF/WEB_IMAGES/MAPS/" + domain_string + "/SNOWH/wrfout_" + domain_string + "_" + date_string + "_"+fx_hour+"_MAP_SNOWH.gif";
   });
 
   fetch("./WEB_IMAGES/current_run.txt")
@@ -154,30 +154,30 @@ function load_figures() {
 <hr color="#B3A369" width="80%"  align="center" style="display:block;"/>
 <table width="100%">
   <tr>
-    <td><center>MSLP/10-m Wind/2-m Temp<br><img id="HRLY_SFCT" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
+    <td><center><font size="+2"><b>MSLP/10-m Wind/2-m Temp</b></font><br><img id="HRLY_SFCT" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
 
 
-    <td><center>10-m Windspeed<br><img id="HRLY_WIND" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
-
-  </tr>
-  <tr>
-    <td><center>Hourly Precip<br><img id="HRLY_RAIN" style="display:block;" width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
-
-    <td><center>36-h Rainfall<br><img id="TOTAL_RAINFALL" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
-
+    <td><center><font size="+2"><b>10-m Windspeed</b></font><br><img id="HRLY_WIND" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
 
   </tr>
   <tr>
-    <td><center>Est Hourly Snowfall<br><img id="HRLY_WEASD" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
+    <td><center><font size="+2"><b>Hourly Precip</b></font><br><img id="HRLY_RAIN" style="display:block;" width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
+
+    <td><center><font size="+2"><b>36-h Rainfall</b></font><br><img id="TOTAL_RAINFALL" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
 
 
-    <td><center>Total Est 36-hrly Snowfall<br><img id="TOTAL_SNOWFALL" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
   </tr>
   <tr>
-    <td><center>Est Max Radar Reflectivity<br><img id="HRLY_DBZ" style="display:block;"  width="100%"></center></td>
+    <td><center><font size="+2"><b>Est Hourly Snowfall</b></font><br><img id="HRLY_WEASD" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
 
 
-    <td><center>Model-Est Boundary Layer Height<br><img id="HRLY_PBL" style="display:block;"  width="100%"></center></td>
+    <td><center><font size="+2"><b>Total Est 36-hrly Snowfall</b></font><br><img id="TOTAL_SNOWFALL" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
+  </tr>
+  <tr>
+    <td><center><font size="+2"><b>Est Max Radar Reflectivity</b></font><br><img id="HRLY_DBZ" style="display:block;"  width="100%"></center></td>
+
+    <td><center><font size="+2"><b>WRF/NOAH-Estimated* Hourly Snow Depth</b></font><br><img id="HRLY_SNOW" style="display:block;"  width="100%"></center></b><br><center>*Not for School Cancellation Wishcasting</center><!--hr color="#B3A369" width="80%"  align="center" style="display:block;"/--></td>
+
 
   </tr>
 </table>
@@ -231,10 +231,10 @@ function load_figures() {
 
 <table width="100%">
   <tr>
-    <td><center>Meteogram<br><img id="METEOGRAM" style="display:block;"  width="100%"></center></td>
+    <td><center><font size="+2"><b>Meteogram</b></font><br><img id="METEOGRAM" style="display:block;"  width="100%"></center></td>
 
 
-    <td><center>Sounding<br><img id="HRLY_SKEWT" style="display:block;"  width="100%"></center></td>
+    <td><center><font size="+2"><b>Sounding</b></font><br><img id="HRLY_SKEWT" style="display:block;"  width="100%"></center></td>
 
   </tr>
 </table>
