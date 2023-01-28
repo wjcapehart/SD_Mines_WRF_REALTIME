@@ -5,7 +5,7 @@
 
 # ## Libraries
 
-# In[1]:
+# In[ ]:
 
 
 ####################################################
@@ -36,9 +36,12 @@ import wrf               as wrf
 import cartopy.crs       as ccrs
 import cartopy.feature   as cfeature
 
+import pyproj            as pyproj
+
 import matplotlib.gridspec as gridspec
 
 import metpy.calc        as mpcalc
+
 from metpy.units import units, pandas_dataframe_to_unit_arrays
 from metpy.plots import colortables,  USCOUNTIES
 
@@ -46,8 +49,6 @@ from metpy.plots import colortables,  USCOUNTIES
 import metpy.calc  as mpcalc
 
 from metpy.units import units
-
-import seaborn           as sns
 
 import timezonefinder    as tzf
 import pytz as pytz
@@ -60,6 +61,13 @@ import matplotlib as mpl
 from      joblib import Parallel, delayed
 
 from metpy.plots import colortables
+
+
+
+
+
+colorbar_pad    = 0.012
+colorbar_shrink = 0.8
 #
 ####################################################
 ####################################################
@@ -69,19 +77,207 @@ from metpy.plots import colortables
 # In[ ]:
 
 
+####################################################
+####################################################
+####################################################
+#
+# Mines Colors and Fonts
+#
 
+Mines_Blue = "#002554"
+
+
+plt.rcParams.update({'text.color'      : Mines_Blue,
+                     'axes.labelcolor' : Mines_Blue,
+					 'xtick.color'     : Mines_Blue,
+					 'ytick.color'    : Mines_Blue})
+
+
+#
+####################################################
+####################################################
+####################################################
+
+
+# In[ ]:
+
+
+####################################################
+####################################################
+####################################################
+#
+# MetPy Color Tables
+#
+
+nws_dbz_colors = colortables.get_colortable("NWSReflectivity")
+nws_rainbow    = colortables.get_colortable("ir_rgbv")
+
+## radar colormap
+
+norm_radar, cmap_radar = colortables.get_with_steps("NWSStormClearReflectivity", 
+                                        -20, 
+                                        0.5)
+
+
+
+
+
+clearsky_dbz_values = np.arange(-28, 28.1, 2)
+stormy_dbz_values   = np.arange(  5, 75.1, 5)
+
+#
+####################################################
+####################################################
+####################################################
+
+
+# In[ ]:
+
+
+###################################################
+#
+# NWS Rainfall Color Table.
+#
+
+nws_precip_colors = [
+    "#04e9e7",  # 0.01 - 0.10 inches
+    "#019ff4",  # 0.10 - 0.25 inches
+    "#0300f4",  # 0.25 - 0.50 inches
+    "#02fd02",  # 0.50 - 0.75 inches
+    "#01c501",  # 0.75 - 1.00 inches
+    "#008e00",  # 1.00 - 1.50 inches
+    "#fdf802",  # 1.50 - 2.00 inches
+    "#e5bc00",  # 2.00 - 2.50 inches
+    "#fd9500",  # 2.50 - 3.00 inches
+    "#fd0000",  # 3.00 - 4.00 inches
+    "#d40000",  # 4.00 - 5.00 inches
+    "#bc0000",  # 5.00 - 6.00 inches
+    "#8B008B",  # 8.00 - 10.00 inches
+    "#ff00ff",  # 6.00 - 8.00 inches
+	"#FFCCFF",
+    "#888888"]  # 10.00+
+
+precip_colormap = mpl.colors.ListedColormap(colors = nws_precip_colors)
+
+precip_levels_hrly = [   0.01,   0.05,   0.10,  0.25,    
+                         0.50,   0.75,   1.00,  1.25,   
+                         1.50,   1.75,   2.00,  2.25,  
+                         2.50,   3.00,   4.00,  5.00] # in Inches!!!
+
+
+precip_levels_full = [   0.01,   0.05,   0.10,  0.25,    
+                         0.50,   0.75,   1.00,  1.50,   
+                         2.00,   2.50,   3.00,  4.00,  
+                         5.00,   6.00,   8.00, 10.00] # in Inches!!!
+
+snow_levels_hrly   = [   0.10,   0.25,   0.50,  0.75,    
+                         1.00,   1.25,   1.50,  1.75,   
+                         2.00,   2.25,   2.50,  2.75,  
+                         3.00,   4.00,   5.00,  6.00] # in Inches!!!
+
+snow_levels_full   = [   0.10,   0.25,   0.50,  0.75,    
+                         1.00,   2.00,   3.00,  4.00,   
+                         5.00,   6.00,  12.00, 18.00,  
+                        24.00,  30.00,  36.00, 48.00] # in Inches!!!
+
+#
+###################################################
+
+
+# In[ ]:
+
+
+###################################################
+#
+# BOM Temperature Color Table.
+#
+
+###################################################
+#
+# BOM Temperature Color Table.
+#
+
+
+bom_temp_colors  = ['#ccebff', 
+					'#b3cde3',
+					'#a0b2d4', 
+					'#8c96c6', 
+					'#8856a7', 
+					'#810f7c', 
+					'#081d58', 
+					'#132778', 
+					'#253494', 
+					'#23479e', 
+					'#225ca7', 
+					'#1f76b4', 
+					'#1d91c0', 
+					'#2ca7c5', 
+					'#43b5c5', 
+					'#63c8c5', 
+					'#7fcdbb', 
+					'#98dca6', 
+					'#c7e9b4',
+					'#dcf2c6', 
+					'#edf8d9', 
+					'#f5fcd3', 
+					'#fcffcc', 
+					'#fff9b6', 
+					'#ffeda0', 
+					'#ffe48b', 
+					'#fed976', 
+					'#fec761', 
+					'#feb24c', 
+					'#fea044', 
+					'#fd8d3c', 
+					'#fd6e33', 
+					'#fc4e2a', 
+					'#f23120', 
+					'#e31a1c', 
+					'#d20b20', 
+					'#bd0026', 
+					'#9f0027', 
+					'#73001f', 
+					'#4c0019', 
+					'#19000d', 
+					'#4c0099', 
+					'#cc17cc',
+				    '#ffffff']
+
+bom_colormap = mpl.colors.ListedColormap(colors = bom_temp_colors)
+
+
+temp_range_degF =  np.linspace(-20, 115, 44-2)
+delta_t_scale   =  temp_range_degF[1]-temp_range_degF[0]
+temp_range_degF =  np.linspace(-20-delta_t_scale, 115+delta_t_scale, 44)
+
+bom_colorbar_ticks = np.arange(-20,116,5)
+
+dewpoint_levels_degF = np.linspace(30,70,41) # in DegF
+
+
+#
+###################################################
 
 
 # ## Parallel Code Area
 # 
 # ### Making Time Series Maps
 
-# In[2]:
+# In[ ]:
 
 
 ####################################################
 
 def plot_time_series_maps_func(t):
+	
+    Mines_Blue = "#002554"
+	
+    plt.rcParams.update({'text.color'      : Mines_Blue,
+                     'axes.labelcolor' : Mines_Blue,
+					 'xtick.color'     : Mines_Blue,
+					 'ytick.color'    : Mines_Blue})
+
+
 
     ####################################################
     #
@@ -109,26 +305,12 @@ def plot_time_series_maps_func(t):
     v_name       = "SFCT"
     fig_dir_name = graphics_directory + "/" + v_name + "/"
     file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
-
-    bom_colorset = ['#ccebff', '#b3cde3', '#a0b2d4', '#8c96c6', 
-                    '#8856a7', '#810f7c', '#081d58', '#132778', 
-                    '#253494', '#23479e', '#225ca7', '#1f76b4', 
-                    '#1d91c0', '#2ca7c5', '#43b5c5', '#63c8c5', 
-                    '#7fcdbb', '#98dca6', '#c7e9b4', '#dcf2c6', 
-                    '#edf8d9', '#f5fcd3', '#fcffcc', '#fff9b6', 
-                    '#ffeda0', '#ffe48b', '#fed976', '#fec761', 
-                    '#feb24c', '#fea044', '#fd8d3c', '#fd6e33', 
-                    '#fc4e2a', '#f23120', '#e31a1c', '#d20b20', 
-                    '#bd0026', '#9f0027', '#73001f', '#4c0019', 
-                    '#19000d', '#4c0099', '#cc00cc']
-    
-    temp_range_degF =  np.linspace(-15, 120, 44)
-    
+  
     print(fig_dir_name + file_name)
 
     fig = plt.figure(figsize=figure_domain_size)
 
-    fig.suptitle(model_run_label)
+    fig.suptitle(model_run_label,fontsize="x-large")
 
     ax1 = fig.add_subplot(1,  # nrows
                           1,  # ncols 
@@ -137,23 +319,23 @@ def plot_time_series_maps_func(t):
 
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
-
+    ax1.set_frame_on(False)
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.RIVERS, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.BORDERS, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.COASTLINE, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
 
     ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
@@ -161,18 +343,14 @@ def plot_time_series_maps_func(t):
                                                  '50m',
                                                  linewidths = 0.75,
                                                  facecolor  = 'none',
-                                                 edgecolor  = 'black'))
+                                                 edgecolor  = Mines_Blue))
 
     if (domain > 1) :
-        ax1.add_feature(USCOUNTIES, linewidths=0.5,edgecolor  = 'black',facecolor='none')
+        ax1.add_feature(USCOUNTIES, linewidths=0.5,edgecolor  = Mines_Blue,facecolor='none')
 
-
-    ax1.set_title(valid_time + "  (" + local_time+")")
-
-
-    line_contour_levels = np.arange(start = 900, 
+    line_contour_levels = np.arange(start =  900, 
                                     stop  = 1200,
-                                    step  = 4)
+                                    step  =    4)
 
     line_contour_map = ax1.contour(lon2d, 
                                   lat2d, 
@@ -185,19 +363,27 @@ def plot_time_series_maps_func(t):
 
     ax1.clabel(line_contour_map, inline=True, fontsize=8)
 
-    filled_cm     = ax1.contourf(lon2d, 
-                                 lat2d, 
-                                 t2m_maps.isel(Time=t),
-                                 transform = ccrs.PlateCarree(),
-                                 colors    = bom_colorset,
-                                 levels    = temp_range_degF)
-    plt.colorbar(filled_cm, 
-                 label  = r"2-m Temperature (°F)",
-                 shrink = 0.8,
-                 pad    = 0.012,
-                 values = temp_range_degF,
-                 ticks  = np.arange(-15, 121, 5),
-                 format = '%+d')
+    filled_cm = t2m_maps.isel(Time=t).plot.imshow(cmap          = bom_colormap,
+												  alpha         = alpha2d,
+												  interpolation = "bilinear",
+												  vmin          = temp_range_degF.min(),
+												  vmax          = temp_range_degF.max(),
+												  add_colorbar  = False)
+	
+    cb = plt.colorbar(mappable = filled_cm, 
+					  label    = r"2-m Temperature (°F)",
+					  shrink   = colorbar_shrink, 
+					  pad      = colorbar_pad,
+					  ticks    = bom_colorbar_ticks,
+					  format   = '%d')
+	
+    ticklabs = cb.ax.get_yticklabels()
+	
+    cb.ax.set_yticklabels(labels = ticklabs,
+						  ha     =  'right')
+    cb.ax.yaxis.set_tick_params(pad = 20)
+    cb.outline.set_color(Mines_Blue)
+
     gap = 10
     plt.barbs(wrf.to_np(lon2d[::gap,::gap]),
               wrf.to_np(lat2d[::gap,::gap]),
@@ -205,16 +391,15 @@ def plot_time_series_maps_func(t):
               wrf.to_np(v10_maps.isel(Time=t)[::gap,::gap]),
               transform = ccrs.PlateCarree(), 
               length=5)
-
         
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
-                              edgecolor = 'black', 
-                              facecolor = "black",
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
-
+    ax1.set_title(valid_time + "  (" + local_time+")")
     
     # plt.show()
     plt.tight_layout()
@@ -222,13 +407,11 @@ def plot_time_series_maps_func(t):
 
     ax1.set_frame_on(False)
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
 
     plt.close('all')
-
-
 
     #
     ####################################################
@@ -246,7 +429,7 @@ def plot_time_series_maps_func(t):
 
     fig = plt.figure(figsize=figure_domain_size)
 
-    fig.suptitle(model_run_label)
+    fig.suptitle(model_run_label,fontsize="x-large")
 
     ax1 = fig.add_subplot(1,  # nrows
                           1,  # ncols 
@@ -255,23 +438,23 @@ def plot_time_series_maps_func(t):
 
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
-
+    ax1.set_frame_on(False)
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.RIVERS, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.BORDERS, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.COASTLINE, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
 
     ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
@@ -279,44 +462,44 @@ def plot_time_series_maps_func(t):
                                                  '50m',
                                                  linewidths = 0.75,
                                                  facecolor  = 'none',
-                                                 edgecolor  = 'black'))
+                                                 edgecolor  = Mines_Blue))
 
     if (domain > 1) :
         ax1.add_feature(USCOUNTIES, 
                         linewidths=0.5,
-                        edgecolor  = 'black',
+                        edgecolor  = Mines_Blue,
                         facecolor='none')
-
-    ax1.set_title(valid_time + "  (" + local_time+")")
 
     ax1.streamplot(wrf.to_np(lon2d),
                    wrf.to_np(lat2d), 
                    wrf.to_np(u10_maps.isel(Time=t)),
                    wrf.to_np(v10_maps.isel(Time=t)),
                    transform = ccrs.PlateCarree(),
-                   color = "black")
+                   color = Mines_Blue)
 
-    filled_cm     = ax1.contourf(lon2d, 
-                                 lat2d, 
-                                 m10_maps.isel(Time=t),
-                                 transform = ccrs.PlateCarree(),
-                                 cmap      = mpl.cm.Blues,
-                                 levels    = np.arange(0,41,1))
-    plt.colorbar(filled_cm, 
-                 label  = r"10-m Wind Speed (kts)",
-                 shrink = 0.8,
-                 pad    = 0.012)
+    filled_cm = m10_maps.isel(Time=t).plot.imshow(cmap          = mpl.cm.Blues,
+												  alpha         = alpha2d,
+												  interpolation = "bilinear",
+												  vmin          = 0,
+												  vmax          = 41,
+												  add_colorbar  = False)
 
+    cb = plt.colorbar(filled_cm, 
+					  label  = r"10-m Wind Speed (kts)",
+					  shrink = colorbar_shrink, 
+					  pad    = colorbar_pad)
+    cb.outline.set_color(Mines_Blue)
         
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
-                              edgecolor = 'black', 
-                              facecolor = "black",
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
     ax1.set_frame_on(False)
 
+    ax1.set_title(valid_time + "  (" + local_time+")")
 
     # plt.show()
     plt.tight_layout()
@@ -330,7 +513,6 @@ def plot_time_series_maps_func(t):
                         transparent =   False)
 
     plt.close('all')
-
 
     #
     ####################################################
@@ -348,7 +530,7 @@ def plot_time_series_maps_func(t):
 
     fig = plt.figure(figsize=figure_domain_size)
 
-    fig.suptitle(model_run_label)
+    fig.suptitle(model_run_label,fontsize="x-large")
 
     ax1 = fig.add_subplot(1,  # nrows
                           1,  # ncols 
@@ -357,23 +539,24 @@ def plot_time_series_maps_func(t):
 
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
+    ax1.set_frame_on(False)
 
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.RIVERS, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.BORDERS, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.COASTLINE, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
 
     ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
@@ -381,15 +564,14 @@ def plot_time_series_maps_func(t):
                                                  '50m',
                                                  linewidths = 0.75,
                                                  facecolor  = 'none',
-                                                 edgecolor  = 'black'))
+                                                 edgecolor  = Mines_Blue))
 
     if (domain > 1) :
         ax1.add_feature(USCOUNTIES, 
                         linewidths=0.5,
-                        edgecolor  = 'black',
+                        edgecolor  = Mines_Blue,
                         facecolor='none')
 
-    ax1.set_title(valid_time + "  (" + local_time+")")
     
     lw = 5 * m10_maps.isel(Time=t) / np.nanmax(m10_maps.isel(Time=t).values)
     ax1.streamplot(wrf.to_np(lon2d),
@@ -398,29 +580,29 @@ def plot_time_series_maps_func(t):
                    wrf.to_np(v10_maps.isel(Time=t)),
                    linewidth = lw.values,
                    transform = ccrs.PlateCarree(),
-                   color = "black")
+                   color = Mines_Blue)
 
-    filled_cm     = ax1.contourf(lon2d, 
-                                 lat2d, 
-                                 td2m_maps.isel(Time=t),
-                                 transform = ccrs.PlateCarree(),
-                                 cmap      = mpl.cm.YlGn,
-                                 extend      = 'both',
-                                 levels    = dewpoint_levels_degF)
-    plt.colorbar(filled_cm, 
-                 label  = r"2-m Dew Point Temperatuere (°F)",
-                 shrink = 0.8,
-                 pad    = 0.012)
+    filled_cm = td2m_maps.isel(Time=t).plot.imshow(cmap          = mpl.cm.YlGn,
+												   alpha         = alpha2d,
+												   interpolation = "bilinear",
+												   vmin          = dewpoint_levels_degF.min(),
+												   vmax          = dewpoint_levels_degF.max(),
+												   add_colorbar  = False)
 
-        
+    cb = plt.colorbar(filled_cm, 
+				 label  = r"2-m Dew Point Temperatuere (°F)",
+				 shrink = colorbar_shrink, 
+				 pad    = colorbar_pad)
+    cb.outline.set_color(Mines_Blue)
+ 
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
-                              edgecolor = 'black', 
-                              facecolor = "black",
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
-
+    ax1.set_title(valid_time + "  (" + local_time+")")
 
     # plt.show()
     plt.tight_layout()
@@ -434,7 +616,6 @@ def plot_time_series_maps_func(t):
                         transparent =   False)
 
     plt.close('all')
-
 
     #
     ####################################################       
@@ -454,7 +635,7 @@ def plot_time_series_maps_func(t):
 
     fig = plt.figure(figsize=figure_domain_size)
 
-    fig.suptitle(model_run_label)
+    fig.suptitle(model_run_label,fontsize="x-large")
 
     ax1 = fig.add_subplot(1,  # nrows
                           1,  # ncols 
@@ -463,23 +644,23 @@ def plot_time_series_maps_func(t):
 
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
-
+    ax1.set_frame_on(False)
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.RIVERS, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.BORDERS, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.COASTLINE, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
 
     ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
@@ -487,56 +668,50 @@ def plot_time_series_maps_func(t):
                                                  '50m',
                                                  linewidths = 0.75,
                                                  facecolor  = 'none',
-                                                 edgecolor  = 'black'))
+                                                 edgecolor  = Mines_Blue))
 
     if (domain > 1) :
         ax1.add_feature(USCOUNTIES, 
                         linewidths=0.5,
-                        edgecolor  = 'black',
+                        edgecolor  = Mines_Blue,
                         facecolor='none')
 
+    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_hrly, 
+											ncolors    = 15)
+	
+    filled_cm = hrly_rain_maps.isel(Time=t).plot.imshow(cmap          = precip_colormap,
+											  alpha         = alpha2d,
+											  ax            = ax1,  
+											  interpolation = "bilinear",
+												   extend        = 'max',
+												   norm          = rain_norm,
+												   levels        = precip_levels_hrly,
+												  add_colorbar  = False)
 
-
-
-    ax1.set_title(valid_time + "  (" + local_time+")")
-
-    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
-                                            ncolors    = 15)
-
-    filled_cm     = ax1.contourf(lon2d, 
-                                 lat2d, 
-                                 hrly_rain_maps.isel(Time=t),
-                                 transform = ccrs.PlateCarree(),
-                                 norm      = rain_norm,
-                                 cmap      = precip_colormap,
-                                 extend    = 'max',
-                                 levels    = precip_levels_in)
-    
-    
-    
-    
-    plt.colorbar(filled_cm, 
-                 label  = "Hourly Precip (in)",
-                 shrink = 0.8,
-                 ticks=precip_levels_in,
-                 pad    = 0.012)
+    cb = plt.colorbar(filled_cm, 
+				 label  = "Hourly Water-Equivalent Snowfall (in)",
+				 shrink = colorbar_shrink, 
+				 pad    = colorbar_pad,
+				 ticks  = precip_levels_hrly)
+    cb.outline.set_color(Mines_Blue)
 
     contour_plot2 = ax1.contour(lon2d, 
-                                 lat2d, 
-                                 hrly_rain_maps.isel(Time=t),
-                                 transform = ccrs.PlateCarree(),
-                                 colors    =            "cyan",
-                                 linewidths=1,
-                                 levels    = np.array([0.002]))
-    
- 
-    
+								lat2d, 
+								hrly_rain_maps.isel(Time=t),
+								transform = ccrs.PlateCarree(),
+								colors    =            "cyan",
+								linewidths=1,
+								levels    = np.array([0.002]))    
+
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
-                              edgecolor = 'black', 
-                              facecolor = "black",
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
                               transform = ax1.transAxes)
+	
+    ax1.set_title(valid_time + "  (" + local_time+")")
+
     ax1.add_patch(rect1)
 
     # plt.show()
@@ -570,7 +745,7 @@ def plot_time_series_maps_func(t):
 
     fig = plt.figure(figsize=figure_domain_size)
 
-    fig.suptitle(model_run_label)
+    fig.suptitle(model_run_label,fontsize="x-large")
 
     ax1 = fig.add_subplot(1,  # nrows
                           1,  # ncols 
@@ -579,23 +754,24 @@ def plot_time_series_maps_func(t):
 
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
+    ax1.set_frame_on(False)
 
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.RIVERS, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.BORDERS, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.COASTLINE, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
 
     ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
@@ -603,43 +779,63 @@ def plot_time_series_maps_func(t):
                                                  '50m',
                                                  linewidths = 0.75,
                                                  facecolor  = 'none',
-                                                 edgecolor  = 'black'))
+                                                 edgecolor  = Mines_Blue))
 
     if (domain > 1) :
         ax1.add_feature(USCOUNTIES, 
                         linewidths=0.5,
-                        edgecolor  = 'black',
+                        edgecolor  = Mines_Blue,
                         facecolor='none')
 
     ax1.set_title(valid_time + "  (" + local_time+")")
+	
+    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_hrly, 
+											ncolors    = 15)
+	
+    filled_cm = hrly_snowfall_maps.isel(Time=t).plot.imshow(cmap          = precip_colormap,
+											  alpha         = alpha2d,
+											  ax            = ax1,  
+											  interpolation = "bilinear",
+												   extend        = 'max',
+												   norm          = rain_norm,
+												   levels        = precip_levels_hrly,
+												  add_colorbar  = False)
 
-    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
-                                            ncolors    = 15)
+    cb = plt.colorbar(filled_cm, 
+				 label  = "Hourly Water-Equivalent Snowfall (in)",
+				 shrink = colorbar_shrink, 
+				 pad    = colorbar_pad,
+				 ticks  = precip_levels_hrly)
+    cb.outline.set_color(Mines_Blue)
 
-    filled_cm     = ax1.contourf(lon2d, 
-                                 lat2d, 
-                                 hrly_snowfall_maps.isel(Time=t),
-                                 transform = ccrs.PlateCarree(),
-                                 norm      = rain_norm,
-                                 cmap      = precip_colormap,
-                                 extend    = 'max',
-                                 levels    = precip_levels_in)
-    plt.colorbar(filled_cm, 
-                 label  = "Hourly Snow-Water Equivalent (in)",
-                 shrink = 0.8,
-                 ticks=precip_levels_in,
-                 pad    = 0.012)
+    contour_plot2 = ax1.contour(lon2d, 
+								lat2d, 
+								hrly_snowfall_maps.isel(Time=t),
+								transform = ccrs.PlateCarree(),
+								colors    =            "cyan",
+								linewidths=1,
+								levels    = np.array([0.002]))  
+
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
+                              transform = ax1.transAxes)
+	
+    ax1.set_title(valid_time + "  (" + local_time+")")
 
         
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
-                              edgecolor = 'black', 
-                              facecolor = "black",
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
 
     ax1.set_frame_on(False)
+    ax1.set_title(valid_time + "  (" + local_time+")")
 
     # plt.show()
     plt.tight_layout()
@@ -671,7 +867,7 @@ def plot_time_series_maps_func(t):
 
     fig = plt.figure(figsize=figure_domain_size)
 
-    fig.suptitle(model_run_label)
+    fig.suptitle(model_run_label,fontsize="x-large")
 
     ax1 = fig.add_subplot(1,  # nrows
                           1,  # ncols 
@@ -680,23 +876,24 @@ def plot_time_series_maps_func(t):
 
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
+    ax1.set_frame_on(False)
 
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.RIVERS, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.BORDERS, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.COASTLINE, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
 
     ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
@@ -704,47 +901,43 @@ def plot_time_series_maps_func(t):
                                                  '50m',
                                                  linewidths = 0.75,
                                                  facecolor  = 'none',
-                                                 edgecolor  = 'black'))
+                                                 edgecolor  = Mines_Blue))
 
     if (domain > 1) :
         ax1.add_feature(USCOUNTIES, 
                         linewidths=0.5,
-                        edgecolor  = 'black',
+                        edgecolor  = Mines_Blue,
                         facecolor='none')
+	
+    rain_norm = mpl.colors.BoundaryNorm(boundaries = snow_levels_full, 
+										ncolors    = 15)
 
-    ax1.set_title(valid_time + "  (" + local_time+")")
+    filled_cm = snow_depth_map.isel(Time=t).plot.imshow(cmap              = precip_colormap,
+															alpha         = alpha2d,
+															ax            = ax1,  
+															interpolation = "bilinear",
+															extend        = 'max',
+															norm          = rain_norm,
+															levels        = snow_levels_full,
+															add_colorbar  = False)
 
-
-
-    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
-                                            ncolors    = 15)
-
-    filled_cm     = ax1.contourf(lon2d, 
-                                 lat2d, 
-                                 snow_depth_map.isel(Time=t),
-                                 transform = ccrs.PlateCarree(),
-                                 norm      = rain_norm,
-                                 cmap      = precip_colormap,
-                                 extend    = 'max',
-                                 levels    = precip_levels_in)
-    plt.colorbar(filled_cm, 
-                 label  = "Hourly Snow Depth (in)",
-                 shrink = 0.8,
-                 ticks=precip_levels_in,
-                 pad    = 0.012)
-
-
+    cb = plt.colorbar(filled_cm, 
+					  label  = "Hourly Snow Depth (in)",
+					  shrink = colorbar_shrink, 
+					  pad    = colorbar_pad,
+					  ticks  = snow_levels_full)  
 
     # plt.show()
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
-        
+    ax1.set_title(valid_time + "  (" + local_time+")")
+
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
-                              edgecolor = 'black', 
-                              facecolor = "black",
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
     
@@ -772,7 +965,7 @@ def plot_time_series_maps_func(t):
 
     fig = plt.figure(figsize=figure_domain_size)
 
-    fig.suptitle(model_run_label)
+    fig.suptitle(model_run_label,fontsize="x-large")
 
     ax1 = fig.add_subplot(1,  # nrows
                           1,  # ncols 
@@ -781,23 +974,24 @@ def plot_time_series_maps_func(t):
 
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
+    ax1.set_frame_on(False)
 
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.RIVERS, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.BORDERS, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.COASTLINE, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
 
     ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
@@ -805,41 +999,32 @@ def plot_time_series_maps_func(t):
                                                  '50m',
                                                  linewidths = 0.75,
                                                  facecolor  = 'none',
-                                                 edgecolor  = 'black'))
-
+                                                 edgecolor  = Mines_Blue))
     if (domain > 1) :
         ax1.add_feature(USCOUNTIES, 
                         linewidths=0.5,
-                        edgecolor  = 'black',
+                        edgecolor  = Mines_Blue,
                         facecolor='none')
 
+    filled_cm =  dbz_maps.isel(Time=t).plot.imshow(cmap          = cmap_radar,
+												   alpha         = alpha2d,
+												   norm          = norm_radar,
+												   levels        = stormy_dbz_values,
+												   add_colorbar  = False)
+
+    cb = plt.colorbar(filled_cm, 
+					  label  = "Reflectivity (dbZ)",
+					  shrink = colorbar_shrink, 
+					  pad    = colorbar_pad)
+    cb.outline.set_color(Mines_Blue)
+   
     ax1.set_title(valid_time + "  (" + local_time+")")
-
-
-
-    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
-                                            ncolors    = 15)
-
-    filled_cm = ax1.pcolormesh(lon2d, 
-                              lat2d, 
-                              dbz_maps.isel(Time=t),
-                              transform = ccrs.PlateCarree(),
-                              norm      = norm_radar, 
-                              cmap      = cmap_radar)
-
-    color_bar = plt.colorbar(filled_cm, 
-                 label  = "Reflectivity (dbZ)",
-                 shrink = 0.8,
-                 pad    = 0.012)
-
-    
-    
          
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
-                              edgecolor = 'black', 
-                              facecolor = "black",
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
                               transform = ax1.transAxes)
 
 
@@ -879,7 +1064,7 @@ def plot_time_series_maps_func(t):
 
     fig = plt.figure(figsize=figure_domain_size)
 
-    fig.suptitle(model_run_label)
+    fig.suptitle(model_run_label,fontsize="x-large")
 
     ax1 = fig.add_subplot(1,  # nrows
                           1,  # ncols 
@@ -888,23 +1073,23 @@ def plot_time_series_maps_func(t):
 
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
-
+    ax1.set_frame_on(False)
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.RIVERS, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.BORDERS, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.COASTLINE, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
 
     ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
@@ -912,47 +1097,37 @@ def plot_time_series_maps_func(t):
                                                  '50m',
                                                  linewidths = 0.75,
                                                  facecolor  = 'none',
-                                                 edgecolor  = 'black'))
+                                                 edgecolor  = Mines_Blue))
 
     if (domain > 1) :
         ax1.add_feature(USCOUNTIES, 
                         linewidths=0.5,
-                        edgecolor  = 'black',
+                        edgecolor  = Mines_Blue,
                         facecolor='none')
 
-    ax1.set_title(valid_time + "  (" + local_time+")")
+    filled_cm = pblh_maps.isel(Time=t).plot.imshow(cmap          = mpl.cm.rainbow,
+												   alpha         = alpha2d,
+												   interpolation = "bilinear",
+												   vmin          = pbl_height_levels.min(),
+												   vmax          = pbl_height_levels.max(),
+												   add_colorbar  = False)
 
-
-
-
-    filled_cm     = ax1.contourf(lon2d, 
-                                 lat2d, 
-                                 pblh_maps.isel(Time=t),
-                                 transform = ccrs.PlateCarree(),
-                                 levels    = pbl_height_levels,
-                                 cmap      = mpl.cm.rainbow,
-                                 extend    = 'max')
-    plt.colorbar(filled_cm, 
-                 label  = "PBL Height (m)",
-                 shrink = 0.8,
-                 #ticks = stormy_dbz_values,
-                 pad    = 0.012)
-
-
+    cb = plt.colorbar(filled_cm, 
+				 label  = "PBL Height (m)",
+				 shrink = colorbar_shrink, 
+				 pad    = colorbar_pad)
+    cb.outline.set_color(Mines_Blue)
    
+    ax1.set_title(valid_time + "  (" + local_time+")")
          
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
-                              edgecolor = 'black', 
-                              facecolor = "black",
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
                               transform = ax1.transAxes)
 
-
-
     ax1.add_patch(rect1)
-
-
 
     # plt.show()
     plt.tight_layout()
@@ -972,7 +1147,7 @@ def plot_time_series_maps_func(t):
 
 # ### PNG to Animated GIF
 
-# In[3]:
+# In[ ]:
 
 
 # for v_name in ("DBZ", "PBL", "RAIN", "SFCT", "DEWP",  "SNOWH", "WIND", "WEASD"):   
@@ -1004,7 +1179,7 @@ def png_to_gif_func(v_name):
 
 # ## File Organization
 
-# In[4]:
+# In[ ]:
 
 
 ####################################################
@@ -1077,7 +1252,7 @@ os.chdir(WRF_EXE)
 
 # ## Time Control
 
-# In[5]:
+# In[ ]:
 
 
 ####################################################
@@ -1127,153 +1302,12 @@ tzabbr = pytz.timezone(tz).localize(model_start_datetime)
 ####################################################
 
 
-# In[6]:
-
-
-###################################################
-#
-# NWS Rainfall Color Table.
-#
-
-nws_precip_colors = [
-    "#04e9e7",  # 0.01 - 0.10 inches
-    "#019ff4",  # 0.10 - 0.25 inches
-    "#0300f4",  # 0.25 - 0.50 inches
-    "#02fd02",  # 0.50 - 0.75 inches
-    "#01c501",  # 0.75 - 1.00 inches
-    "#008e00",  # 1.00 - 1.50 inches
-    "#fdf802",  # 1.50 - 2.00 inches
-    "#e5bc00",  # 2.00 - 2.50 inches
-    "#fd9500",  # 2.50 - 3.00 inches
-    "#fd0000",  # 3.00 - 4.00 inches
-    "#d40000",  # 4.00 - 5.00 inches
-    "#bc0000",  # 5.00 - 6.00 inches
-    "#f800fd",  # 6.00 - 8.00 inches
-    "#9854c6",  # 8.00 - 10.00 inches
-    "#fdfdfd"]  # 10.00+
-
-precip_colormap = mpl.colors.ListedColormap(colors = nws_precip_colors)
-
-precip_levels_in = [   0.01,   0.10,  0.25,   0.50, 
-                       0.75,   1.00,  1.50,   2.00, 
-                       2.50,   3.00,  4.00,   5.00,
-                       6.00,   8.00, 10.00,  20.00] # in Inches!!!
-
-precip_levels_mm = [  0.25,   2.50,   5.00,  10.00, 
-                     20.00,  25.00,  40.00,  50.00, 
-                     60.00,  75.00, 100.00, 125.00,
-                    150.00, 200.00, 250.00, 500.00] # in mm
-
-#
-###################################################
-
-
-# In[7]:
-
-
-###################################################
-#
-# BOM Temperature Color Table.
-#
-
-bom_temp_colors = ['#CFEAFD',
-                   '#B8CCE3',
-                   '#8D99BF',
-                   '#8D97C2',
-                   '#835BA1',
-                   '#752078',
-                   '#0F1D53',
-                   '#172974',
-                   '#28368E',
-                   '#2B4999',
-                   '#2F5CA3',
-                   '#3C75B0',
-                   '#478DBC',
-                   '#51A6C2',
-                   '#61B2C1',
-                   '#7CC7C1',
-                   '#91CBBD',
-                   '#A6D9A8',
-                   '#CDE9B7',
-                   '#E0F0CA',
-                   '#F0F8DE',
-                   '#F6FBD8',
-                   '#FCFED1',
-                   '#FCFABD',
-                   '#FAEDAA',
-                   '#FAE495',
-                   '#F6DA85',
-                   '#F5C671',
-                   '#F1B460',
-                   '#EDA255',
-                   '#EF914D',
-                   '#EE7444',
-                   '#E95B3C',
-                   '#DF4431',
-                   '#AF2B2F',
-                   '#C1322D',
-                   '#B02C2F',
-                   '#93232D',
-                   '#6A1721',
-                   '#450B17',
-                   '#17020A',
-                   '#441293',
-                   '#BE34CB',
-                   '#FFFFFF']
- 
-temperature_colormap = mpl.colors.ListedColormap(colors = bom_temp_colors)
-
-temperature_levels_degC = np.linspace(-32,54,44) # in degC
-temperature_levels_degF = temperature_levels_degC * 9./5. + 32.
-
-dewpoint_levels_degF = np.linspace(30,70,41) # in DegF
-
-
-#
-###################################################
-
-
-# In[8]:
-
-
-np.linspace(30,70,41) 
-
-
-# In[9]:
-
-
-####################################################
-####################################################
-####################################################
-#
-# MetPy Color Tables
-#
-
-nws_dbz_colors = colortables.get_colortable("NWSReflectivity")
-nws_rainbow    = colortables.get_colortable("ir_rgbv")
-
-## radar colormap
-
-norm_radar, cmap_radar = colortables.get_with_steps("NWSStormClearReflectivity", 
-                                        -20, 
-                                        0.5)
-
-
-
-
-
-clearsky_dbz_values = np.arange(-28, 28.1, 2)
-stormy_dbz_values   = np.arange(  5, 75.1, 5)
-
-#
-####################################################
-####################################################
-####################################################
-
-
 # ## Crack WRF Files
+# 
+# 
+# 
 
-# In[10]:
+# In[ ]:
 
 
 ####################################################
@@ -1321,6 +1355,64 @@ for domain in range(1,max_domains+1):
     print(wrf_file)
     
     ncf = nc4.Dataset(filename = wrf_file)
+    ds  = xr.open_dataset(filename_or_obj = wrf_file)
+    
+    ##########################################################
+    # 
+    # Pulling at the CRS Proj-4 fields.  
+    #
+
+    cart_proj = wrf.get_cartopy(wrfin = ncf)
+
+
+    lat2d = wrf.getvar(wrfin = ncf, varname="lat", timeidx=0)
+    lon2d = wrf.getvar(wrfin = ncf, varname="lon", timeidx=0)
+
+    wrf_proj = pyproj.Proj(proj  =                             'lcc',
+                           lat_1 =     np.round(ds.TRUELAT1*100)/100, 
+                           lat_2 =     np.round(ds.TRUELAT2*100)/100, 
+                           lat_0 = np.round(ds.MOAD_CEN_LAT*100)/100,
+                           lon_0 =                      ds.STAND_LON,
+                           a     =    wrf.Constants.WRF_EARTH_RADIUS,
+                           b     =    wrf.Constants.WRF_EARTH_RADIUS)
+
+    LambertConformal_Projection = xr.DataArray(data   = int(0),
+                                               attrs  = dict(grid_mapping_name              = "lambert_conformal_conic",
+                                                             latitude_of_projection_origin  = np.round(ds.MOAD_CEN_LAT*100)/100,
+                                                             longitude_of_central_meridian  = ds.STAND_LON,
+                                                             standard_parallel              = np.round([ds.TRUELAT1*100,ds.TRUELAT2*100])/100,
+                                                             earth_radius                   = wrf.Constants.WRF_EARTH_RADIUS,
+                                                             _CoordinateTransformType       = "Projection",
+                                                             _CoordinateAxisTypes           = "GeoX GeoY"))
+
+    # Display the Proj-4 Information
+
+    print("-- Proj4 Settings --")
+
+    print(wrf_proj.to_proj4())
+
+    # Display the Proj-4 Information
+
+    eastings,northings=wrf_proj(lon2d,lat2d)
+
+    west_east = xr.DataArray(data   = eastings.mean(axis = 0),
+                             dims   = ["west_east"],
+                             coords = dict(west_east = eastings.mean(axis = 0)),
+                             attrs  = dict(standard_name       = "projection_x_coordinate",
+                                           description         = "Eastings",
+                                           units               = "m",
+                                           _CoordinateAxisType = "GeoX"))
+
+    south_north = xr.DataArray(data   = northings.mean(axis = 1),
+                               dims   = ["south_north"],
+                               coords = dict(south_north         = northings.mean(axis = 1)),
+                               attrs  = dict(standard_name       = "projection_y_coordinate",
+                                             description         = "Eastings",
+                                             units               = "m",
+                                             _CoordinateAxisType = "GeoY"))
+    #
+    ###########################################
+
     
     wrf_time_steps     = wrf.getvar(wrfin    =           ncf,
                                     varname  =       'times',
@@ -1344,37 +1436,22 @@ for domain in range(1,max_domains+1):
                                     varname  =          'RAINSH',
                                     timeidx  = wrf.ALL_TIMES)    
     
-    ##########################################################
-    # 
-    # Pulling at the CRS Proj-4 fields.  
-    #
-
-    cart_proj = wrf.get_cartopy(wrfin = ncf)
-
-    # Display the Proj-4 Information
-
-    print("-- Proj4 Settings --")
-    print("")
-    #display("cart_proj.proj4_params",cart_proj.proj4_params)
-
-    # Display the Flat Earth Orange Peel.  
-
-    print(cart_proj)
-
-    #
-    ##########################################################
 
     rain_maps          = rainc_maps.copy()
     rain_maps.values   = rainc_maps.values + rainnc_maps.values + rainsc_maps.values
     
     rain_maps.values         = rain_maps.values / 25.4
     rain_maps.attrs['units'] = 'in'
+    
+    rain_maps = rain_maps.assign_coords(coords = dict(south_north = south_north,
+                                                  west_east   =   west_east))
 
    
     hrly_rain_maps     = rain_maps.copy()
     hrly_rain_maps.values[1:,:,:] = hrly_rain_maps.values[1:,:,:] - hrly_rain_maps.values[0:-1,:,:]
     
-
+    hrly_rain_maps = hrly_rain_maps.assign_coords(coords = dict(south_north = south_north,
+                                                                west_east   =   west_east))
 
     
     #
@@ -1385,7 +1462,8 @@ for domain in range(1,max_domains+1):
                                     varname  =          'mdbz',
                                     timeidx  = wrf.ALL_TIMES)
     
-    
+    dbz_maps = dbz_maps.assign_coords(coords = dict(south_north = south_north,
+                                                                west_east   =   west_east))
     #
     # Helicity
     #
@@ -1393,7 +1471,9 @@ for domain in range(1,max_domains+1):
     #srh_maps           = wrf.getvar(wrfin    =           ncf,
     #                                varname  =          'srh',
     #                                timeidx  = wrf.ALL_TIMES)
-    
+    #    srh_maps = srh_maps.assign_coords(coords = dict(south_north = south_north,
+    #                                                           west_east   =   west_east))
+
     #
     # T2M
     # 
@@ -1404,6 +1484,8 @@ for domain in range(1,max_domains+1):
     
     t2m_maps.values         = (t2m_maps.values - 273.15) * 9./5. + 32.
     t2m_maps.attrs['units'] = 'degF'
+    t2m_maps = t2m_maps.assign_coords(coords = dict(south_north = south_north,
+                                                    west_east   =   west_east))
 
     #
     # TD2M
@@ -1415,9 +1497,8 @@ for domain in range(1,max_domains+1):
                                     units    =          'degF')
     
     td2m_maps.attrs['units'] = 'degF'
-
-
-
+    td2m_maps = td2m_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))
 
     #
     # U10 / V10 / M10
@@ -1435,17 +1516,27 @@ for domain in range(1,max_domains+1):
     v10_maps.values         = v10_maps.values * 1.9438444924406     
     u10_maps.attrs['units'] = 'kt'
     v10_maps.attrs['units'] = 'kt'
+    
+    u10_maps   = u10_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))
+    v10_maps   = v10_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))
 
     helic_maps         = wrf.getvar(wrfin    =           ncf,
                                     varname  =         'helicity',
                                     timeidx  = wrf.ALL_TIMES) 
+    helic_maps   = helic_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))
 
 
     m10_maps, d10_maps = wrf.getvar(wrfin    =           ncf,
                                     varname  = 'wspd_wdir10',
                                     timeidx  = wrf.ALL_TIMES, 
                                     units    =          'kt') 
-
+    m10_maps   = m10_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))
+    d10_maps   = d10_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))
     #
     # MSLP
     # 
@@ -1454,6 +1545,8 @@ for domain in range(1,max_domains+1):
                                     varname  =         'slp',
                                     timeidx  = wrf.ALL_TIMES, 
                                     units    =         'hPa')
+    mslp_maps   = mslp_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))
 
     
     #
@@ -1462,7 +1555,9 @@ for domain in range(1,max_domains+1):
 
     pblh_maps          = wrf.getvar(wrfin    =           ncf,
                                     varname  =        'PBLH',
-                                    timeidx  = wrf.ALL_TIMES)    
+                                    timeidx  = wrf.ALL_TIMES)
+    pblh_maps   = pblh_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))  
     #
     # Accumulated Snow Total
     # 
@@ -1473,29 +1568,46 @@ for domain in range(1,max_domains+1):
     
     snow_fall_maps.values         = snow_fall_maps.values / 25.4    
     snow_fall_maps.attrs['units'] = 'in'
+    
+    snow_fall_maps   = snow_fall_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))  
 
     hrly_snowfall_maps                = snow_fall_maps.copy()
     hrly_snowfall_maps.values[1:,:,:] = snow_fall_maps.values[1:,:,:] - snow_fall_maps.values[0:-1,:,:]
 
-
+    hrly_snowfall_maps   = hrly_snowfall_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))  
+    
     snow_depth_map     = wrf.getvar(wrfin    =           ncf,
                                     varname  =        'SNOWH',
                                     timeidx  = wrf.ALL_TIMES) 
     
-
     snow_depth_map.values         = snow_depth_map.values * 39.3701 
     snow_depth_map.attrs['units'] = 'in'
 
-
+    snow_depth_map   = snow_depth_map.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))  
    
     hrly_snowdepth_maps                = snow_depth_map.copy()
     hrly_snowdepth_maps.values[1:,:,:] = snow_depth_map.values[1:,:,:] - snow_depth_map.values[0:-1,:,:]
-    
+    hrly_snowdepth_maps   = hrly_snowdepth_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))  
+   
     #
     # Accumulated Snow Total
     # 
 
     lat2d, lon2d = wrf.latlon_coords(var = mslp_maps)
+    
+    
+    alpha_factor = 0.05
+
+    ny = lon2d.shape[0]
+    nx = lon2d.shape[1]      
+    alpha2d = np.sqrt(np.outer(np.abs(np.hanning(ny)),np.abs(np.hanning(nx))))
+    alpha2d = np.where(alpha2d>alpha_factor,alpha_factor,alpha2d)
+    alpha2d = alpha2d / alpha_factor
+
     
     # Extract Eastings and Northings at the grid's corners
 
@@ -1570,79 +1682,62 @@ for domain in range(1,max_domains+1):
 
     fig = plt.figure(figsize=figure_domain_size)
 
-    fig.suptitle(model_run_label)
-
-    ax1 = fig.add_subplot(1,  # nrows
-                          1,  # ncols 
-                          1,  # index of figure you're installing
-                          projection = cart_proj) # cartopy CRS Projection
+    fig.suptitle(model_run_label,fontsize="x-large")
+    
+    ax1 = fig.add_subplot(1, 1, 1, projection = cart_proj) # cartopy CRS Projection
 
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
+    ax1.set_frame_on(False)
 
-    
-    ax1.add_feature(cfeature.LAKES, 
-                    linewidths =     0.5, 
-                    edgecolor  = 'black',
-                    facecolor  =  'none')
-    ax1.add_feature(cfeature.RIVERS, 
-                    linewidths =     0.5, 
-                    edgecolor  = 'black',
-                    facecolor  =  'none')
-    ax1.add_feature(cfeature.BORDERS, 
-                    linewidths =     1.0, 
-                    edgecolor  = 'black',
-                    facecolor  =  'none')
-    ax1.add_feature(cfeature.COASTLINE, 
-                    linewidths =     1.0, 
-                    edgecolor  = 'black',
-                    facecolor  =  'none')
+    ax1.add_feature(cfeature.LAKES, linewidths =     0.5, edgecolor  = Mines_Blue,facecolor  =  'none')
+    ax1.add_feature(cfeature.RIVERS, linewidths =     0.5, edgecolor  = Mines_Blue, facecolor  =  'none')
+    ax1.add_feature(cfeature.BORDERS, linewidths =     1.0, edgecolor  = Mines_Blue, facecolor  =  'none')
+    ax1.add_feature(cfeature.COASTLINE, linewidths =     1.0, edgecolor  = Mines_Blue, facecolor  =  'none')
 
     ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
                                                  'admin_1_states_provinces_lines',
                                                  '50m',
                                                  linewidths = 0.75,
                                                  facecolor  = 'none',
-                                                 edgecolor  = 'black'))
+                                                 edgecolor  = Mines_Blue))
+
 
     if (domain > 1) :
         ax1.add_feature(USCOUNTIES, 
                         linewidths=0.5,
-                        edgecolor  = 'black',
+                        edgecolor  = Mines_Blue,
                         facecolor='none')
             
+    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_hrly, 
+											ncolors    = 15)
+	
+    filled_cm = rain_maps[-1,:,:].plot.imshow(cmap          = precip_colormap,
+											  alpha         = alpha2d,
+											  ax            = ax1,  
+											  interpolation = "bilinear",
+												   extend        = 'max',
+												   norm          = rain_norm,
+												   levels        = precip_levels_hrly,
+												  add_colorbar  = False)
+
+    cb = plt.colorbar(filled_cm, 
+				 label  = "36-hr Total Precip (in)",
+				 shrink = colorbar_shrink, 
+				 pad    = colorbar_pad,
+				 ticks  = precip_levels_hrly)
+    cb.outline.set_color(Mines_Blue)
 
 
+    contour_plot2 = ax1.contour(lon2d, 
+								 lat2d, 
+								 rain_maps[-1,:,:],
+								 transform = ccrs.PlateCarree(),
+								 colors    =            "cyan",
+								 linewidths=1,
+								 levels    = np.array([0.002]))    
 
     ax1.set_title(valid_time0 + " - " + valid_timef + "  (" + local_time0 + " - " + local_timef+")")
-
-    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
-                                            ncolors    = 15)
-
-    filled_cm     = ax1.contourf(lon2d, 
-                                 lat2d, 
-                                 rain_maps[-1,:,:],
-                                 transform = ccrs.PlateCarree(),
-                                 norm      = rain_norm,
-                                 cmap      = precip_colormap,
-                                 extend    = 'max',
-                                 levels    = precip_levels_in)
-    plt.colorbar(filled_cm, 
-                 label  = "36-hr Total Precip (in)",
-                 shrink = 0.8,
-                 ticks = precip_levels_in,
-                 pad    = 0.012)
-
-    
-    contour_plot2 = ax1.contour(lon2d, 
-                                 lat2d, 
-                                 rain_maps[-1,:,:],
-                                 transform = ccrs.PlateCarree(),
-                                 colors    =            "cyan",
-                                 linewidths=1,
-                                 levels    = np.array([0.002]))    
-
-
 
     # plt.show()
     plt.tight_layout()
@@ -1672,9 +1767,9 @@ for domain in range(1,max_domains+1):
 
     print(fig_dir_name + file_name)
 
-    fig = plt.figure(figsize=figure_domain_size)
+    fig = plt.figure(figsize=figure_domain_size, facecolor="white")
 
-    fig.suptitle(model_run_label)
+    fig.suptitle(model_run_label,fontsize="x-large")
 
     ax1 = fig.add_subplot(1,  # nrows
                           1,  # ncols 
@@ -1683,23 +1778,24 @@ for domain in range(1,max_domains+1):
 
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
+    ax1.set_frame_on(False)
 
     
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.RIVERS, 
                     linewidths =     0.5, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.BORDERS, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
     ax1.add_feature(cfeature.COASTLINE, 
                     linewidths =     1.0, 
-                    edgecolor  = 'black',
+                    edgecolor  = Mines_Blue,
                     facecolor  =  'none')
 
     ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
@@ -1707,35 +1803,44 @@ for domain in range(1,max_domains+1):
                                                  '50m',
                                                  linewidths = 0.75,
                                                  facecolor  = 'none',
-                                                 edgecolor  = 'black'))
+                                                 edgecolor  = Mines_Blue))
 
     if (domain > 1) :
         ax1.add_feature(USCOUNTIES, 
                         linewidths=0.5,
-                        edgecolor  = 'black',
+                        edgecolor  = Mines_Blue,
                         facecolor  =  'none')   
-                        
+
+    rain_norm = mpl.colors.BoundaryNorm(boundaries = snow_levels_hrly, 
+										ncolors    = 15)
+	
+    filled_cm = snow_fall_maps[-1,:,:].plot.imshow(cmap          = precip_colormap,
+												   alpha         = alpha2d,
+												   ax            = ax1,  
+												   interpolation = "bilinear",
+												   extend        = 'max',
+												   norm          = rain_norm,
+												   levels        = snow_levels_hrly,
+												   add_colorbar  = False)
+
+    cb = plt.colorbar(filled_cm, 
+				 label  = "36-hr Total Snowfall Liquid Water Equivalent (in)",
+				 shrink = colorbar_shrink, 
+				 pad    = colorbar_pad,
+				 ticks  = snow_levels_hrly)
+    cb.outline.set_color(Mines_Blue)
+
+    contour_plot2 = ax1.contour(lon2d, 
+								 lat2d, 
+								 rain_maps[-1,:,:],
+								 transform = ccrs.PlateCarree(),
+								 colors    =            "cyan",
+								 linewidths=1,
+								 levels    = np.array([0.002]))    
+
     ax1.set_title(valid_time0 + " - " + valid_timef + "  (" + local_time0 + " - " + local_timef+")")
 
-    rain_norm = mpl.colors.BoundaryNorm(boundaries = precip_levels_in, 
-                                            ncolors    = 15)
-
-    filled_cm     = ax1.contourf(lon2d, 
-                                 lat2d, 
-                                 snow_fall_maps[-1,:,:],
-                                 transform = ccrs.PlateCarree(),
-                                 norm      = rain_norm,
-                                 cmap      = precip_colormap,
-                                 extend    = 'max',
-                                 levels    = precip_levels_in)
-    plt.colorbar(filled_cm, 
-                 label  = "36-hr Total Snowfall Liquid-Water Equivalent (in)",
-                 shrink = 0.8,
-                 ticks = precip_levels_in,
-
-                 pad    = 0.012)
-
-
+    
 
 
     # plt.show()
@@ -1756,7 +1861,7 @@ for domain in range(1,max_domains+1):
     #
     ####################################################
     ####################################################
-            
+
 
 print("done")
 #
@@ -1767,7 +1872,7 @@ print("done")
 
 # ## Ending Script
 
-# In[11]:
+# In[ ]:
 
 
 ####################################################
@@ -1783,45 +1888,4 @@ print("End Sounding Plotting Script")
 ####################################################
 ####################################################
 ####################################################
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
 

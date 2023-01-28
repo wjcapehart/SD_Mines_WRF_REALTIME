@@ -65,6 +65,32 @@ import matplotlib as mpl
 ####################################################
 
 
+# In[ ]:
+
+
+####################################################
+####################################################
+####################################################
+#
+# Mines Colors and Fonts
+#
+
+Mines_Blue = "#002554"
+
+
+plt.rcParams.update({'text.color'      : Mines_Blue,
+                     'axes.labelcolor' : Mines_Blue,
+					 'axes.edgecolor'  :Mines_Blue,
+					 'xtick.color'     : Mines_Blue,
+					 'ytick.color'    : Mines_Blue})
+
+
+#
+####################################################
+####################################################
+####################################################
+
+
 # ## File Organization
 
 # In[ ]:
@@ -467,7 +493,7 @@ for domain in range(chosen_domain,chosen_domain+1):
             
             skew.plot(sounding_df["pressure"], 
                       parcel_profile, 
-                      color = 'black', 
+                      color = Mines_Blue, 
                       linewidth = 0.5)
 
             # Mask barbs to be below 100 hPa only
@@ -480,7 +506,8 @@ for domain in range(chosen_domain,chosen_domain+1):
 
             skew.plot_barbs(sounding_df["pressure"][mask], 
                             sounding_df[  "u_wind"][mask], 
-                            sounding_df[  "v_wind"][mask])
+                            sounding_df[  "v_wind"][mask],
+						   color=Mines_Blue)
 
             skew.ax.set_ylim(1000, 100)
 
@@ -545,7 +572,6 @@ for domain in range(chosen_domain,chosen_domain+1):
                              markersize      =     30, 
                              markeredgewidth =      3)
                 
-                
             skew.ax.spines["right"].set_visible(False)
             skew.ax.spines[  "top"].set_color("white")
 
@@ -567,12 +593,12 @@ for domain in range(chosen_domain,chosen_domain+1):
             h = Hodograph(ax, component_range=40.)
 
             h.add_grid(increment=10)
+            ax.spines["right"].set_visible(False)
+            ax.spines[  "top"].set_visible(False)
+
 
             cmh = h.plot_colormapped(sounding_df["u_wind"][mask], sounding_df["v_wind"][mask], sounding_df[   "agl"][mask].to(units.km), cmap = "jet")
             cmh.set_clim(0, 10)
-
-            ax.spines["right"].set_visible(False)
-            ax.spines[  "top"].set_color("white")
 
             plt.colorbar(cmh, orientation = "horizontal", label       = 'Height (km AGL)')
 
@@ -590,16 +616,16 @@ for domain in range(chosen_domain,chosen_domain+1):
             rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
-                              edgecolor = 'black', 
-                              facecolor = "black",
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
                               transform = skew.ax.transAxes)
             skew.ax.add_patch(rect1)
             
             rect2 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
-                              edgecolor = 'black', 
-                              facecolor = "black",
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
                               transform = ax.transAxes)
             ax.add_patch(rect2)
 
@@ -613,29 +639,29 @@ for domain in range(chosen_domain,chosen_domain+1):
             #            
             
             plt.figtext( 0.68, 0.60, 'LCL Height:')
-            plt.figtext( 0.80, 0.60, '{} m'.format(lcl_hgt.magnitude))
+            plt.figtext( 0.80, 0.60, '{0:.1f} m'.format(lcl_hgt.magnitude))
             plt.figtext( 0.68, 0.58, 'LFC Height:')
-            plt.figtext( 0.80, 0.58, '{} m'.format(lfc_hgt.magnitude))
+            plt.figtext( 0.80, 0.58, '{0:.1f} m'.format(lfc_hgt.magnitude))
             plt.figtext( 0.68, 0.56, 'MLLR:')
-            plt.figtext( 0.80, 0.56, '{} K'.format(lr_700_500.magnitude))
+            plt.figtext( 0.80, 0.56, '{0:.1f} K'.format(lr_700_500.magnitude))
             plt.figtext( 0.68, 0.54, 'SBCAPE:')
-            plt.figtext( 0.80, 0.54, '{} J/kg'.format(sbcape.magnitude))
+            plt.figtext( 0.80, 0.54, '{0:.1f} J/kg'.format(sbcape.magnitude))
             plt.figtext( 0.68, 0.52, 'SBCIN:')
-            plt.figtext( 0.80, 0.52, '{} J/kg'.format(sbcin.magnitude))
+            plt.figtext( 0.80, 0.52, '{0:.1f} J/kg'.format(sbcin.magnitude))
             plt.figtext( 0.68, 0.50, 'MLCAPE:')
-            plt.figtext( 0.80, 0.50, '{} J/kg'.format(mlcape.magnitude))
+            plt.figtext( 0.80, 0.50, '{0:.1f} J/kg'.format(mlcape.magnitude))
             plt.figtext( 0.68, 0.48, 'MLCIN:')
-            plt.figtext( 0.80, 0.48, '{} J/kg'.format(mlcin.magnitude))
+            plt.figtext( 0.80, 0.48, '{0:.1f} J/kg'.format(mlcin.magnitude))
             plt.figtext( 0.68, 0.46, 'MUCAPE:')
-            plt.figtext( 0.80, 0.46, '{} J/kg'.format(mucape.magnitude))
+            plt.figtext( 0.80, 0.46, '{0:.1f} J/kg'.format(mucape.magnitude))
             plt.figtext( 0.68, 0.44, 'Shear 0-1 km:')
-            plt.figtext( 0.80, 0.44, '{} m/s'.format(shear01.magnitude))
+            plt.figtext( 0.80, 0.44, '{0:.1f} m/s'.format(shear01.magnitude))
             plt.figtext( 0.68, 0.42, 'Shear 0-6 km:')
-            plt.figtext( 0.80, 0.42, '{} m/s'.format(shear06.magnitude))
+            plt.figtext( 0.80, 0.42, '{0:.1f} m/s'.format(shear06.magnitude))
             plt.figtext( 0.68, 0.40, 'SRH 0-1 km:')
-            plt.figtext( 0.80, 0.40, '{} m\u00b2/s\u00b2'.format(srh_01.magnitude))
+            plt.figtext( 0.80, 0.40, '{0:.1f} m\u00b2/s\u00b2'.format(srh_01.magnitude))
             plt.figtext( 0.68, 0.38, 'SRH 0-3 km:')
-            plt.figtext( 0.80, 0.38, '{} m\u00b2/s\u00b2'.format(srh_03.magnitude))
+            plt.figtext( 0.80, 0.38, '{0:.1f} m\u00b2/s\u00b2'.format(srh_03.magnitude))
 
             #
             ###################################################           
