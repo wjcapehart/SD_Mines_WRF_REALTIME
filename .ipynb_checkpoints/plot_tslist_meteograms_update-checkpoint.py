@@ -75,6 +75,29 @@ def haversine(row):
 ####################################################
 ####################################################
 
+####################################################
+####################################################
+####################################################
+#
+# Mines Colors and Fonts
+#
+
+Mines_Blue = "#002554"
+
+
+plt.rcParams.update({'text.color'      : Mines_Blue,
+                     'axes.labelcolor' : Mines_Blue,
+					 'axes.edgecolor'  :Mines_Blue,
+					 'xtick.color'     : Mines_Blue,
+					 'ytick.color'    : Mines_Blue})
+
+
+#
+####################################################
+####################################################
+####################################################
+
+
 
 # In[ ]:
 
@@ -231,60 +254,65 @@ airport_database = airpt.load('ICAO')
 #
 # Pull METARS from UNIDATA NOAAPORT Experimental Site
 #
-
 # https://thredds-test.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_20210924_0000.txt
 
-try:
-    
-    cat = siphcat.TDSCatalog('https://thredds-test.unidata.ucar.edu/thredds/catalog/noaaport/text/metar/catalog.xml')
-except HTTPSConnectionPool:
+
+try: 
+    cat = siphcat.TDSCatalog('https://thredds-dev.unidata.ucar.edu/thredds/catalog/noaaport/text/metar/catalog.xml')
+
+    first = True
+    for datehour in siphon_pulls_YYYYMMDD_HH:
+
+
+
+        metar_url  = "https://thredds-dev.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_"+datehour+".txt"
+        metar_file = METAR_DIR + "./metar_"+datehour+".txt"
+
+
+        path_to_file = pathlib.Path(metar_file)
+
+        print(path_to_file, path_to_file.is_file())
+
+
+
+        if (not path_to_file.is_file()) :
+
+            print("downloading "+ metar_url)
+            with urllib.request.urlopen(metar_url) as response, open(metar_file, 'wb') as out_file:
+                shutil.copyfileobj(response, out_file)
+        print("cracking "+metar_file)
+        try:
+            indata = mpio.metar.parse_metar_file(metar_file)
+            if first:
+                first = False
+                metar_dataframe = indata
+            else:
+                metar_dataframe = pd.concat([metar_dataframe,indata])
+                metar_dataframe = metar_dataframe.drop_duplicates()
+        except ValueError:
+            print("BALLS! Parse Error")
+            error_404 = True
+            pass
+
+
+
+
+    metar_station_locs = metar_dataframe[["station_id","latitude","longitude"]].drop_duplicates()
+
+except:
     print("Balls - we cannot access the thredds server")
-
-
-
-first = True
-for datehour in siphon_pulls_YYYYMMDD_HH:
-    
-
-    
-    metar_url  = "https://thredds-test.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_"+datehour+".txt"
-    metar_file = METAR_DIR + "./metar_"+datehour+".txt"
-    
-    
-    path_to_file = pathlib.Path(metar_file)
-    
-    print(path_to_file, path_to_file.is_file())
-
-    
-    
-    if (not path_to_file.is_file()) :
-
-        print("downloading "+ metar_url)
-        with urllib.request.urlopen(metar_url) as response, open(metar_file, 'wb') as out_file:
-            shutil.copyfileobj(response, out_file)
-    print("cracking "+metar_file)
-    try:
-        indata = mpio.metar.parse_metar_file(metar_file)
-        if first:
-            first = False
-            metar_dataframe = indata
-        else:
-            metar_dataframe = pd.concat([metar_dataframe,indata])
-            metar_dataframe = metar_dataframe.drop_duplicates()
-    except ValueError:
-        print("BALLS! Parse Error")
-        error_404 = True
-        pass
-
-
-
-
-metar_station_locs = metar_dataframe[["station_id","latitude","longitude"]].drop_duplicates()
+    metar_dataframe = pd.DataFrame()
 
 #
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
 
 
 # ## Rotate through Available Files
@@ -462,6 +490,10 @@ for station in available_time_series_list.iterrows():
     #
 
     wrf_cum_prec      = wrf_timeseries["stratiform_precipitation_amount"].values + wrf_timeseries["convective_precipitation_amount"].values
+    if (np.sum(wrf_cum_prec)/25.4 < 0.005):
+        print("No Significant Rainfall")
+        wrf_cum_prec.values[:] = 0.000
+    
     wrf_cum_hrly_prec = wrf_cum_prec[on_the_hour]
     wrf_hrly_prec     = wrf_cum_hrly_prec.copy()
 
@@ -568,7 +600,7 @@ for station in available_time_series_list.iterrows():
     ax01.set_yticklabels(["WRF","OBS"])
 
     
-    ax01.barbs( wrf_time_hrly, 1/3.,  u_wrf, v_wrf )
+    ax01.barbs( wrf_time_hrly, 1/3.,  u_wrf, v_wrf, color=Mines_Blue )
 
     try:
         ax01.barbs( ncss_times,    2/3.,  u_obs, v_obs, color="blue")
@@ -596,7 +628,8 @@ for station in available_time_series_list.iterrows():
     ax[1,0].legend(["Solar↓",
                     "LongWave↓",
                     "Heat↑",
-                    "Evap↑"])
+                    "Evap↑"],
+                  frameon=False)
     ax[1,0].set_ylabel("Surface Energy Flux (W/m²)")
 
     ax[1,0].axhline(y=0,color="grey", linewidth=0.5)
@@ -646,6 +679,17 @@ for station in available_time_series_list.iterrows():
     ax[0,1].xaxis.set_minor_locator(xminor)
     ax[0,1].xaxis_date()
 
+    ax[0,0].spines["top"].set_visible(False)
+    ax[1,0].spines["top"].set_visible(False)
+    ax[0,1].spines["top"].set_visible(False)
+    ax[1,1].spines["top"].set_visible(False)
+    ax11.spines[   "top"].set_visible(False)
+    ax01.spines[   "top"].set_visible(False)
+
+    ax[0,0].spines["right"].set_visible(False)
+    ax[1,0].spines["right"].set_visible(False)
+    ax[0,1].spines["right"].set_visible(False)
+    ax01.spines[   "right"].set_visible(False)
 
     
     plt.tight_layout()
@@ -692,6 +736,12 @@ print("Ploting Meteogram Script complete.")
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
