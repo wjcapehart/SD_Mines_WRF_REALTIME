@@ -377,11 +377,6 @@ def plot_time_series_maps_func(t):
 					  ticks    = bom_colorbar_ticks,
 					  format   = '%d')
 	
-    ticklabs = cb.ax.get_yticklabels()
-	
-    cb.ax.set_yticklabels(labels = ticklabs,
-						  ha     =  'right')
-    cb.ax.yaxis.set_tick_params(pad = 20)
     cb.outline.set_color(Mines_Blue)
 
     gap = 10
