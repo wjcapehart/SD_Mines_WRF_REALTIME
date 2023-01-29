@@ -67,7 +67,7 @@ function load_figures() {
     .then(response => response.text())
     .then(json => {
        formatted_date_string = JSON.stringify(json).replace(/"/g, '').replace(/\\n/g, '')
-       document.getElementById('WRF_RUN_HEADER_TEXT').innerHTML = "Western South Dakota Real-Time WRF for<br>" + formatted_date_string;
+       document.getElementById('WRF_RUN_HEADER_TEXT').innerHTML = "<font color='#002554'>Western South Dakota Real-Time WRF for<br>" + formatted_date_string + "</font>";
      });
 
    fetch("http://kyrill.ias.sdsmt.edu/WRF/WEB_IMAGES/current_run.txt")
@@ -122,17 +122,17 @@ function load_figures() {
       <hr width="100%" color='#B3A369'>
 
 
-<H1 id="WRF_RUN_HEADER_TEXT"  align="center"></H1>
+      <H1 color="#002554" id="WRF_RUN_HEADER_TEXT" align="center"></H1>
 
 
 
 
 <table width="100%">
   <tr>
-	  <td><center><font size="+2"><b>MSLP/10-m Wind/2-m Temp</b></font><br><img id="HRLY_SFCT" style="display:block;"  width="100%"></center><!--hr color="#B3A369" width="80%"  align="center" style="display:block;"/--></td>
+	  <td><center><font  color="#002554" size="+2"><b>MSLP/10-m Wind/2-m Temp</b></font><br><img id="HRLY_SFCT" style="display:block;"  width="100%"></center><!--hr color="#B3A369" width="80%"  align="center" style="display:block;"/--></td>
 
 
-	  <td><center><font size="+2"><b>Hourly Rainfall</b></font><br><img id="HRLY_RAIN" style="display:block;"  width="100%"></center><!--hr color="#B3A369" width="80%"  align="center" style="display:block;"/ --></td>
+	  <td><center><font  color="#002554" size="+2"><b>Hourly Rainfall</b></font><br><img id="HRLY_RAIN" style="display:block;"  width="100%"></center><!--hr color="#B3A369" width="80%"  align="center" style="display:block;"/ --></td>
 
   </tr>
 

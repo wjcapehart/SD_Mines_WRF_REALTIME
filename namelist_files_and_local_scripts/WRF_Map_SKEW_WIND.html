@@ -68,7 +68,7 @@ function load_figures() {
     .then(response => response.text())
     .then(json => {
        formatted_date_string = JSON.stringify(json).replace(/"/g, '').replace(/\\n/g, '')
-       document.getElementById('WRF_RUN_HEADER_TEXT').innerHTML = "Western South Dakota Real-Time WRF for<br>" + formatted_date_string;
+       document.getElementById('WRF_RUN_HEADER_TEXT').innerHTML = "<font color='#002554'>Western South Dakota Real-Time WRF for<br>" + formatted_date_string + "</font>";
      });
 
    fetch("http://kyrill.ias.sdsmt.edu/WRF/WEB_IMAGES/current_run.txt")
@@ -123,7 +123,7 @@ function load_figures() {
       <hr width="100%" color='#B3A369'>
 
 
-<H1 id="WRF_RUN_HEADER_TEXT"  align="center"></H1>
+      <H1 color="#002554" id="WRF_RUN_HEADER_TEXT" align="center"></H1>
 
 <!--- form>
 

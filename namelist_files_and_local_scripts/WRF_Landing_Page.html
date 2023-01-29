@@ -10,9 +10,10 @@
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,300" rel="stylesheet" type="text/css">
 
 <body style="font-family: 'Open Sans', sans-serif;"  lang="en" color="#002554" onload="load_figures();">
+<font color="#002554">
 <img src="http://kyrill.ias.sdsmt.edu/wjc/web_graphics/AES_WRF_Masthead.png" alt="SD Mines WRF Masthead" width="100%">
 
-<H1 id="WRF_RUN_HEADER_TEXT" align="center"></H1>
+<H1 color="#002554" id="WRF_RUN_HEADER_TEXT" align="center"></H1>
 
 
 
@@ -37,7 +38,7 @@ function load_figures() {
     .then(response => response.text())
     .then(json => {
        formatted_date_string = JSON.stringify(json).replace(/"/g, '').replace(/\\n/g, '')
-       document.getElementById('WRF_RUN_HEADER_TEXT').innerHTML = "Western South Dakota Real-Time WRF for<br>" + formatted_date_string;
+       document.getElementById('WRF_RUN_HEADER_TEXT').innerHTML = "<font color='#002554'>Western South Dakota Real-Time WRF for<br>" + formatted_date_string + "</font>";
      });
 
    fetch("http://kyrill.ias.sdsmt.edu/WRF/WEB_IMAGES/current_run.txt")
@@ -154,29 +155,29 @@ function load_figures() {
 <hr color="#B3A369" width="80%"  align="center" style="display:block;"/>
 <table width="100%">
   <tr>
-    <td><center><font size="+2"><b>MSLP/10-m Wind/2-m Temp</b></font><br><img id="HRLY_SFCT" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
+    <td><center><font color="#002554" size="+2"><b>MSLP/10-m Wind/2-m Temp</b></font><br><img id="HRLY_SFCT" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
 
 
-    <td><center><font size="+2"><b>10-m Windspeed</b></font><br><img id="HRLY_WIND" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
-
-  </tr>
-  <tr>
-    <td><center><font size="+2"><b>Hourly Precip</b></font><br><img id="HRLY_RAIN" style="display:block;" width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
-
-    <td><center><font size="+2"><b>36-h Rainfall</b></font><br><img id="TOTAL_RAINFALL" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
-
+    <td><center><font color="#002554" size="+2"><b>10-m Windspeed</b></font><br><img id="HRLY_WIND" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
 
   </tr>
   <tr>
-    <td><center><font size="+2"><b>Est Hourly Snowfall</b></font><br><img id="HRLY_WEASD" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
+    <td><center><font color="#002554" size="+2"><b>Hourly Precip</b></font><br><img id="HRLY_RAIN" style="display:block;" width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
+
+    <td><center><font color="#002554" size="+2"><b>36-h Rainfall</b></font><br><img id="TOTAL_RAINFALL" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
 
 
-    <td><center><font size="+2"><b>Total Est 36-hrly Snowfall</b></font><br><img id="TOTAL_SNOWFALL" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
   </tr>
   <tr>
-    <td><center><font size="+2"><b>Est Max Radar Reflectivity</b></font><br><img id="HRLY_DBZ" style="display:block;"  width="100%"></center></td>
+    <td><center><font color="#002554" size="+2"><b>Est Hourly Snowfall</b></font><br><img id="HRLY_WEASD" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
 
-    <td><center><font size="+2"><b>WRF/NOAH-Estimated* Hourly Snow Depth</b></font><br><img id="HRLY_SNOW" style="display:block;"  width="100%"></center></b><br><center>*Not for School Cancellation Wishcasting</center><!--hr color="#B3A369" width="80%"  align="center" style="display:block;"/--></td>
+
+    <td><center><font color='#002554' size="+2"><b>Total Est 36-hrly Snowfall</b></font><br><img id="TOTAL_SNOWFALL" style="display:block;"  width="100%"></center><hr color="#B3A369" width="80%"  align="center" style="display:block;"/></td>
+  </tr>
+  <tr>
+    <td><center><font color='#002554' size="+2"><b>Est Max Radar Reflectivity</b></font><br><img id="HRLY_DBZ" style="display:block;"  width="100%"></center><br><br></td>
+
+    <td><center><font color='#002554' size="+2"><b>WRF/NOAH-Estimated* Hourly Snow Depth*</b></font><br><img id="HRLY_SNOW" style="display:block;"  width="100%"></center></b><br><center><font color='#002554'>*Not for School Cancellation Wishcasting</font></center><!--hr color="#B3A369" width="80%"  align="center" style="display:block;"/--></td>
 
 
   </tr>
@@ -231,10 +232,10 @@ function load_figures() {
 
 <table width="100%">
   <tr>
-    <td><center><font size="+2"><b>Meteogram</b></font><br><img id="METEOGRAM" style="display:block;"  width="100%"></center></td>
+    <td><center><font color="#002554" size="+2"><b>Meteogram</b></font><br><img id="METEOGRAM" style="display:block;"  width="100%"></center></td>
 
 
-    <td><center><font size="+2"><b>Sounding</b></font><br><img id="HRLY_SKEWT" style="display:block;"  width="100%"></center></td>
+    <td><center><font color="#002554" size="+2"><b>Sounding</b></font><br><img id="HRLY_SKEWT" style="display:block;"  width="100%"></center></td>
 
   </tr>
 </table>
@@ -243,7 +244,7 @@ function load_figures() {
 
 
 <hr color="#B3A369" width="80%"  align="center" style="display:block;"/>
-<H2>Links to Downloads</H2>
+<H2><font color="#002554">Links to Downloads</font></H2>
 
 <a href="http://kyrill.ias.sdsmt.edu:8080/thredds/catalog/SDSMT_WRF/current_complete_run/catalog.html">Link to SD Mines THREDDS Data Services</a><br>
 <a href="http://kyrill.ias.sdsmt.edu/WRF/GRIB/wrf_out_d01_current.grib2">wrf_out_d01_current.grib2</a><br>
@@ -254,7 +255,7 @@ function load_figures() {
 <hr color="#B3A369" width="80%"  align="center" style="display:block;"/>
 
 
-
+</font>
 </body>
 
 
