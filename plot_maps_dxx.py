@@ -86,11 +86,13 @@ colorbar_shrink = 0.8
 
 Mines_Blue = "#002554"
 
+#plt.rcParams['font.family'] = 'OpenSans'
 
 plt.rcParams.update({'text.color'      : Mines_Blue,
                      'axes.labelcolor' : Mines_Blue,
+					 'axes.edgecolor'  : Mines_Blue,
 					 'xtick.color'     : Mines_Blue,
-					 'ytick.color'    : Mines_Blue})
+					 'ytick.color'     : Mines_Blue})
 
 
 #
@@ -270,8 +272,13 @@ dewpoint_levels_degF = np.linspace(30,70,41) # in DegF
 
 def plot_time_series_maps_func(t):
 	
-    Mines_Blue = "#002554"
 	
+    import matplotlib.font_manager as font_manager
+
+
+    Mines_Blue = "#002554"
+
+
     plt.rcParams.update({'text.color'      : Mines_Blue,
                      'axes.labelcolor' : Mines_Blue,
 					 'xtick.color'     : Mines_Blue,
@@ -286,9 +293,25 @@ def plot_time_series_maps_func(t):
 
     valid_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").strftime("%Y-%m-%d %H %Z")
     local_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%Y-%m-%d %H %Z")
+    local_time_zone = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%Z")
+    dow = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%a")
 
+    
+    time_for_clock = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).time()
+
+    hour   = time_for_clock.hour
+    minute = time_for_clock.minute
+    second = time_for_clock.second
     percent_done = (1.0 * t) / (nt-1.)
+    
+    if ((hour >= 6) and (hour < 18)):
+        Clock_Color = Mines_Blue
+        Clock_BgndC = "white"           
+    else:
+        Clock_Color = "white"
+        Clock_BgndC = Mines_Blue               
 
+    
     model_run_label    = "Model Run " + wrf_skewt_time + "; WRF Domain " + str(domain).zfill(2)
 
     print(valid_time, "     -- " + model_run_label, " :: ", (percent_done*100) )
@@ -320,6 +343,9 @@ def plot_time_series_maps_func(t):
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
     ax1.set_frame_on(False)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
+
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
@@ -386,7 +412,21 @@ def plot_time_series_maps_func(t):
               wrf.to_np(v10_maps.isel(Time=t)[::gap,::gap]),
               transform = ccrs.PlateCarree(), 
               length=5)
-        
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
+
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
@@ -394,13 +434,62 @@ def plot_time_series_maps_func(t):
                               facecolor = Mines_Blue,
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
-    ax1.set_title(valid_time + "  (" + local_time+")")
     
-    # plt.show()
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.90)
+    #
+    # Walking Clock
+    #
+ 
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
 
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+
+
+
+    size_of_clock = 0.07
+
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
+    # plt.show()
     ax1.set_frame_on(False)
+    ax1.set_title(valid_time + "  (" + local_time+")")
 
     fig.savefig(fname       = fig_dir_name + file_name,
 				facecolor   =                  'white', 
@@ -434,6 +523,8 @@ def plot_time_series_maps_func(t):
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
     ax1.set_frame_on(False)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
@@ -485,6 +576,21 @@ def plot_time_series_maps_func(t):
 					  pad    = colorbar_pad)
     cb.outline.set_color(Mines_Blue)
         
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
+
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
@@ -492,22 +598,68 @@ def plot_time_series_maps_func(t):
                               facecolor = Mines_Blue,
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
-    ax1.set_frame_on(False)
+    
+    #
+    # Walking Clock
+    #
 
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
+
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+
+
+
+    size_of_clock = 0.07
+
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
+    # plt.show()
+    ax1.set_frame_on(False)
     ax1.set_title(valid_time + "  (" + local_time+")")
 
-    # plt.show()
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.90)
-    
-    ax1.set_frame_on(False)
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
 
-
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
-
-    plt.close('all')
+    plt.close('all')    
 
     #
     ####################################################
@@ -535,6 +687,8 @@ def plot_time_series_maps_func(t):
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
     ax1.set_frame_on(False)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
 
 
     ax1.add_feature(cfeature.LAKES, 
@@ -590,6 +744,21 @@ def plot_time_series_maps_func(t):
 				 pad    = colorbar_pad)
     cb.outline.set_color(Mines_Blue)
  
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
+
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
@@ -597,21 +766,68 @@ def plot_time_series_maps_func(t):
                               facecolor = Mines_Blue,
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
+    
+    #
+    # Walking Clock
+    #
+
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
+
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+
+
+
+    size_of_clock = 0.07
+
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
+    # plt.show()
+    ax1.set_frame_on(False)
     ax1.set_title(valid_time + "  (" + local_time+")")
 
-    # plt.show()
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.90)
-    
-    ax1.set_frame_on(False)
-
-
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
 
     plt.close('all')
-
     #
     ####################################################       
 
@@ -640,6 +856,11 @@ def plot_time_series_maps_func(t):
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
     ax1.set_frame_on(False)
+    ax1.set_xlim(  west_east_range)
+    ax1.set_ylim(south_north_range)
+    ax1.set_frame_on(False)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
@@ -698,29 +919,90 @@ def plot_time_series_maps_func(t):
 								linewidths=1,
 								levels    = np.array([0.002]))    
 
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
+
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
                               edgecolor = Mines_Blue, 
                               facecolor = Mines_Blue,
                               transform = ax1.transAxes)
-	
+    ax1.add_patch(rect1)
+    
+    #
+    # Walking Clock
+    #
+
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
+
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+
+
+
+    size_of_clock = 0.07
+
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
+    # plt.show()
+    ax1.set_frame_on(False)
     ax1.set_title(valid_time + "  (" + local_time+")")
 
-    ax1.add_patch(rect1)
-
-    # plt.show()
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.90)
-
-    ax1.set_frame_on(False)
-
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
 
     plt.close('all')
-
 
     #
     ####################################################
@@ -750,6 +1032,8 @@ def plot_time_series_maps_func(t):
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
     ax1.set_frame_on(False)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
 
 
     ax1.add_feature(cfeature.LAKES, 
@@ -790,7 +1074,6 @@ def plot_time_series_maps_func(t):
     filled_cm = hrly_snowfall_maps.isel(Time=t).plot.imshow(cmap          = precip_colormap,
 											  alpha         = alpha2d,
 											  ax            = ax1,  
-											  interpolation = "bilinear",
 												   extend        = 'max',
 												   norm          = rain_norm,
 												   levels        = precip_levels_hrly,
@@ -821,6 +1104,21 @@ def plot_time_series_maps_func(t):
     ax1.set_title(valid_time + "  (" + local_time+")")
 
         
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
+
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
@@ -828,22 +1126,69 @@ def plot_time_series_maps_func(t):
                               facecolor = Mines_Blue,
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
+    
+    #
+    # Walking Clock
+    #
+ 
 
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
+
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+
+
+
+    size_of_clock = 0.07
+
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
+    # plt.show()
     ax1.set_frame_on(False)
     ax1.set_title(valid_time + "  (" + local_time+")")
 
-    # plt.show()
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.90)
-
-    ax1.set_frame_on(False)
-
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
 
     plt.close('all')
-
 
     #
     ####################################################
@@ -872,6 +1217,8 @@ def plot_time_series_maps_func(t):
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
     ax1.set_frame_on(False)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
 
 
     ax1.add_feature(cfeature.LAKES, 
@@ -910,7 +1257,6 @@ def plot_time_series_maps_func(t):
     filled_cm = snow_depth_map.isel(Time=t).plot.imshow(cmap              = precip_colormap,
 															alpha         = alpha2d,
 															ax            = ax1,  
-															interpolation = "bilinear",
 															extend        = 'max',
 															norm          = rain_norm,
 															levels        = snow_levels_full,
@@ -922,11 +1268,23 @@ def plot_time_series_maps_func(t):
 					  pad    = colorbar_pad,
 					  ticks  = snow_levels_full)  
 
-    # plt.show()
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.90)
 
     ax1.set_title(valid_time + "  (" + local_time+")")
+
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
 
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
@@ -936,15 +1294,67 @@ def plot_time_series_maps_func(t):
                               transform = ax1.transAxes)
     ax1.add_patch(rect1)
     
-    ax1.set_frame_on(False)
+    #
+    # Walking Clock
+    #
 
-    
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
+
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+
+
+
+    size_of_clock = 0.07
+
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
+    # plt.show()
+    ax1.set_frame_on(False)
+    ax1.set_title(valid_time + "  (" + local_time+")")
+
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
 
     plt.close('all')
-
 
     #
     ####################################################
@@ -970,6 +1380,8 @@ def plot_time_series_maps_func(t):
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
     ax1.set_frame_on(False)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
 
 
     ax1.add_feature(cfeature.LAKES, 
@@ -1015,31 +1427,91 @@ def plot_time_series_maps_func(t):
    
     ax1.set_title(valid_time + "  (" + local_time+")")
          
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
+
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
                               edgecolor = Mines_Blue, 
                               facecolor = Mines_Blue,
                               transform = ax1.transAxes)
-
-
     ax1.add_patch(rect1)
+    
+    #
+    # Walking Clock
+    #
+
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
+
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
 
 
 
+    size_of_clock = 0.07
 
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
     # plt.show()
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.90)
-
     ax1.set_frame_on(False)
+    ax1.set_title(valid_time + "  (" + local_time+")")
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
 
     plt.close('all')
-
+    
     #
     ####################################################
 
@@ -1069,6 +1541,8 @@ def plot_time_series_maps_func(t):
     ax1.set_xlim(  west_east_range)
     ax1.set_ylim(south_north_range)
     ax1.set_frame_on(False)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
 
     ax1.add_feature(cfeature.LAKES, 
                     linewidths =     0.5, 
@@ -1102,7 +1576,6 @@ def plot_time_series_maps_func(t):
 
     filled_cm = pblh_maps.isel(Time=t).plot.imshow(cmap          = mpl.cm.rainbow,
 												   alpha         = alpha2d,
-												   interpolation = "bilinear",
 												   vmin          = pbl_height_levels.min(),
 												   vmax          = pbl_height_levels.max(),
 												   add_colorbar  = False)
@@ -1115,27 +1588,581 @@ def plot_time_series_maps_func(t):
    
     ax1.set_title(valid_time + "  (" + local_time+")")
          
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
+
     rect1 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
                               height    = 0.01, 
                               edgecolor = Mines_Blue, 
                               facecolor = Mines_Blue,
                               transform = ax1.transAxes)
-
     ax1.add_patch(rect1)
+    
+    #
+    # Walking Clock
+    #
+   
 
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
+
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+
+
+
+    size_of_clock = 0.07
+
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
     # plt.show()
+    ax1.set_frame_on(False)
+    ax1.set_title(valid_time + "  (" + local_time+")")
+
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
+
+    plt.close('all')
+    
+    #
+    ####################################################
+    
+    
+    
+    
+
+    ####################################################
+    #
+    # SRH
+    #
+
+    v_name       = "SRH"
+    fig_dir_name = graphics_directory + "/" + v_name + "/"
+    file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+
+    print(fig_dir_name + file_name)
+
+
+    fig = plt.figure(figsize=figure_domain_size)
+
+    fig.suptitle(model_run_label,fontsize="x-large")
+
+    ax1 = fig.add_subplot(1,  # nrows
+                          1,  # ncols 
+                          1,  # index of figure you're installing
+                          projection = cart_proj) # cartopy CRS Projection
+
+    ax1.set_xlim(  west_east_range)
+    ax1.set_ylim(south_north_range)
+    ax1.set_frame_on(False)
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
 
-    ax1.set_frame_on(False)
+    ax1.add_feature(cfeature.LAKES, 
+                    linewidths =     0.5, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.RIVERS, 
+                    linewidths =     0.5, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.BORDERS, 
+                    linewidths =     1.0, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.COASTLINE, 
+                    linewidths =     1.0, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
 
-    fig.savefig(fig_dir_name + file_name,
-                        facecolor   = 'white', 
-                        transparent =   False)
+    ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
+                                                 'admin_1_states_provinces_lines',
+                                                 '50m',
+                                                 linewidths = 0.75,
+                                                 facecolor  = 'none',
+                                                 edgecolor  = Mines_Blue))
+
+    if (domain > 1) :
+        ax1.add_feature(USCOUNTIES, 
+                        linewidths=0.5,
+                        edgecolor  = Mines_Blue,
+                        facecolor='none')
+
+    filled_cm = helic_maps.isel(Time=t).plot.imshow(cmap          = mpl.cm.bwr,
+												   alpha         = alpha2d,
+                                                   vmin          = np.fabs(helic_maps).max(),
+												   vmax          = np.fabs(helic_maps).max(),
+												   add_colorbar  = False)
+
+    cb = plt.colorbar(filled_cm, 
+				 label  = "Sfc-3-km Storm-Relative helicity (m² s⁻²)",
+				 shrink = colorbar_shrink, 
+				 pad    = colorbar_pad)
+    cb.outline.set_color(Mines_Blue)
+   
+    ax1.set_title(valid_time + "  (" + local_time+")")
+         
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
+
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
+                              transform = ax1.transAxes)
+    ax1.add_patch(rect1)
+    
+    #
+    # Walking Clock
+    #
+   
+
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
+
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+
+
+
+    size_of_clock = 0.07
+
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
+    # plt.show()
+    ax1.set_frame_on(False)
+    ax1.set_title(valid_time + "  (" + local_time+")")
+
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
 
     plt.close('all')
+    
+    #
+    ####################################################
+    
+  
 
+    ####################################################
+    #
+    # SRH
+    #
+
+    v_name       = "SRH"
+    fig_dir_name = graphics_directory + "/" + v_name + "/"
+    file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+
+    print(fig_dir_name + file_name)
+
+
+    fig = plt.figure(figsize=figure_domain_size)
+
+    fig.suptitle(model_run_label,fontsize="x-large")
+
+    ax1 = fig.add_subplot(1,  # nrows
+                          1,  # ncols 
+                          1,  # index of figure you're installing
+                          projection = cart_proj) # cartopy CRS Projection
+
+    ax1.set_xlim(  west_east_range)
+    ax1.set_ylim(south_north_range)
+    ax1.set_frame_on(False)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
+
+    ax1.add_feature(cfeature.LAKES, 
+                    linewidths =     0.5, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.RIVERS, 
+                    linewidths =     0.5, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.BORDERS, 
+                    linewidths =     1.0, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.COASTLINE, 
+                    linewidths =     1.0, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+
+    ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
+                                                 'admin_1_states_provinces_lines',
+                                                 '50m',
+                                                 linewidths = 0.75,
+                                                 facecolor  = 'none',
+                                                 edgecolor  = Mines_Blue))
+
+    if (domain > 1) :
+        ax1.add_feature(USCOUNTIES, 
+                        linewidths=0.5,
+                        edgecolor  = Mines_Blue,
+                        facecolor='none')
+
+    filled_cm = helic_maps.isel(Time=t).plot.imshow(cmap          = mpl.cm.bwr,
+												   alpha         = alpha2d,
+                                                   vmin          = -np.fabs(helic_maps).max(),
+												   vmax          = np.fabs(helic_maps).max(),
+												   add_colorbar  = False)
+
+    cb = plt.colorbar(filled_cm, 
+				 label  = "Sfc-3km Storm-Relative Helicity (m² s⁻²)",
+				 shrink = colorbar_shrink, 
+				 pad    = colorbar_pad)
+    cb.outline.set_color(Mines_Blue)
+   
+    ax1.set_title(valid_time + "  (" + local_time+")")
+         
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
+
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
+                              transform = ax1.transAxes)
+    ax1.add_patch(rect1)
+    
+    #
+    # Walking Clock
+    #
+   
+
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
+
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+
+
+
+    size_of_clock = 0.07
+
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
+    # plt.show()
+    ax1.set_frame_on(False)
+    ax1.set_title(valid_time + "  (" + local_time+")")
+
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
+
+    plt.close('all')
+    
+    #
+    ####################################################
+    
+    
+  
+
+    ####################################################
+    #
+    # UHEL
+    #
+
+    v_name       = "UHEL"
+    fig_dir_name = graphics_directory + "/" + v_name + "/"
+    file_name    = "wrfout_d" + str(domain).zfill(2) + "_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_MAP_" + v_name + ".png"
+
+    print(fig_dir_name + file_name)
+
+
+    fig = plt.figure(figsize=figure_domain_size)
+
+    fig.suptitle(model_run_label,fontsize="x-large")
+
+    ax1 = fig.add_subplot(1,  # nrows
+                          1,  # ncols 
+                          1,  # index of figure you're installing
+                          projection = cart_proj) # cartopy CRS Projection
+
+    ax1.set_xlim(  west_east_range)
+    ax1.set_ylim(south_north_range)
+    ax1.set_frame_on(False)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.90)
+
+    ax1.add_feature(cfeature.LAKES, 
+                    linewidths =     0.5, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.RIVERS, 
+                    linewidths =     0.5, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.BORDERS, 
+                    linewidths =     1.0, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+    ax1.add_feature(cfeature.COASTLINE, 
+                    linewidths =     1.0, 
+                    edgecolor  = Mines_Blue,
+                    facecolor  =  'none')
+
+    ax1.add_feature(cfeature.NaturalEarthFeature('cultural',
+                                                 'admin_1_states_provinces_lines',
+                                                 '50m',
+                                                 linewidths = 0.75,
+                                                 facecolor  = 'none',
+                                                 edgecolor  = Mines_Blue))
+
+    if (domain > 1) :
+        ax1.add_feature(USCOUNTIES, 
+                        linewidths=0.5,
+                        edgecolor  = Mines_Blue,
+                        facecolor='none')
+
+    filled_cm = uphelic_maps.isel(Time=t).plot.imshow(cmap          = mpl.cm.bwr,
+												   alpha         = alpha2d,
+                                                   vmin          = -np.fabs(uphelic_maps).max(),
+												   vmax          = np.fabs(uphelic_maps).max(),
+												   add_colorbar  = False)
+
+    cb = plt.colorbar(filled_cm, 
+				 label  = "2km-5km Upward Helicity (m² s⁻²)",
+				 shrink = colorbar_shrink, 
+				 pad    = colorbar_pad)
+    cb.outline.set_color(Mines_Blue)
+   
+    ax1.set_title(valid_time + "  (" + local_time+")")
+         
+    
+    
+    ##################################
+    # 
+    # Progress Bar
+    #
+    
+    plot_box         = ax1.get_position()
+    plot_box_x_start = plot_box.x0
+    plot_box_y_start = plot_box.y0
+    plot_box_x_end   = plot_box.x1
+    plot_box_y_end   = plot_box.y1
+
+
+
+    rect1 = patches.Rectangle(xy        = (0, 0),
+                              width     = percent_done,
+                              height    = 0.01, 
+                              edgecolor = Mines_Blue, 
+                              facecolor = Mines_Blue,
+                              transform = ax1.transAxes)
+    ax1.add_patch(rect1)
+    
+    #
+    # Walking Clock
+    #
+   
+
+    circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+    circle_radius = circle_theta * 0 + 1
+
+    if (hour > 12) :
+        hour = hour - 12
+
+    angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+    angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+
+
+
+    size_of_clock = 0.07
+
+    x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+    y_clock = plot_box_y_start-size_of_clock/2+0.01
+
+    x_dow = percent_done
+    y_dow = size_of_clock
+
+    ax1.annotate(dow+"-"+local_time_zone, 
+                 [x_dow,y_dow],
+                 horizontalalignment="center",
+                verticalalignment="center",
+                xycoords='axes fraction')
+
+
+    axins = fig.add_axes(rect     =    [x_clock,
+                                        y_clock,
+                                        size_of_clock,
+                                        size_of_clock],
+                         projection =  "polar")
+
+    plt.setp(axins.get_yticklabels(), visible=False)
+    plt.setp(axins.get_xticklabels(), visible=False)
+    axins.spines['polar'].set_visible(False)
+    axins.set_ylim(0,1)
+    axins.set_theta_zero_location('N')
+    axins.set_theta_direction(-1)
+    axins.set_facecolor(Clock_BgndC)
+    axins.grid(False)
+
+    axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+    axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+    axins.plot(circle_theta, circle_radius,   color=Mines_Blue,  linewidth=1)
+
+    #
+    ##################################
+            
+    # plt.show()
+    ax1.set_frame_on(False)
+    ax1.set_title(valid_time + "  (" + local_time+")")
+
+    fig.savefig(fname       = fig_dir_name + file_name,
+				facecolor   =                  'white', 
+				transparent =                    False)
+
+    plt.close('all')
+    
     #
     ####################################################
 
@@ -1323,7 +2350,7 @@ for domain in range(1,max_domains+1):
         figure_domain_size = (7,6)
         
         
-
+    print("Domain")
     
     graphics_directory = WRF_IMAGES + "/" + model_start_date_YYYY_MM_DD_HH + "/MAPS/d" +  str(domain).zfill(2) + "/"
     
@@ -1334,8 +2361,8 @@ for domain in range(1,max_domains+1):
     os.system("mkdir -pv " + graphics_directory + "DBZ")
 
     os.system("mkdir -pv " + graphics_directory + "DEWP")
-    os.system("mkdir -pv " + graphics_directory + "HELI")
-
+    os.system("mkdir -pv " + graphics_directory + "SRH")
+    os.system("mkdir -pv " + graphics_directory + "UHEL")
 
 
     os.system("mkdir -pv " + graphics_directory + "SNOWH")
@@ -1460,15 +2487,24 @@ for domain in range(1,max_domains+1):
     dbz_maps = dbz_maps.assign_coords(coords = dict(south_north = south_north,
                                                                 west_east   =   west_east))
     #
-    # Helicity
+    # helicity
     #
     
-    #srh_maps           = wrf.getvar(wrfin    =           ncf,
-    #                                varname  =          'srh',
-    #                                timeidx  = wrf.ALL_TIMES)
-    #    srh_maps = srh_maps.assign_coords(coords = dict(south_north = south_north,
-    #                                                           west_east   =   west_east))
+    helic_maps         = wrf.getvar(wrfin    =           ncf,
+                                    varname  =         'helicity',
+                                    timeidx  = wrf.ALL_TIMES) 
+    helic_maps   = helic_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))
 
+    #
+    # helicity upeard
+    #
+    
+    uphelic_maps         = wrf.getvar(wrfin    =           ncf,
+                                    varname  =         'updraft_helicity',
+                                    timeidx  = wrf.ALL_TIMES) 
+    uphelic_maps   = uphelic_maps.assign_coords(coords = dict(south_north = south_north,
+                                                      west_east   =   west_east))
     #
     # T2M
     # 
@@ -1516,13 +2552,6 @@ for domain in range(1,max_domains+1):
                                                       west_east   =   west_east))
     v10_maps   = v10_maps.assign_coords(coords = dict(south_north = south_north,
                                                       west_east   =   west_east))
-
-    helic_maps         = wrf.getvar(wrfin    =           ncf,
-                                    varname  =         'helicity',
-                                    timeidx  = wrf.ALL_TIMES) 
-    helic_maps   = helic_maps.assign_coords(coords = dict(south_north = south_north,
-                                                      west_east   =   west_east))
-
 
     m10_maps, d10_maps = wrf.getvar(wrfin    =           ncf,
                                     varname  = 'wspd_wdir10',
@@ -1643,7 +2672,7 @@ for domain in range(1,max_domains+1):
     # making gifs
     #
     
-    animation_list = ("DBZ", "PBL", "RAIN", "SFCT", "DEWP", "SNOWH", "WIND", "WEASD")
+    animation_list = ("DBZ", "PBL", "RAIN", "SFCT", "DEWP", "SNOWH", "SRH", "UHEL", "WIND", "WEASD")
     
     n_jobs = len(animation_list)
     
@@ -1883,4 +2912,10 @@ print("End Sounding Plotting Script")
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
 

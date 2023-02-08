@@ -80,9 +80,9 @@ Mines_Blue = "#002554"
 
 plt.rcParams.update({'text.color'      : Mines_Blue,
                      'axes.labelcolor' : Mines_Blue,
-					 'axes.edgecolor'  :Mines_Blue,
+					 'axes.edgecolor'  : Mines_Blue,
 					 'xtick.color'     : Mines_Blue,
-					 'ytick.color'    : Mines_Blue})
+					 'ytick.color'     : Mines_Blue})
 
 
 #
@@ -97,6 +97,26 @@ plt.rcParams.update({'text.color'      : Mines_Blue,
 
 
 ####################################################
+####################################################
+####################################################
+#
+# Mines Colors and Fonts
+#
+
+Mines_Blue = "#002554"
+
+
+plt.rcParams.update({'text.color'      : Mines_Blue,
+                     'axes.labelcolor' : Mines_Blue,
+					 'axes.edgecolor'  : Mines_Blue,
+					 'xtick.color'     : Mines_Blue,
+					 'ytick.color'     : Mines_Blue})
+
+
+#
+####################################################
+####################################################
+########################################################################################################
 ####################################################
 ####################################################
 #
@@ -298,6 +318,10 @@ for domain in range(chosen_domain,chosen_domain+1):
         station_lat    = station[1][3]
         station_lon    = station[1][4]
         
+        tf     = tzf.TimezoneFinder()
+        tz     = tf.certain_timezone_at(lng=station_lon, lat=station_lat)
+        tzabbr = pytz.timezone(tz).localize(model_start_datetime)
+        
         #
         # Creating Graphics Directory
         #
@@ -351,8 +375,32 @@ for domain in range(chosen_domain,chosen_domain+1):
             # Extract Point Locations
             #
         
+
             valid_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").strftime("%Y-%m-%d %H %Z")
             local_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%Y-%m-%d %H %Z")
+            local_time_zone = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%Z")
+            dow = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%a")
+
+
+            time_for_clock = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).time()
+
+            hour   = time_for_clock.hour
+            minute = time_for_clock.minute
+            second = time_for_clock.second
+            percent_done = (1.0 * t) / (nt-1.)
+
+            if ((hour >= 6) and (hour < 18)):
+                Clock_Color = Mines_Blue
+                Clock_BgndC = "white"           
+            else:
+                Clock_Color = "white"
+                Clock_BgndC = Mines_Blue               
+            
+
+
+            model_run_label    = "Model Run " + wrf_skewt_time + "; WRF Domain " + str(domain).zfill(2)
+
+            print(valid_time, "     -- " + model_run_label, " :: ", (percent_done*100) )
 
 
             sounding_file_name_png = "wrfout_dxx_" + model_start_date_YYYY_MM_DD_HH + "_F" + str(t).zfill(2) + "_SKEWT_" + station_id + ".png"
@@ -589,6 +637,8 @@ for domain in range(chosen_domain,chosen_domain+1):
             mask = sounding_df["agl"] <= 10 * units.km
 
             ax = fig.add_subplot(gs[0, -1])
+            
+
 
             h = Hodograph(ax, component_range=40.)
 
@@ -604,6 +654,9 @@ for domain in range(chosen_domain,chosen_domain+1):
 
             #
             ###################################################    
+            plt.tight_layout()
+
+            plt.subplots_adjust(top=0.93)    
             
             ###################################################
             #
@@ -613,13 +666,76 @@ for domain in range(chosen_domain,chosen_domain+1):
             percent_done = (1.0 * t) / (nt-1.)
             
             
-            rect1 = patches.Rectangle(xy        = (0, 0),
-                              width     = percent_done,
-                              height    = 0.01, 
-                              edgecolor = Mines_Blue, 
-                              facecolor = Mines_Blue,
-                              transform = skew.ax.transAxes)
+            rect1 = patches.Rectangle(xy        = (0, 0-0.01/2),
+                                      width     = percent_done,
+                                      height    = 0.01, 
+                                      edgecolor = Mines_Blue, 
+                                      facecolor = Mines_Blue,
+                                      transform = skew.ax.transAxes)
             skew.ax.add_patch(rect1)
+            
+            
+            #
+            # Walking Clock
+            #
+                        
+
+            circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+            circle_radius = circle_theta * 0 + 1
+
+            if (hour > 12) :
+                hour = hour - 12
+
+            angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+            angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+                
+            plot_box         = skew.ax.get_position()
+            plot_box_x_start = plot_box.x0
+            plot_box_y_start = plot_box.y0
+            plot_box_x_end   = plot_box.x1
+            
+            size_of_clock = 0.05
+            
+            x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
+
+            y_clock = plot_box_y_start-size_of_clock/2
+
+            x_dow = percent_done
+            y_dow = size_of_clock
+
+            skew.ax.annotate(dow+"-"+local_time_zone, 
+                         [x_dow,y_dow],
+                         horizontalalignment="center",
+                        verticalalignment="center",
+                        xycoords='axes fraction')
+
+            
+            axins = fig.add_axes(rect     =    [x_clock,
+                                                y_clock,
+                                                size_of_clock,
+                                                size_of_clock],
+                                 projection =  "polar")
+            
+            plt.setp(axins.get_yticklabels(), visible=False)
+            plt.setp(axins.get_xticklabels(), visible=False)
+            axins.spines['polar'].set_visible(False)
+            axins.set_ylim(0,1)
+            axins.set_theta_zero_location('N')
+            axins.set_theta_direction(-1)
+            axins.set_facecolor(Clock_BgndC)
+            axins.grid(False)
+
+            axins.plot([angles_h,angles_h], [0,0.60], color=Clock_Color, linewidth=1)
+            axins.plot([angles_m,angles_m], [0,0.95], color=Clock_Color, linewidth=1)
+            axins.plot(circle_theta, circle_radius, color="darkgrey", linewidth=1)
+            
+
+            
+            #
+            #
+            #
+            
+            
             
             rect2 = patches.Rectangle(xy        = (0, 0),
                               width     = percent_done,
@@ -671,9 +787,6 @@ for domain in range(chosen_domain,chosen_domain+1):
             # Close SkewT
             #
             
-            plt.tight_layout()
-
-            plt.subplots_adjust(top=0.93)    
             
             plt.savefig(graphics_directory + sounding_file_name_png,
                         facecolor   = 'white', 
@@ -702,8 +815,8 @@ for domain in range(chosen_domain,chosen_domain+1):
         gif_file_name    = "wrfout_dxx_" + model_start_date_YYYY_MM_DD_HH + "_Fxx_SKEWT_" + station_id + ".gif"
 
         
-        print("creating " + WRF_OVERALL_DIR + "./processing_skewt2_gif.sh")
-        with open(WRF_OVERALL_DIR + "./processing_skewt2_gif.sh", 'w') as f:
+        print("creating " + WRF_OVERALL_DIR + "./processing_skewt1_gif.sh")
+        with open(WRF_OVERALL_DIR + "./processing_skewt1_gif.sh", 'w') as f:
             print("#!/bin/bash", file =  f)
             print(". ~/.bashrc", file =  f)
             print("ulimit -s unlimited", file = f)
@@ -711,12 +824,13 @@ for domain in range(chosen_domain,chosen_domain+1):
                 print(". /opt/intel/oneapi/setvars.sh", file = f)
             print("cd " + WRF_OVERALL_DIR, file =  f) 
             print("convert -delay 50 " + graphics_directory + png_file_name + " " + graphics_directory + gif_file_name, file =  f) 
-            print("echo MAIN:SKEWT2::: We^re Outahere Like Vladimir", file =  f) 
+            print("echo MAIN:SKEWT1::: We^re Outahere Like Vladimir", file =  f) 
 
-        os.system("chmod a+x " + WRF_OVERALL_DIR + "./processing_skewt2_gif.sh")
-        os.system(WRF_OVERALL_DIR + "./processing_skewt2_gif.sh > ./processing_skewt2_gif." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
+        os.system("chmod a+x " + WRF_OVERALL_DIR + "./processing_skewt1_gif.sh")
+        os.system(WRF_OVERALL_DIR + "./processing_skewt1_gif.sh > ./processing_skewt1_gif." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
         os.system("date")
         print()
+    
 
 
 
@@ -761,12 +875,6 @@ print("End Sounding Plotting Scriot")
 
 
 
-
-
-# In[ ]:
-
-
-plt.show()
 
 
 # In[ ]:
