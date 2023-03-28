@@ -26,7 +26,10 @@ import matplotlib.pyplot       as plt
 import matplotlib.patches      as patches
 import matplotlib.font_manager as fm
 import matplotlib              as mpl
+import matplotlib.gridspec     as gridspec
+from matplotlib.ticker         import (MultipleLocator, NullFormatter, ScalarFormatter)
 
+import seaborn           as sns
 
 import pandas            as pd
 import xarray            as xr
@@ -37,32 +40,26 @@ import netCDF4           as nc4
 import wrf               as wrf
 
 
-import matplotlib.gridspec as gridspec
 
-import metpy.calc        as mpcalc
-from metpy.plots import SkewT, Hodograph
-from metpy.units import units, pandas_dataframe_to_unit_arrays
+import metpy.calc  as     mpcalc
+from   metpy.plots import SkewT, Hodograph
+from   metpy.units import units, pandas_dataframe_to_unit_arrays
 
-
-import metpy.calc  as mpcalc
-
-from metpy.units import units
-
-import seaborn           as sns
 
 import timezonefinder    as tzf
-import pytz as pytz
-import socket as socket
-
-import matplotlib.font_manager as fm
-import matplotlib as mpl
-
-
+import pytz              as pytz
+import socket            as socket
 
 #
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
@@ -288,6 +285,29 @@ for domain in range(chosen_domain,chosen_domain+1):
                                     varname      =  'height_agl',
                                     timeidx      = wrf.ALL_TIMES, 
                                     units        =           'm') * units.m
+
+    qv_4d              = wrf.getvar(wrfin        =           ncf,
+                                    varname      =      'QVAPOR',
+                                    timeidx      = wrf.ALL_TIMES)     
+    qc_4d              = wrf.getvar(wrfin        =           ncf,
+                                    varname      =      'QCLOUD',
+                                    timeidx      = wrf.ALL_TIMES)    
+    
+    qi_4d              = wrf.getvar(wrfin        =           ncf,
+                                    varname      =         'QICE',
+                                    timeidx      = wrf.ALL_TIMES)    
+    
+    qr_4d              = wrf.getvar(wrfin        =           ncf,
+                                    varname      =      'QRAIN',
+                                    timeidx      = wrf.ALL_TIMES)    
+    
+    qs_4d              = wrf.getvar(wrfin        =           ncf,
+                                    varname      =      'QSNOW',
+                                    timeidx      = wrf.ALL_TIMES)    
+    
+    qg_4d              = wrf.getvar(wrfin        =           ncf,
+                                    varname      =      'QGRAUP',
+                                    timeidx      = wrf.ALL_TIMES)     
     
     z_700_500_4d = wrf.vinterp(wrfin         =           ncf,
                                field         = height_agl_4d,
@@ -340,6 +360,14 @@ for domain in range(chosen_domain,chosen_domain+1):
                                     meta      = False, 
                                     stagger   = None, 
                                     as_int    = True)
+        
+        clouds_maxx = np.max([qv_4d[:, :, wrf_y, wrf_x],
+                              qc_4d[:, :, wrf_y, wrf_x],
+                              qi_4d[:, :, wrf_y, wrf_x],
+                              qr_4d[:, :, wrf_y, wrf_x],
+                              qs_4d[:, :, wrf_y, wrf_x],
+                              qg_4d[:, :, wrf_y, wrf_x]]) * 1000.
+        print('  Max q* = ',clouds_maxx, "g/kg")
                
         z_700_500 = z_700_500_4d[:,:,wrf_y,wrf_x]
         t_700_500 = t_700_500_4d[:,:,wrf_y,wrf_x]
@@ -389,14 +417,31 @@ for domain in range(chosen_domain,chosen_domain+1):
             second = time_for_clock.second
             percent_done = (1.0 * t) / (nt-1.)
 
+
             if ((hour >= 6) and (hour < 18)):
                 Clock_Color = Mines_Blue
                 Clock_BgndC = "white"           
             else:
                 Clock_Color = "white"
-                Clock_BgndC = Mines_Blue               
-            
+                Clock_BgndC = Mines_Blue        
+                
+            #
+            # Walking Clock Parameters
+            #
 
+            circle_theta  = np.deg2rad(np.arange(0,360,0.01))
+            circle_radius = circle_theta * 0 + 1
+
+            if (hour > 12) :
+                hour = hour - 12
+
+            angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
+            angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
+            
+            
+            #
+            # Labels
+            #
 
             model_run_label    = "Model Run " + wrf_skewt_time + "; WRF Domain " + str(domain).zfill(2)
 
@@ -407,13 +452,26 @@ for domain in range(chosen_domain,chosen_domain+1):
             
             print("     -- " + sounding_file_name_png)
     
+            #
+            # Make Sounding Dataframe
+            #
+
+            
+
+
             sounding_df = pd.DataFrame({"pressure"    :   isobar_hgt_4d[t, :, wrf_y, wrf_x],
                                         "temperature" :  temperature_4d[t, :, wrf_y, wrf_x],
                                         "dewpoint"    :    dew_point_4d[t, :, wrf_y, wrf_x],
                                         "u_wind"      :        uwind_4d[t, :, wrf_y, wrf_x],
                                         "v_wind"      :        vwind_4d[t, :, wrf_y, wrf_x],
                                         "height"      :       height_4d[t, :, wrf_y, wrf_x],
-                                        "agl"         :   height_agl_4d[t, :, wrf_y, wrf_x]})
+                                        "agl"         :   height_agl_4d[t, :, wrf_y, wrf_x],
+                                        "qv"          :           qv_4d[t, :, wrf_y, wrf_x]*1000,
+                                        "qc"          :           qc_4d[t, :, wrf_y, wrf_x]*1000,
+                                        "qi"          :           qi_4d[t, :, wrf_y, wrf_x]*1000,
+                                        "qr"          :           qr_4d[t, :, wrf_y, wrf_x]*1000,
+                                        "qs"          :           qs_4d[t, :, wrf_y, wrf_x]*1000,
+                                        "qg"          :           qg_4d[t, :, wrf_y, wrf_x]*1000})
 
             units_df = {"pressure"    :  "hPa",
                         "temperature" : "degC",
@@ -421,7 +479,13 @@ for domain in range(chosen_domain,chosen_domain+1):
                         "u_wind"      :   "kt",
                         "v_wind"      :   "kt",
                         "height"      :    "m",
-                        "agl"         :    "m"}
+                        "agl"         :    "m",
+                        "qv"          : "g/kg",
+                        "qc"          : "g/kg",
+                        "qi"          : "g/kg",
+                        "qr"          : "g/kg",
+                        "qs"          : "g/kg",
+                        "qh"          : "g/kg"}
 
 
             sounding_df = pandas_dataframe_to_unit_arrays(sounding_df, 
@@ -515,18 +579,21 @@ for domain in range(chosen_domain,chosen_domain+1):
             # Generate SkewT
             #
 
-            fig = plt.figure(figsize=(9, 9))
+            fig = plt.figure(figsize   = (9, 9))
 
             fig.suptitle(station_name + "; Model Run " + wrf_skewt_time + "; WRF Domain " + str(domain).zfill(2), 
-                         fontsize=18)
+                         fontsize=18,
+                         verticalalignment = "center",
+                         horizontalalignment = "center")
 
             # Grid for plots
 
-            gs   = gridspec.GridSpec(3, 3)
+            gs   = gridspec.GridSpec(nrows = 3, 
+                                     ncols = 3)
 
-            skew = SkewT(fig, 
+            skew = SkewT(fig      =       fig, 
                          rotation =        45,  
-                         subplot  = gs[:, :2])
+                         rect     = [0.10, 0.00, 0.60, 0.95])
 
             # Plot the sounding using normal plotting functions, in this case using
             # log scaling in Y, as dictated by the typical meteorological plot
@@ -555,9 +622,9 @@ for domain in range(chosen_domain,chosen_domain+1):
             skew.plot_barbs(sounding_df["pressure"][mask], 
                             sounding_df[  "u_wind"][mask], 
                             sounding_df[  "v_wind"][mask],
-						   color=Mines_Blue)
+                            color=Mines_Blue)
 
-            skew.ax.set_ylim(1000, 100)
+            skew.ax.set_ylim=(1000, 100)
 
             # Add the relevant special lines
 
@@ -587,14 +654,12 @@ for domain in range(chosen_domain,chosen_domain+1):
                             parcel_profile, 
                             color = "mistyrose")
 
-            skew.ax.set_xlabel = "Temperature (C)"
-            skew.ax.set_ylabel = "Isobaric Height (hPa)"
-
 
             # Good bounds for aspect ratio
 
             skew.ax.set_xlim(-25, max_axis_temp)
             skew.ax.set_title(valid_time + "  (" + local_time+")", fontsize=15)
+
 
             if lcl_pressure:
                 skew.ax.plot(lcl_temperature, 
@@ -622,49 +687,126 @@ for domain in range(chosen_domain,chosen_domain+1):
                 
             skew.ax.spines["right"].set_visible(False)
             skew.ax.spines[  "top"].set_color("white")
+            skew.ax.set_xlabel('Temperature (\N{DEGREE CELSIUS})')
+            skew.ax.set_ylabel("Isobaric Height (hPa)")
 
+            skew_box          = skew.ax.get_position()
+            skew_box_x_start  = skew_box.x0
+            skew_box_y_start  = skew_box.y0
+            skew_box_x_end    = skew_box.x1
+            skew_box_y_end    = skew_box.y1
+            skew_box_x_length = skew_box.x1 - skew_box.x0
+            skew_box_y_length = skew_box.y1 - skew_box.y0
+        
 
             #
             ###################################################
 
 
 
+            
+            ###################################################
+            #
+            # Create a Cloud Water Profile
+            #
+         
+            if (True):
+                
+                axclouds = SkewT(fig      =       fig,
+                                 rotation =         0, 
+                                 aspect   =    (90./np.log10(1050.-100)) / (np.ceil(clouds_maxx)/np.log10(1050.-100)) ,
+                                 rect     = [0.75, skew_box_y_start, 0.3, skew_box_y_length])
+                
+                axclouds.ax.set_title('Hodograph & Moisture Profile', fontsize=15)
+                axclouds.ax.set_xlabel('Mixing Ratio (g/kg)')
+                axclouds.ax.set_ylabel("")
+                axclouds.ax.set_xlim(0, np.ceil(clouds_maxx))
+                axclouds.ax.xaxis.set_major_locator(MultipleLocator(1))
+                axclouds.ax.xaxis.set_units(units("g/kg"))
+                axclouds.ax.spines["right"].set_visible(False)
+                axclouds.ax.spines[  "top"].set_color("white")
+                
+                
+                axclouds.plot(sounding_df["pressure"], sounding_df["qv"], color="greenyellow")
+                axclouds.plot(sounding_df["pressure"], sounding_df["qc"], color="darkgrey")            
+                axclouds.plot(sounding_df["pressure"], sounding_df["qi"], color="cyan")            
+                axclouds.plot(sounding_df["pressure"], sounding_df["qr"], color="darkgreen")            
+                axclouds.plot(sounding_df["pressure"], sounding_df["qs"], color="blue")            
+                axclouds.plot(sounding_df["pressure"], sounding_df["qg"], color="red")  
+
+
+                axclouds.ax.legend(["$q_v$","$q_c$","$q_i$","$q_r$","$q_s$","$q_g$"],
+                                  loc = 'center right',
+                                  frameon = False)
+            
+            axclouds_box          = axclouds.ax.get_position()
+            axclouds_box_x_start  = axclouds_box.x0
+            axclouds_box_y_start  = axclouds_box.y0
+            axclouds_box_x_end    = axclouds_box.x1
+            axclouds_box_y_end    = axclouds_box.y1
+            axclouds_box_x_length = axclouds_box.x1 - axclouds_box.x0
+            axclouds_box_y_length = axclouds_box.y1 - axclouds_box.y0
+
+
+            #
+            ###################################################             
+
+        
             ###################################################
             #
             # Create a hodograph
             #
-
-            mask = sounding_df["agl"] <= 10 * units.km
-
-            ax = fig.add_subplot(gs[0, -1])
             
+            do_hodo = True
+            
+            if (do_hodo):
+
+                mask = sounding_df["agl"] <= 10 * units.km
+
+                axhodo = fig.add_axes(rect = [0.75, 
+                                              skew_box_y_start+skew_box_y_length-0.32, 
+                                              0.3, 
+                                              0.3],
+                                      zorder=1001)
+                axhodo.zorder=1001
+
+                h = Hodograph(axhodo, component_range=40.)
+
+                h.add_grid(increment=10)
+                axhodo.spines["right"].set_visible(False)
+                axhodo.spines[  "top"].set_visible(False)
 
 
-            h = Hodograph(ax, component_range=40.)
+                cmh = h.plot_colormapped(sounding_df["u_wind"][mask], sounding_df["v_wind"][mask], sounding_df[   "agl"][mask].to(units.km), cmap = "jet")
+                cmh.set_clim(0, 10)
 
-            h.add_grid(increment=10)
-            ax.spines["right"].set_visible(False)
-            ax.spines[  "top"].set_visible(False)
+                fig.patches.extend([plt.Rectangle((0.73,skew_box_y_start+skew_box_y_length-0.35),0.3,0.355,
+                                  fill=True, color='w', alpha=0.99, zorder=1000,
+                                  transform=fig.transFigure, figure=fig)])
 
+                cbhodo = plt.colorbar(mappable = cmh, 
+                                      ax = axhodo,
+                                      orientation = "horizontal", 
+                                      label       = 'Height (km AGL)')
+                
+                cbhodo.ax.zorder = 1001
 
-            cmh = h.plot_colormapped(sounding_df["u_wind"][mask], sounding_df["v_wind"][mask], sounding_df[   "agl"][mask].to(units.km), cmap = "jet")
-            cmh.set_clim(0, 10)
-
-            plt.colorbar(cmh, orientation = "horizontal", label       = 'Height (km AGL)')
+                
 
             #
-            ###################################################    
-            plt.tight_layout()
+            ###################################################  
+            
+            
+            #plt.tight_layout()
 
-            plt.subplots_adjust(top=0.93)    
+            #plt.subplots_adjust(top=0.93)    
+            
+            
             
             ###################################################
             #
             # Add Status Bars 
             #
-            
-            percent_done = (1.0 * t) / (nt-1.)
-            
             
             rect1 = patches.Rectangle(xy        = (0, 0-0.01/2),
                                       width     = percent_done,
@@ -673,41 +815,52 @@ for domain in range(chosen_domain,chosen_domain+1):
                                       facecolor = Mines_Blue,
                                       transform = skew.ax.transAxes)
             skew.ax.add_patch(rect1)
+
+            rect2 = patches.Rectangle(xy        = (0, 0-0.01/2),
+                                      width     = percent_done,
+                                      height    = 0.015, 
+                                      edgecolor = Mines_Blue, 
+                                      facecolor = Mines_Blue,
+                                      transform = axhodo.transAxes, zorder = 1001)
+            axhodo.add_patch(rect2)
+
+            rect3 = patches.Rectangle(xy        = (0, 0-0.01/2),
+                                      width     = percent_done,
+                                      height    = 0.01, 
+                                      edgecolor = Mines_Blue, 
+                                      facecolor = Mines_Blue,
+                                      transform = axclouds.ax.transAxes)
+            axclouds.ax.add_patch(rect3)
             
-            
+            #######
             #
             # Walking Clock
             #
-                        
-
-            circle_theta  = np.deg2rad(np.arange(0,360,0.01))
-            circle_radius = circle_theta * 0 + 1
-
-            if (hour > 12) :
-                hour = hour - 12
-
-            angles_h = 2*np.pi*hour/12+2*np.pi*minute/(12*60)+2*second/(12*60*60)
-            angles_m = 2*np.pi*minute/60+2*np.pi*second/(60*60)
-                
-            plot_box         = skew.ax.get_position()
-            plot_box_x_start = plot_box.x0
-            plot_box_y_start = plot_box.y0
-            plot_box_x_end   = plot_box.x1
+            #######
             
+            plot_box          = skew.ax.get_position()
+            plot_box_x_start  = plot_box.x0
+            plot_box_y_start  = plot_box.y0
+            plot_box_x_end    = plot_box.x1
+            plot_box_y_end    = plot_box.y1
+            plot_box_x_length = plot_box.x1 - plot_box.x0
+            plot_box_y_length = plot_box.y1 - plot_box.y0
+
             size_of_clock = 0.05
-            
+
             x_clock = percent_done*(plot_box_x_end-plot_box_x_start) + plot_box_x_start - size_of_clock/2
 
             y_clock = plot_box_y_start-size_of_clock/2
-
+            
             x_dow = percent_done
-            y_dow = size_of_clock
-
+            y_dow = size_of_clock    
+            
             skew.ax.annotate(dow+"-"+local_time_zone, 
-                         [x_dow,y_dow],
-                         horizontalalignment="center",
-                        verticalalignment="center",
-                        xycoords='axes fraction')
+                             [x_dow,y_dow],
+                             horizontalalignment = "center",
+                             verticalalignment   = "center",
+                             xycoords            = 'axes fraction')
+
 
             
             axins = fig.add_axes(rect     =    [x_clock,
@@ -731,20 +884,6 @@ for domain in range(chosen_domain,chosen_domain+1):
             
 
             
-            #
-            #
-            #
-            
-            
-            
-            rect2 = patches.Rectangle(xy        = (0, 0),
-                              width     = percent_done,
-                              height    = 0.01, 
-                              edgecolor = Mines_Blue, 
-                              facecolor = Mines_Blue,
-                              transform = ax.transAxes)
-            ax.add_patch(rect2)
-
 
             #
             ###################################################
@@ -752,52 +891,61 @@ for domain in range(chosen_domain,chosen_domain+1):
             ###################################################
             #
             # Add Descriptive Statistics
-            #            
+            #   
             
-            plt.figtext( 0.68, 0.60, 'LCL Height:')
-            plt.figtext( 0.80, 0.60, '{0:.1f} m'.format(lcl_hgt.magnitude))
-            plt.figtext( 0.68, 0.58, 'LFC Height:')
-            plt.figtext( 0.80, 0.58, '{0:.1f} m'.format(lfc_hgt.magnitude))
-            plt.figtext( 0.68, 0.56, 'MLLR:')
-            plt.figtext( 0.80, 0.56, '{0:.1f} K'.format(lr_700_500.magnitude))
-            plt.figtext( 0.68, 0.54, 'SBCAPE:')
-            plt.figtext( 0.80, 0.54, '{0:.1f} J/kg'.format(sbcape.magnitude))
-            plt.figtext( 0.68, 0.52, 'SBCIN:')
-            plt.figtext( 0.80, 0.52, '{0:.1f} J/kg'.format(sbcin.magnitude))
-            plt.figtext( 0.68, 0.50, 'MLCAPE:')
-            plt.figtext( 0.80, 0.50, '{0:.1f} J/kg'.format(mlcape.magnitude))
-            plt.figtext( 0.68, 0.48, 'MLCIN:')
-            plt.figtext( 0.80, 0.48, '{0:.1f} J/kg'.format(mlcin.magnitude))
-            plt.figtext( 0.68, 0.46, 'MUCAPE:')
-            plt.figtext( 0.80, 0.46, '{0:.1f} J/kg'.format(mucape.magnitude))
-            plt.figtext( 0.68, 0.44, 'Shear 0-1 km:')
-            plt.figtext( 0.80, 0.44, '{0:.1f} m/s'.format(shear01.magnitude))
-            plt.figtext( 0.68, 0.42, 'Shear 0-6 km:')
-            plt.figtext( 0.80, 0.42, '{0:.1f} m/s'.format(shear06.magnitude))
-            plt.figtext( 0.68, 0.40, 'SRH 0-1 km:')
-            plt.figtext( 0.80, 0.40, '{0:.1f} m\u00b2/s\u00b2'.format(srh_01.magnitude))
-            plt.figtext( 0.68, 0.38, 'SRH 0-3 km:')
-            plt.figtext( 0.80, 0.38, '{0:.1f} m\u00b2/s\u00b2'.format(srh_03.magnitude))
+
+            
+            xtext_start =  0.22;  0.115
+            ytext_start =  0.9
+            text_deltay =  0.02
+            xtext_numbr =  xtext_start + 0.005
+
+            
+            plt.figtext( xtext_start, ytext_start - text_deltay* 0, 'LCL Height:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay* 0, '{0:.1f} m'.format(lcl_hgt.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay* 1, 'LFC Height:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay* 1, '{0:.1f} m'.format(lfc_hgt.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay* 2, 'MLLR:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay* 2, '{0:.1f} K'.format(lr_700_500.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay* 3, 'SBCAPE:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay* 3, '{0:.1f} J/kg'.format(sbcape.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay* 4, 'SBCIN:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay* 4, '{0:.1f} J/kg'.format(sbcin.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay* 5, 'MLCAPE:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay* 5, '{0:.1f} J/kg'.format(mlcape.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay* 6, 'MLCIN:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay* 6, '{0:.1f} J/kg'.format(mlcin.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay* 7, 'MUCAPE:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay* 7, '{0:.1f} J/kg'.format(mucape.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay* 8, 'Shear 0-1 km:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay* 8, '{0:.1f} m/s'.format(shear01.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay* 9, 'Shear 0-6 km:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay* 9, '{0:.1f} m/s'.format(shear06.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay*10, 'SRH 0-1 km:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay*10, '{0:.1f} m\u00b2/s\u00b2'.format(srh_01.magnitude))
+            plt.figtext( xtext_start, ytext_start - text_deltay*11, 'SRH 0-3 km:', horizontalalignment = "right")
+            plt.figtext( xtext_numbr, ytext_start - text_deltay*11, '{0:.1f} m\u00b2/s\u00b2'.format(srh_03.magnitude))
 
             #
             ###################################################           
     
+   
             ###################################################
             #
             # Close SkewT
             #
             
-            
             plt.savefig(graphics_directory + sounding_file_name_png,
                         facecolor   = 'white', 
-                        transparent =   False)
+                        transparent =   False,
+                        bbox_inches = 'tight', 
+                        pad_inches  =       0)
             
             #print(1/0)
-            
+                        
             plt.close('all')
             
-            
-
+        
             #
             ###################################################
 
@@ -869,6 +1017,18 @@ print("End Sounding Plotting Scriot")
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
