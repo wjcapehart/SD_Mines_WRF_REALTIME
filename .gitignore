@@ -31,9 +31,11 @@ processing_DBZ1_gif.sh
 processing_PBL1_gif.sh
 processing_RAIN1_gif.sh
 processing_SFCT1_gif.sh
+processing_SRH2_gif.sh
 processing_SNOWH1_gif.sh
 processing_WIND1_gif.sh
 processing_WEASD1_gif.sh
+processing_UHEL2_gif.sh
 wrf_post_upp.sh
 wrf_post_processing.sh
 processing_skewt1_gif.sh
@@ -41,8 +43,10 @@ processing_DEWP2_gif.sh
 processing_DBZ2_gif.sh
 processing_PBL2_gif.sh
 processing_RAIN2_gif.sh
+processing_SRH2_gif.sh
 processing_SFCT2_gif.sh
 processing_SNOWH2_gif.sh
 processing_WIND2_gif.sh
 processing_WEASD2_gif.sh
 processing_skewt2_gif.sh
+processing_UHEL2_gif.sh
