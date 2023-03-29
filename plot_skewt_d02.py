@@ -122,7 +122,7 @@ plt.rcParams.update({'text.color'      : Mines_Blue,
 intel         = True
 beta_on       = 0
 max_domains   = 2
-chosen_domain = 1
+chosen_domain = 2
 
 if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
