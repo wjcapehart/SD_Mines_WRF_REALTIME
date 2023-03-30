@@ -27,13 +27,15 @@ import matplotlib.patches      as patches
 import matplotlib.font_manager as fm
 import matplotlib              as mpl
 import matplotlib.gridspec     as gridspec
-from matplotlib.ticker         import (MultipleLocator, NullFormatter, ScalarFormatter)
+from   matplotlib.ticker       import (MultipleLocator, NullFormatter, ScalarFormatter)
 
 import seaborn           as sns
 
 import pandas            as pd
 import xarray            as xr
 import pint_xarray       as px
+
+import scipy.interpolate as scintp 
 
 import netCDF4           as nc4
 
@@ -485,11 +487,68 @@ for domain in range(chosen_domain,chosen_domain+1):
                         "qi"          : "g/kg",
                         "qr"          : "g/kg",
                         "qs"          : "g/kg",
-                        "qh"          : "g/kg"}
+                        "qh"          : "g/kg",
+                        "speed"       : "kt"}
 
 
-            sounding_df = pandas_dataframe_to_unit_arrays(sounding_df, 
-                                                          column_units = units_df)
+            sounding_df = pandas_dataframe_to_unit_arrays(df           = sounding_df, 
+                                                          column_units =    units_df)
+            
+            
+            #################################################
+            #
+            # Make Hodo Data Frame
+            #
+
+            hodo_frame = pd.DataFrame.from_dict(sounding_df)[["agl","u_wind","v_wind"]].copy()
+            hodo_frame["speed"] = np.sqrt((hodo_frame["u_wind"].values**2) + (hodo_frame["v_wind"].values**2))
+
+
+
+            hodo_extra = pd.DataFrame({"agl":[500,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000]})
+
+
+
+            fx = scintp.interp1d(x    = hodo_frame[   "agl"].values, 
+                                 y    = hodo_frame["u_wind"].values,
+                                 kind = "cubic")
+
+
+            fy = scintp.interp1d(x    = hodo_frame[   "agl"].values, 
+                                 y    = hodo_frame["v_wind"].values,
+                                 kind = "cubic")
+
+            hodo_extra["u_wind"] = fx(hodo_extra["agl"].values)
+            hodo_extra["v_wind"] = fy(hodo_extra["agl"].values)
+            hodo_extra["speed"]  = np.sqrt((hodo_extra["u_wind"].values**2 + hodo_extra["v_wind"].values**2))
+
+            hodo_extra[hodo_extra["speed"] <= 40]
+
+
+
+            hodo_frame = pd.concat([hodo_frame, hodo_extra])
+            hodo_frame = hodo_frame.sort_values(by = "agl",
+                                               ignore_index = True)
+            
+
+
+            hodo_extra = pandas_dataframe_to_unit_arrays(df           = hodo_extra, 
+                                                         column_units =   units_df)
+            hodo_frame = pandas_dataframe_to_unit_arrays(df           = hodo_frame, 
+                                                         column_units =   units_df)
+            
+
+            hodo_extra["u_wind"] = hodo_extra["u_wind"].to(units("m/s"))
+            hodo_extra["v_wind"] = hodo_extra["v_wind"].to(units("m/s"))
+            hodo_extra["v_wind"] = hodo_extra["v_wind"].to(units("m/s"))
+            hodo_frame["u_wind"] = hodo_frame["u_wind"].to(units("m/s"))
+            hodo_extra["speed"]  = hodo_extra["speed"].to(units("m/s"))
+            hodo_frame["speed"]  = hodo_frame["speed"].to(units("m/s"))
+            
+
+                
+            #
+            #################################################
 
             # Calculate thermodynamics
             lcl_pressure, lcl_temperature = mpcalc.lcl(sounding_df["pressure"][0],
@@ -760,8 +819,10 @@ for domain in range(chosen_domain,chosen_domain+1):
             do_hodo = True
             
             if (do_hodo):
-
-                mask = sounding_df["agl"] <= 10 * units.km
+                
+                
+                
+                mask = hodo_frame["agl"] <= 10 * units.km
 
                 axhodo = fig.add_axes(rect = [0.75, 
                                               skew_box_y_start+skew_box_y_length-0.32, 
@@ -770,15 +831,24 @@ for domain in range(chosen_domain,chosen_domain+1):
                                       zorder=1001)
                 axhodo.zorder=1001
 
-                h = Hodograph(axhodo, component_range=40.)
+                h = Hodograph(ax              = axhodo, 
+                              component_range = 40.)
 
                 h.add_grid(increment=10)
                 axhodo.spines["right"].set_visible(False)
                 axhodo.spines[  "top"].set_visible(False)
 
 
-                cmh = h.plot_colormapped(sounding_df["u_wind"][mask], sounding_df["v_wind"][mask], sounding_df[   "agl"][mask].to(units.km), cmap = "jet")
+                cmh = h.plot_colormapped(u    = hodo_frame["u_wind"][mask], 
+                                         v    = hodo_frame["v_wind"][mask], 
+                                         c    = hodo_frame["agl"][mask].to(units.km), 
+                                         cmap = "jet")
                 cmh.set_clim(0, 10)
+                #cmh2 = h.plot(hodo_extra["u_wind"], hodo_extra["v_wind"], 
+                #              color = Mines_Blue, 
+                #              marker = "o",
+                #              linestyle="None")
+                
 
                 fig.patches.extend([plt.Rectangle((0.73,skew_box_y_start+skew_box_y_length-0.35),0.3,0.355,
                                   fill=True, color='w', alpha=0.99, zorder=1000,
@@ -786,13 +856,18 @@ for domain in range(chosen_domain,chosen_domain+1):
 
                 cbhodo = plt.colorbar(mappable = cmh, 
                                       ax = axhodo,
+                                      #labelpad = -2,
                                       orientation = "horizontal", 
                                       label       = 'Height (km AGL)')
                 
+                #cbhodo.ax.scatter(hodo_extra["agl"]/1000,
+                #                 (np.zeros(len(hodo_extra["agl"]))+0.5),
+                #                 color = "black")
+            
                 cbhodo.ax.zorder = 1001
 
-                
-
+                axhodo.set_xlabel("u (m s$^{-1}$)",labelpad=-2)
+                axhodo.set_ylabel("v (m s$^{-1}$)",labelpad=-2)
             #
             ###################################################  
             
@@ -892,8 +967,6 @@ for domain in range(chosen_domain,chosen_domain+1):
             #
             # Add Descriptive Statistics
             #   
-            
-
             
             xtext_start =  0.22;  0.115
             ytext_start =  0.9
@@ -999,7 +1072,7 @@ for domain in range(chosen_domain,chosen_domain+1):
 ####################################################
 
 
-# ## Ending Script
+# ## Ending ScriptMines_Blue
 
 # In[ ]:
 
@@ -1017,24 +1090,6 @@ print("End Sounding Plotting Scriot")
 ####################################################
 ####################################################
 ####################################################
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
 
 
 # In[ ]:
