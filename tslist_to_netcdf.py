@@ -34,6 +34,8 @@ import metpy.units as mpunits
 import socket as socket
 
 
+
+
 from metpy.units import units
 
 #
@@ -157,10 +159,14 @@ if (use_excel_inventory_file):
                                                index_col=0)
     
 else:
+    
+    import haversine as haversine
 
     # Pull Full Time Series List
     
     print("Generating time series list from original wrf time series files")
+    
+    print("Accessing TSLIST: ",WRF_EXE + "./tslist")
 
     full_time_series_list = pd.read_fwf(WRF_EXE + "./tslist", 
                                         header   = 2,
@@ -175,8 +181,13 @@ else:
     print("Full Time Series List")
     print(full_time_series_list)
     # Grep the Library for *.TS
+    
+    display(len(full_time_series_list['Longitude'].values))
 
     available_time_series_list = glob.glob("????.d??.TS")
+    
+    
+    
 
     # Trim *.TS Suffix
 
@@ -207,15 +218,34 @@ else:
                                           on  = 'Station ID',
                                           how = 'left').sort_values(by=['Domain','Station ID'])
     
+    lats = available_time_series_list['Latitude'].values
+    lons = available_time_series_list['Longitude'].values
+    dist = lats.copy()
+    for i in range(len(lats)):
+        dist[i] = haversine.haversine([lats[i],lons[i]],[ 44.074915, -103.206571])
+                                  
+
+
+    available_time_series_list["Distane from SDMines"] = dist
+
+    available_time_series_list.sort_values(by = "Distane from SDMines", inplace=True)
+
+    
     available_time_series_list.to_excel(station_list_file)
 
-print("Available Time Series List")
-print(available_time_series_list)
+    print("Available Time Series List")
+    print(available_time_series_list)
 
 #
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
 
 
 # ## Read common values for sigma levels and top of model space
