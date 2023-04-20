@@ -648,8 +648,8 @@ for station in available_time_series_list.iterrows():
               color="darkgreen")
     ax11.set_ylabel("Cumulative Precipitation (in)")
     ax[1,1].set_ylabel("Hourly Precipitation (in)")
-    ax[1,1].set_ylim(0,max(np.max(wrf_hrly_prec), 0.001)
-    ax11.set_ylim(0,max(np.max(wrf_cum_prec), 0.001)
+    ax[1,1].set_ylim(0,np.max(np.max(wrf_hrly_prec), 0.001))
+    ax11.set_ylim(0,max(np.max(wrf_cum_prec), 0.001))
     fig.suptitle(station_name+"; Model Run "+file_time+"; WRF Domain "+str(grid_domain),
                  fontsize=20)
 
