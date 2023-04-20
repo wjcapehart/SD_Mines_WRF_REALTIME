@@ -75,6 +75,10 @@ def haversine(row):
 ####################################################
 ####################################################
 
+
+# In[ ]:
+
+
 ####################################################
 ####################################################
 ####################################################
@@ -96,13 +100,6 @@ plt.rcParams.update({'text.color'      : Mines_Blue,
 ####################################################
 ####################################################
 ####################################################
-
-
-
-# In[ ]:
-
-
-
 
 
 # ## File Organization
@@ -258,13 +255,15 @@ airport_database = airpt.load('ICAO')
 
 
 try: 
-    cat = siphcat.TDSCatalog('https://thredds-dev.unidata.ucar.edu/thredds/catalog/noaaport/text/metar/catalog.xml')
+
+    #cat = siphcat.TDSCatalog('https://thredds-dev.unidata.ucar.edu/thredds/catalog/noaaport/text/metar/catalog.xml')
 
     first = True
     for datehour in siphon_pulls_YYYYMMDD_HH:
 
 
-
+                    # https://thredds-dev.unidata.ucar.edu/thredds/catalog/noaaport/text/metar/catalog.html
+                    # https://thredds-dev.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_20230227_0200.txt
         metar_url  = "https://thredds-dev.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_"+datehour+".txt"
         metar_file = METAR_DIR + "./metar_"+datehour+".txt"
 
@@ -279,10 +278,14 @@ try:
 
             print("downloading "+ metar_url)
             with urllib.request.urlopen(metar_url) as response, open(metar_file, 'wb') as out_file:
+                print(response)
+                print(out_file)
                 shutil.copyfileobj(response, out_file)
         print("cracking "+metar_file)
         try:
-            indata = mpio.metar.parse_metar_file(metar_file)
+            print("mpio.metar.parse_metar_file("+metar_file+")")
+            indata = mpio.metar.parse_metar_file(filename = metar_file)
+            print("completed parse metar")
             if first:
                 first = False
                 metar_dataframe = indata
@@ -291,8 +294,8 @@ try:
                 metar_dataframe = metar_dataframe.drop_duplicates()
         except ValueError:
             print("BALLS! Parse Error")
-            error_404 = True
-            pass
+    error_404 = True
+    pass
 
 
 
@@ -307,12 +310,6 @@ except:
 ####################################################
 ####################################################
 ####################################################
-
-
-# In[ ]:
-
-
-
 
 
 # ## Rotate through Available Files
@@ -490,9 +487,10 @@ for station in available_time_series_list.iterrows():
     #
 
     wrf_cum_prec      = wrf_timeseries["stratiform_precipitation_amount"].values + wrf_timeseries["convective_precipitation_amount"].values
+    print("Total precip: ",np.sum(wrf_cum_prec)/25.4, " in")
     if (np.sum(wrf_cum_prec)/25.4 < 0.005):
         print("No Significant Rainfall")
-        wrf_cum_prec.values[:] = 0.000
+        wrf_cum_prec[:] = 0.000
     
     wrf_cum_hrly_prec = wrf_cum_prec[on_the_hour]
     wrf_hrly_prec     = wrf_cum_hrly_prec.copy()
@@ -514,7 +512,11 @@ for station in available_time_series_list.iterrows():
     u_wrf = (wrf_timeseries["eastward_wind_10m"]*units("m")/units("s")).pint.to("knots")[on_the_hour]
     v_wrf = (wrf_timeseries["northward_wind_10m"]*units("m")/units("s")).pint.to("knots")[on_the_hour]
 
-
+    spd_wrf = np.sqrt(wrf_timeseries[ "eastward_wind_10m"]**2 + 
+                      wrf_timeseries["northward_wind_10m"]**2 )
+    
+    
+    spd_wrf = (spd_wrf *units("m")/units("s")).pint.to("knots")                 
 
     obs_winddir   =  metar_data["wind_direction"].to_numpy() * units("deg")
     obs_windspeed = (metar_data["wind_speed"].to_numpy() * units("m")/units("s")).to("knots") 
@@ -588,9 +590,9 @@ for station in available_time_series_list.iterrows():
     #
     
     ax[0,1].plot(wrf_times,
-            wrf_timeseries["atmosphere_mass_content_of_water"],
+            spd_wrf,
               color = "steelblue")
-    ax[0,1].set_ylabel("Total Columnar Water (mm)")
+    ax[0,1].set_ylabel("WRF Wind Speed (kts)")
  
 
     ax01 = ax[0,1].twinx()
@@ -625,11 +627,7 @@ for station in available_time_series_list.iterrows():
     ax[1,0].plot(wrf_times,
                  wrf_timeseries["surface_upward_latent_heat_flux"],
                  color = "blue")
-    ax[1,0].legend(["Solar↓",
-                    "LongWave↓",
-                    "Heat↑",
-                    "Evap↑"],
-                  frameon=False)
+    ax[1,0].legend(["Solar↓","LongWave↓","Heat↑","Evap↑"],frameon=False)
     ax[1,0].set_ylabel("Surface Energy Flux (W/m²)")
 
     ax[1,0].axhline(y=0,color="grey", linewidth=0.5)
@@ -650,7 +648,8 @@ for station in available_time_series_list.iterrows():
               color="darkgreen")
     ax11.set_ylabel("Cumulative Precipitation (in)")
     ax[1,1].set_ylabel("Hourly Precipitation (in)")
-
+    ax[1,1].set_ylim(0,max(np.max(wrf_hrly_prec), 0.001)
+    ax11.set_ylim(0,max(np.max(wrf_cum_prec), 0.001)
     fig.suptitle(station_name+"; Model Run "+file_time+"; WRF Domain "+str(grid_domain),
                  fontsize=20)
 
@@ -742,6 +741,18 @@ print("Ploting Meteogram Script complete.")
 
 
 
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+plt.plot(spd_wrf)
 
 
 # In[ ]:
