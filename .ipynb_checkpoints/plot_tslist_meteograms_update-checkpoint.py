@@ -253,6 +253,11 @@ airport_database = airpt.load('ICAO')
 #
 # https://thredds-test.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_20210924_0000.txt
 
+#
+# remove last metar file in case of updates...
+
+print("purging "+METAR_DIR + "./metar_"+siphon_pulls_YYYYMMDD_HH[-1]+".txt")
+os.system("rm -frv "+METAR_DIR + "./metar_"+siphon_pulls_YYYYMMDD_HH[-1]+".txt")
 
 try: 
 
