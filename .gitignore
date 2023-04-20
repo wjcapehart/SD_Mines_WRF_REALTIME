@@ -18,14 +18,7 @@ METARS
 .DS_Store
 current_run.txt
 current_run_formatted.txt
-./current_run.txt
-current_run.txt
 deleteme.txt
-current_run.txt
-current_run.txt
-deleteme.txt
-current_run.txt
-current_run.txt
 processing_DEWP1_gif.sh
 processing_DBZ1_gif.sh
 processing_PBL1_gif.sh
