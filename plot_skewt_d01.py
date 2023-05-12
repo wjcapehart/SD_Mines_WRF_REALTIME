@@ -238,6 +238,18 @@ print(available_time_series_list)
 # In[ ]:
 
 
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
 ####################################################
 ####################################################
 ####################################################
@@ -773,8 +785,9 @@ for domain in range(chosen_domain,chosen_domain+1):
                 
                 axclouds = SkewT(fig      =       fig,
                                  rotation =         0, 
-                                 aspect   =    (90./np.log10(1050.-100)) / (np.ceil(clouds_maxx)/np.log10(1050.-100)) ,
-                                 rect     = [0.75, skew_box_y_start, 0.3, skew_box_y_length])
+                                 aspect = 'auto',
+                                 #aspect   =    (90./np.log10(1050.-100)) / (np.ceil(clouds_maxx)/np.log10(1050.-100)) ,
+                                 rect     = [0.77, skew_box_y_start, 0.28, skew_box_y_length])
                 
                 axclouds.ax.set_title('Hodograph & Moisture Profile', fontsize=15)
                 axclouds.ax.set_xlabel('Mixing Ratio (g/kg)')
@@ -1090,6 +1103,72 @@ print("End Sounding Plotting Scriot")
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
