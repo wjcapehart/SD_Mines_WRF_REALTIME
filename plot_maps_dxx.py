@@ -5,7 +5,7 @@
 
 # ## Libraries
 
-# In[ ]:
+# In[2]:
 
 
 ####################################################
@@ -265,7 +265,7 @@ dewpoint_levels_degF = np.linspace(30,70,41) # in DegF
 # 
 # ### Making Time Series Maps
 
-# In[ ]:
+# In[1]:
 
 
 ####################################################
@@ -280,9 +280,9 @@ def plot_time_series_maps_func(t):
 
 
     plt.rcParams.update({'text.color'      : Mines_Blue,
-                     'axes.labelcolor' : Mines_Blue,
-					 'xtick.color'     : Mines_Blue,
-					 'ytick.color'    : Mines_Blue})
+                         'axes.labelcolor' : Mines_Blue,
+                         'xtick.color'     : Mines_Blue,
+                         'ytick.color'    : Mines_Blue})
 
 
 
@@ -291,10 +291,10 @@ def plot_time_series_maps_func(t):
     # Establish Times and Labels
     #
 
-    valid_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").strftime("%Y-%m-%d %H %Z")
-    local_time = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%Y-%m-%d %H %Z")
+    valid_time      = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").strftime("%Y-%m-%d %H %Z")
+    local_time      = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%Y-%m-%d %H %Z")
     local_time_zone = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%Z")
-    dow = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%a")
+    dow             = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).strftime("%a")
 
     
     time_for_clock = pd.to_datetime(wrf_time_steps[t].values).tz_localize(tz="UTC").tz_convert(tz=tz).time()
@@ -2470,10 +2470,17 @@ for domain in range(1,max_domains+1):
 
    
     hrly_rain_maps     = rain_maps.copy()
+
+
+
+    
     hrly_rain_maps.values[1:,:,:] = hrly_rain_maps.values[1:,:,:] - hrly_rain_maps.values[0:-1,:,:]
     
     hrly_rain_maps = hrly_rain_maps.assign_coords(coords = dict(south_north = south_north,
                                                                 west_east   =   west_east))
+
+    hrly_rain_maps = hrly_rain_maps.where(hrly_rain_maps >= 0.01)
+    rain_maps      =      rain_maps.where(     rain_maps >= 0.01)
 
     
     #
@@ -2616,6 +2623,14 @@ for domain in range(1,max_domains+1):
     hrly_snowdepth_maps.values[1:,:,:] = snow_depth_map.values[1:,:,:] - snow_depth_map.values[0:-1,:,:]
     hrly_snowdepth_maps   = hrly_snowdepth_maps.assign_coords(coords = dict(south_north = south_north,
                                                       west_east   =   west_east))  
+
+
+
+    hrly_snowfall_maps = hrly_snowfall_maps.where(hrly_snowfall_maps >= 0.01)
+    snow_fall_maps     =     snow_fall_maps.where(    snow_fall_maps >= 0.01)
+    snow_depth_map     =     snow_depth_map.where(    snow_depth_map >= 0.01)
+
+    
    
     #
     # Accumulated Snow Total

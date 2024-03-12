@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Plot Time Series w/ Observations (To get siphcat to get the text files -- USE THIS ONE!)
+# # 
+# Plot Time Series w/ Observations (To get siphcat to get the text files -- USE THIS ONE!)
 
 # ## Libraries
 
@@ -114,6 +115,8 @@ plt.rcParams.update({'text.color'      : Mines_Blue,
 # File Organization
 #
 
+
+
 beta_on     = 0
 max_domains = 2
 
@@ -149,8 +152,6 @@ os.chdir(WRF_EXE)
 ####################################################
 
 
-# ## Time Control
-
 # In[ ]:
 
 
@@ -158,8 +159,35 @@ os.chdir(WRF_EXE)
 ####################################################
 ####################################################
 #
-# Model Start Date
+# Model Geographic Limits
 #
+
+f_geog = xr.open_dataset(filename_or_obj= WRF_ARCHIVE + "/GEOGRID_EM_FILES/geo_em.d01.nc")
+
+lat2d_d01 = f_geog[ "XLAT_C"]
+lon2d_d01 = f_geog["XLONG_C"]
+
+geospatial_lat_min =  lat2d_d01.values.min()
+geospatial_lat_max =  lat2d_d01.values.max()
+geospatial_lon_min =  lon2d_d01.values.min()
+geospatial_lon_max =  lon2d_d01.values.max()
+
+#
+####################################################
+####################################################
+####################################################
+
+
+# In[ ]:
+
+
+
+
+
+# ## Time Control
+
+# In[ ]:
+
 
 with open(WRF_ARCHIVE  + "./current_complete_run/current_run.txt") as f:
     model_start_date_YYYY_MM_DD_HH = f.readlines()
@@ -182,7 +210,7 @@ print("             Current Datetime is ",     current_datetime)
 print("          Siphon End Datetime is ",  siphon_end_datetime)
 
 
-siphon_time_series       = pd.date_range(model_start_datetime, siphon_end_datetime,freq='H')
+siphon_time_series       = pd.date_range(model_start_datetime, siphon_end_datetime,freq='h')
 siphon_pulls_YYYYMMDD_HH = siphon_time_series.strftime("%Y%m%d_%H00")
 
 print(siphon_pulls_YYYYMMDD_HH)
@@ -213,6 +241,9 @@ available_time_series_list = pd.read_excel(station_list_file,
                                            index_col=0)
 
 print(available_time_series_list)
+
+target_time_series_as_list = available_time_series_list["Station ID"].to_list()
+print(target_time_series_as_list)
 
 #
 ####################################################
@@ -254,63 +285,97 @@ airport_database = airpt.load('ICAO')
 # https://thredds-test.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_20210924_0000.txt
 
 #
-# remove last metar file in case of updates...
-
-print(    "purging " + METAR_DIR + "./metar_" + siphon_pulls_YYYYMMDD_HH[-1] + ".txt")
-os.system("rm -frv " + METAR_DIR + "./metar_" + siphon_pulls_YYYYMMDD_HH[-1] + ".txt")
-
-try: 
-
-    #cat = siphcat.TDSCatalog('https://thredds-dev.unidata.ucar.edu/thredds/catalog/noaaport/text/metar/catalog.xml')
-
-    first = True
-    for datehour in siphon_pulls_YYYYMMDD_HH:
 
 
-                    # https://thredds-dev.unidata.ucar.edu/thredds/catalog/noaaport/text/metar/catalog.html
-                    # https://thredds-dev.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_20230227_0200.txt
-        metar_url  = "https://thredds-dev.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_"+datehour+".txt"
-        metar_file = METAR_DIR + "./metar_"+datehour+".txt"
+print("Box = ",geospatial_lat_min, geospatial_lat_max)
+print("      ",geospatial_lon_min, geospatial_lon_max)
 
 
-        path_to_file = pathlib.Path(metar_file)
+first = True
+for datehour in siphon_pulls_YYYYMMDD_HH:
 
-        print(path_to_file, path_to_file.is_file())
+    # URLs & Local Work File Names
+    
+    metar_url  = "https://thredds-dev.unidata.ucar.edu/thredds/fileServer/noaaport/text/metar/metar_"+datehour+".txt"
+    metar_file = METAR_DIR + "./metar_"+datehour+".txt"
+    
+    path_to_file = pathlib.Path(metar_file)
+    
+    print(path_to_file, path_to_file.is_file())
+
+    # Pull File 
+    
+    print("downloading "+ metar_url)
+    with urllib.request.urlopen(metar_url) as response, open(metar_file, 'wb') as out_file:
+        shutil.copyfileobj(response, out_file)
+            
+    print("cracking "+metar_file)
+    try:
+        indata = mpio.metar.parse_metar_file(metar_file)
+        indata = indata[(indata['latitude']  > geospatial_lat_min) & 
+                        (indata['latitude']  < geospatial_lat_max) &
+                        (indata['longitude'] > geospatial_lon_min) &
+                        (indata['longitude'] < geospatial_lon_max) ]
+        indata = indata.drop(["current_wx2_symbol",
+                              "current_wx3_symbol",
+                              "current_wx1",
+                              "current_wx2",
+                              "current_wx3",
+                              "altimeter",
+                              "wind_gust",
+                              "visibility",
+                              "cloud_coverage",
+                              "current_wx1_symbol",
+                              "air_pressure_at_sea_level",
+                              "remarks",
+                              "low_cloud_type", 
+                              "low_cloud_level", 
+                              "medium_cloud_type",
+                              "medium_cloud_level", 
+                              "high_cloud_type", 
+                              "high_cloud_level",
+                              "highest_cloud_type", 
+                              "highest_cloud_level"], axis=1)
+        if first:
+            first = False
+            metar_dataframe = indata
+        else:
+            metar_dataframe = pd.concat(objs = [metar_dataframe,indata],
+                                        axis =                  "index")
+    except ValueError:
+        print("BALLS! Parse Error")
+        error_404 = True
+        pass
+
+# Cookiecut the Radar Domain Metars and Clean Data Table
 
 
 
-        if (not path_to_file.is_file()) :
 
-            print("downloading "+ metar_url)
-            with urllib.request.urlopen(metar_url) as response, open(metar_file, 'wb') as out_file:
-                print(response)
-                print(out_file)
-                shutil.copyfileobj(response, out_file)
-        print("cracking "+metar_file)
-        try:
-            print("mpio.metar.parse_metar_file("+metar_file+")")
-            indata = mpio.metar.parse_metar_file(filename = metar_file)
-            print("completed parse metar")
-            if first:
-                first = False
-                metar_dataframe = indata
-            else:
-                metar_dataframe = pd.concat([metar_dataframe,indata])
-                metar_dataframe = metar_dataframe.drop_duplicates()
-        except ValueError:
-            print("BALLS! Parse Error")
-    error_404 = True
-    pass
+
+metar_dataframe = metar_dataframe.sort_values("date_time").reset_index(drop=True)
 
 
 
 
+print(    "purging " + METAR_DIR + "./metar_*.txt")
+os.system("rm -frv " + METAR_DIR + "./metar_*.txt")
+
+print("Dropping Duplicate Records")
+
+metar_dataframe = metar_dataframe.drop_duplicates()
+
+
+
+try:
     metar_station_locs = metar_dataframe[["station_id","latitude","longitude"]].drop_duplicates()
-
 except:
-    print("Balls - we cannot access the thredds server")
-    metar_dataframe = pd.DataFrame()
+    print("Dangit: there is no metar stations to locate")
 
+print("Storing Data in CSVs")
+metar_station_locs.to_csv(WRF_OVERALL_DIR + "Metar_loc_dump.csv")
+metar_dataframe.to_csv(   WRF_OVERALL_DIR + "Metar_Dump.csv")
+print("Metar Extraction Complete")
 #
 ####################################################
 ####################################################
@@ -318,6 +383,18 @@ except:
 
 
 # ## Rotate through Available Files
+
+# In[ ]:
+
+
+u_wrf, v_wrf, u_wrf.coords["time"]
+
+
+# In[ ]:
+
+
+ncss_times.to_numpy()
+
 
 # In[ ]:
 
@@ -347,18 +424,22 @@ os.system("mkdir -pv " + graphics_directory )
 # Start File Rotation
 #
 
-for station in available_time_series_list.iterrows():
+
+for station_row in range(len(available_time_series_list)):
 
     ###################################################################
     #
     # Pull Station Data 
     #
 
-    station_id     = station[1][0]
-    grid_domain    = station[1][1]
-    station_name   = station[1][2]
-    station_lat    = station[1][3]
-    station_lon    = station[1][4]
+
+
+    station_id     = available_time_series_list.iloc[station_row]["Station ID"]
+    grid_domain    = available_time_series_list.iloc[station_row]["Domain"]
+    station_name   = available_time_series_list.iloc[station_row]["Station Name"]
+    station_lat    = available_time_series_list.iloc[station_row]["Latitude"]
+    station_lon    = available_time_series_list.iloc[station_row]["Longitude"]
+
 
     #    
     ###################################################################
@@ -399,40 +480,40 @@ for station in available_time_series_list.iterrows():
     metar_station_locs['distance'] = metar_station_locs.apply(lambda row: haversine(row), axis=1)
     
     x=metar_station_locs[ metar_station_locs['distance'] == metar_station_locs['distance'].min() ]
-
+    
     try:
-        weather_station_name = airport_database[x['station_id'][0]]["name"] #+", "+airport_database[x['station_id'][0]]["subd"]
+        weather_station_name = airport_database[x.iloc[0]['station_id']]["name"] #+", "+airport_database[x['station_id'][0]]["subd"]
         print("Weatherstation from airport database ", weather_station_name)
     except KeyError:
-        weather_station_name = x['station_id'][0]
+        weather_station_name = x.iloc[0]['station_id']
         print("Weatherstation from short table ", weather_station_name)
 
                
-    metar_data = metar_dataframe[metar_dataframe["station_id"]==x["station_id"][0]].set_index("date_time")
+    metar_data = metar_dataframe[metar_dataframe["station_id"]==x.iloc[0]['station_id']].set_index("date_time")
     
 
     
     
-    print("lon metar/station/wrf:",metar_data["longitude"][0],station_lon,wrf_timeseries["wrf_grid_longitude"].values)
-    print("lat metar/station/wrf:",metar_data["latitude"][0],station_lat,wrf_timeseries["wrf_grid_latitude"].values)
+    print("lon metar/station/wrf:",metar_data.iloc[0]["longitude"],station_lon,wrf_timeseries["wrf_grid_longitude"].values)
+    print("lat metar/station/wrf:",metar_data.iloc[0][ "latitude"],station_lat,wrf_timeseries["wrf_grid_latitude"].values)
 
    
 
-    metar_to_sta_distance  = hs.haversine((metar_data["latitude"][0],
-                                           metar_data["longitude"][0]),
+    metar_to_sta_distance  = hs.haversine((metar_data.iloc[0][ "latitude"],
+                                           metar_data.iloc[0]["longitude"]),
                                           (station_lat,
                                            station_lon))
 
-    metar_to_wrf_distance = hs.haversine((metar_data["latitude"][0],
-                                           metar_data["longitude"][0]),
-                                          (wrf_timeseries["wrf_grid_latitude"].values,
-                                           wrf_timeseries["wrf_grid_longitude"].values))
+    metar_to_wrf_distance = hs.haversine((metar_data.iloc[0][ "latitude"],
+                                          metar_data.iloc[0]["longitude"]),
+                                          (wrf_timeseries["wrf_grid_latitude" ].values[0],
+                                           wrf_timeseries["wrf_grid_longitude"].values[0]))
 
 
     sta_to_wrf_distance   = hs.haversine((station_lat,
                                           station_lon),
-                                         (wrf_timeseries["wrf_grid_latitude"].values,
-                                          wrf_timeseries["wrf_grid_longitude"].values))    
+                                         (wrf_timeseries["wrf_grid_latitude" ].values[0],
+                                          wrf_timeseries["wrf_grid_longitude"].values[0]))    
     
     print("distance between  metar and tslist ",metar_to_sta_distance)
     print("distance between  metar and    wrf ",metar_to_wrf_distance)
@@ -531,6 +612,8 @@ for station in available_time_series_list.iterrows():
     u_obs = (metar_data[ "eastward_wind"].to_numpy() * units("m")/units("s")).to("knots") 
     v_obs = (metar_data["northward_wind"].to_numpy() * units("m")/units("s")).to("knots") 
 
+    #u_obs = xr.DataArray(data=u_obs)#, coords={"time":ncss_times})
+    #v_obs = xr.DataArray(data=v_obs)#, coords={"time":ncss_times})
     #
     ###################################################################
 
@@ -585,8 +668,8 @@ for station in available_time_series_list.iterrows():
         print("balls: dew_point_temperature plot error")
 
 
-    ax[0,1].set_title("Sta-to-WRF dist: "+str(round(metar_to_wrf_distance,1)) +" km")
-    ax[0,0].set_title("Nearest Sta: "+weather_station_name +" ("+x['station_id'][0] +")")
+    ax[0,1].set_title("Sta-to-WRF dist: " + str(round(metar_to_wrf_distance,1)) +" km")
+    ax[0,0].set_title("Nearest Sta: "     + weather_station_name +" ("+x.iloc[0]['station_id'] +")")
         
 
 
@@ -609,10 +692,17 @@ for station in available_time_series_list.iterrows():
     
     ax01.barbs( wrf_time_hrly, 1/3.,  u_wrf, v_wrf, color=Mines_Blue )
 
-    try:
-        ax01.barbs( ncss_times,    2/3.,  u_obs, v_obs, color="blue")
-    except ValueError:
-        print("balls: wind plotting error")
+
+    
+
+    #try:
+    ax01.barbs( ncss_times,    
+                   2/3.,  
+                   u_obs.astype('float64'),                  
+                   v_obs.astype('float64'), 
+                   color      = "blue")
+    #except:
+     #print("balls: wind plotting error")
 
    
     
