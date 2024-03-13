@@ -41,6 +41,7 @@ import netCDF4           as nc4
 
 import wrf               as wrf
 
+from datetime    import timezone
 
 
 import metpy.calc  as     mpcalc
@@ -178,11 +179,11 @@ model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:13]
 model_start_date_YYYY_MM_DD_HH0000 = model_start_date_YYYY_MM_DD_HH + ":00:00"
 print(model_start_date_YYYY_MM_DD_HH0000)
     
-model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')
+model_start_datetime = pd.to_datetime(datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')).tz_localize(tz="UTC")
 print("Model Simulation Date ", model_start_datetime)
 
 model_end_datetime  = model_start_datetime + datetime.timedelta(hours=36)
-current_datetime    = datetime.datetime.utcnow()
+current_datetime     = datetime.datetime.now(tz=timezone.utc)
 siphon_end_datetime = min(current_datetime,model_end_datetime)
 
 print( "Current Working Directory is now " + os.getcwd() )

@@ -27,6 +27,7 @@ import socket            as socket
 
 import pathlib           as pathlib
 
+from datetime    import timezone
 
 #
 ####################################################
@@ -138,7 +139,7 @@ time_between_boundary_condition_feeds =  3 # hours
 
 lag_hours = 3
 
-current_datetime = datetime.datetime.utcnow()
+current_datetime = datetime.datetime.now(tz=timezone.utc)
 
 if (not beta_on) :
 
@@ -721,7 +722,7 @@ else:
         print("cd " + WRF_EXE, file =  f) 
         print("export OMP_NUM_THREADS=18", file =  f) 
         print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 2  -ppn 1  " + WRF_EXE + "./REAL_INTEL_DMSM_AVX.EXE 2>&1 real.log", file =  f) 
-        print("# mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 36 -ppn 18 " + WRF_EXE + "./REAL_INTEL_DM_AVX.EXE   2>&1 real.log", file =  f) 
+        print("# mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 36 -ppn 18 " + WRF_EXE + "./REAL_INTEL_DM_AVX.EXE  2>&1 real.log", file =  f) 
         print("echo WRF:REAL::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_real.sh")
@@ -781,8 +782,8 @@ else:
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
         print("export OMP_NUM_THREADS=18", file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 2  -ppn 1  " + WRF_EXE + "./WRF_INTEL_DMSM_AVX.EXE 2>&1  wrf.log", file =  f) 
-        print("# mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 36 -ppn 18 " + WRF_EXE + "./WRF_INTEL_DM_AVX.EXE   2>&1  wrf.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 2  -ppn 1  " + WRF_EXE + "./WRF_INTEL_DMSM_AVX.EXE 2>&1 real.log", file =  f) 
+        print("# mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 36 -ppn 18 " + WRF_EXE + "./WRF_INTEL_DM_AVX.EXE  2>&1 real.log", file =  f) 
         print("echo WRF:WRF::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
@@ -967,7 +968,7 @@ os.system("ln -sv ./" + model_start_date_YYYY_MM_DD_HH  + " ./current_complete_r
 os.system("scp /home/wjc/GitHub/SD_Mines_WRF_REALTIME//ARCHIVE/current_complete_run/GRIB/wrfout_d02_" + model_start_date_YYYY_MM_DD_HH + ".grib2 wjc@kyrill:/var/www/html/WRF/GRIB/wrf_out_d02_current.grib2")
 os.system("scp /home/wjc/GitHub/SD_Mines_WRF_REALTIME//ARCHIVE/current_complete_run/GRIB/wrfout_d01_" + model_start_date_YYYY_MM_DD_HH + ".grib2 wjc@kyrill:/var/www/html/WRF/GRIB/wrf_out_d01_current.grib2")
 
-
+os.system("/home/wjc/GitHub/SD_Mines_WRF_REALTIME/run_hourly_meteogram_update.sh")
 
 #
 ####################################################

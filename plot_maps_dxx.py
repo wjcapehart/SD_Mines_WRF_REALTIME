@@ -5,7 +5,7 @@
 
 # ## Libraries
 
-# In[2]:
+# In[1]:
 
 
 ####################################################
@@ -31,7 +31,6 @@ import pint_xarray       as px
 
 import netCDF4           as nc4
 
-import wrf               as wrf
 
 import cartopy.crs       as ccrs
 import cartopy.feature   as cfeature
@@ -61,9 +60,11 @@ import matplotlib as mpl
 from      joblib import Parallel, delayed
 
 from metpy.plots import colortables
+from datetime    import timezone
 
 
 
+import wrf               as wrf
 
 
 colorbar_pad    = 0.012
@@ -74,7 +75,7 @@ colorbar_shrink = 0.8
 ####################################################
 
 
-# In[ ]:
+# In[2]:
 
 
 ####################################################
@@ -101,7 +102,7 @@ plt.rcParams.update({'text.color'      : Mines_Blue,
 ####################################################
 
 
-# In[ ]:
+# In[3]:
 
 
 ####################################################
@@ -133,7 +134,7 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 ####################################################
 
 
-# In[ ]:
+# In[4]:
 
 
 ###################################################
@@ -186,7 +187,7 @@ snow_levels_full   = [   0.10,   0.25,   0.50,  0.75,
 ###################################################
 
 
-# In[ ]:
+# In[5]:
 
 
 ###################################################
@@ -265,7 +266,7 @@ dewpoint_levels_degF = np.linspace(30,70,41) # in DegF
 # 
 # ### Making Time Series Maps
 
-# In[1]:
+# In[7]:
 
 
 ####################################################
@@ -2292,11 +2293,11 @@ model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:13]
 model_start_date_YYYY_MM_DD_HH0000 = model_start_date_YYYY_MM_DD_HH + ":00:00"
 print(model_start_date_YYYY_MM_DD_HH0000)
     
-model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')
+model_start_datetime = pd.to_datetime(datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')).tz_localize(tz="UTC")
 print("Model Simulation Date ", model_start_datetime)
 
 model_end_datetime  = model_start_datetime + datetime.timedelta(hours=36)
-current_datetime    = datetime.datetime.utcnow()
+current_datetime     = datetime.datetime.now(tz=timezone.utc)
 siphon_end_datetime = min(current_datetime,model_end_datetime)
 
 print( "Current Working Directory is now " + os.getcwd() )
