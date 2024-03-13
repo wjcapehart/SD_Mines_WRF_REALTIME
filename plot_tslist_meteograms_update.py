@@ -47,6 +47,7 @@ import metpy.io          as mpio
 
 
 from requests import HTTPError
+from datetime import timezone
 
 
 from metpy.units import units
@@ -197,12 +198,12 @@ model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:13]
 model_start_date_YYYY_MM_DD_HH0000 = model_start_date_YYYY_MM_DD_HH + ":00:00"
 print(model_start_date_YYYY_MM_DD_HH0000)
     
-model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')
+model_start_datetime = pd.to_datetime(datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')).tz_localize(tz="UTC")
 print("Model Simulation Date ", model_start_datetime)
     
 model_end_datetime   = model_start_datetime + datetime.timedelta(hours=36)
-current_datetime     = datetime.datetime.utcnow()
-siphon_end_datetime  = min(current_datetime,model_end_datetime)
+current_datetime     = datetime.datetime.now(tz=timezone.utc)
+siphon_end_datetime  = min(current_datetime, model_end_datetime)
 
 print("         Model Start Datetime is ", model_start_datetime)
 print("           Model End Datetime is ",   model_end_datetime)
@@ -538,7 +539,7 @@ for station_row in range(len(available_time_series_list)):
     tf     = tzf.TimezoneFinder()
     tz     = tf.certain_timezone_at(lng=station_lon, lat=station_lat)
     
-    tzabbr = pytz.timezone(tz).localize(model_start_datetime)
+    tzabbr = pytz.timezone(tz)#.localize(model_start_datetime)
 
     wrf_times  = pd.to_datetime(wrf_timeseries["time"]).tz_localize(tz="UTC").tz_convert(tz=tz)
     
@@ -835,7 +836,7 @@ print("Ploting Meteogram Script complete.")
 # In[ ]:
 
 
-plt.plot(spd_wrf)
+
 
 
 # In[ ]:
