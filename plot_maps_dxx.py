@@ -5,7 +5,7 @@
 
 # ## Libraries
 
-# In[1]:
+# In[ ]:
 
 
 ####################################################
@@ -75,7 +75,7 @@ colorbar_shrink = 0.8
 ####################################################
 
 
-# In[2]:
+# In[ ]:
 
 
 ####################################################
@@ -102,7 +102,7 @@ plt.rcParams.update({'text.color'      : Mines_Blue,
 ####################################################
 
 
-# In[3]:
+# In[ ]:
 
 
 ####################################################
@@ -134,7 +134,7 @@ stormy_dbz_values   = np.arange(  5, 75.1, 5)
 ####################################################
 
 
-# In[4]:
+# In[ ]:
 
 
 ###################################################
@@ -187,7 +187,7 @@ snow_levels_full   = [   0.10,   0.25,   0.50,  0.75,
 ###################################################
 
 
-# In[5]:
+# In[ ]:
 
 
 ###################################################
@@ -266,7 +266,7 @@ dewpoint_levels_degF = np.linspace(30,70,41) # in DegF
 # 
 # ### Making Time Series Maps
 
-# In[7]:
+# In[ ]:
 
 
 ####################################################
@@ -409,8 +409,8 @@ def plot_time_series_maps_func(t):
     gap = 10
     plt.barbs(wrf.to_np(lon2d[::gap,::gap]),
               wrf.to_np(lat2d[::gap,::gap]),
-              wrf.to_np(u10_maps.isel(Time=t)[::gap,::gap]),
-              wrf.to_np(v10_maps.isel(Time=t)[::gap,::gap]),
+              wrf.to_np(u10_maps.isel(Time=t)[::gap,::gap]).astype('float64'),
+              wrf.to_np(v10_maps.isel(Time=t)[::gap,::gap]).astype('float64'),
               transform = ccrs.PlateCarree(), 
               length=5)
     
@@ -2317,7 +2317,7 @@ tz     = tf.certain_timezone_at(lng=-104, lat=44)
 
 tzabbr = pytz.timezone(tz).localize(model_start_datetime)
 
-
+print(tzabbr)
 
 #
 ####################################################
