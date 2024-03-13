@@ -692,8 +692,8 @@ for domain in range(chosen_domain,chosen_domain+1):
                         mask[i] = False
 
             skew.plot_barbs(sounding_df["pressure"][mask], 
-                            sounding_df[  "u_wind"][mask], 
-                            sounding_df[  "v_wind"][mask],
+                            sounding_df[  "u_wind"][mask].astype('float64'), 
+                            sounding_df[  "v_wind"][mask].astype('float64'),
                             color=Mines_Blue)
 
             skew.ax.set_ylim=(1000, 100)
