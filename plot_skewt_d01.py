@@ -918,13 +918,14 @@ for domain in range(chosen_domain,chosen_domain+1):
                                       transform = axhodo.transAxes, zorder = 1001)
             axhodo.add_patch(rect2)
 
-            rect3 = patches.Rectangle(xy        = (0, 0-0.01/2),
-                                      width     = percent_done,
-                                      height    = 0.01, 
-                                      edgecolor = Mines_Blue, 
-                                      facecolor = Mines_Blue,
-                                      transform = axclouds.ax.transAxes)
-            axclouds.ax.add_patch(rect3)
+            if (CLOUDS_ON):
+                rect3 = patches.Rectangle(xy        = (0, 0-0.01/2),
+                                          width     = percent_done,
+                                          height    = 0.01, 
+                                          edgecolor = Mines_Blue, 
+                                          facecolor = Mines_Blue,
+                                          transform = axclouds.ax.transAxes)
+                axclouds.ax.add_patch(rect3)
             
             #######
             #
