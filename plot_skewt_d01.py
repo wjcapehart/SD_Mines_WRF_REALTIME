@@ -791,7 +791,7 @@ for domain in range(chosen_domain,chosen_domain+1):
                                  #aspect   =    (90./np.log10(1050.-100)) / (np.ceil(clouds_maxx)/np.log10(1050.-100)) ,
                                  rect     = [0.77, skew_box_y_start, 0.28, skew_box_y_length])
 
-                # axclouds.ax.xaxis.set_units(units("g/kg"))
+                axclouds.ax.xaxis.set_units(units("gram / kilogram"))
                 
                 axclouds.ax.set_title('Hodograph & Moisture Profile', fontsize=15)
                 axclouds.ax.set_xlabel('Mixing Ratio (g/kg)')
