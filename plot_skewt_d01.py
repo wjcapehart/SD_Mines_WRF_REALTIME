@@ -346,7 +346,7 @@ for domain in range(chosen_domain,chosen_domain+1):
     # Rotate through stations Files
     #
 
-    for station in station_doms.iterrows():
+    for station_row in range(len(station_doms)):
         
         station_id     = station_doms.iloc[station_row]["Station ID"]
         grid_domain    = station_doms.iloc[station_row]["Domain"]
