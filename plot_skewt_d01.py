@@ -783,7 +783,7 @@ for domain in range(chosen_domain,chosen_domain+1):
             # Create a Cloud Water Profile
             #
          
-            if (True):
+            if (False):
                 
                 axclouds = SkewT(fig      =       fig,
                                  rotation =         0, 
@@ -791,9 +791,8 @@ for domain in range(chosen_domain,chosen_domain+1):
                                  #aspect   =    (90./np.log10(1050.-100)) / (np.ceil(clouds_maxx)/np.log10(1050.-100)) ,
                                  rect     = [0.77, skew_box_y_start, 0.28, skew_box_y_length])
 
-                #axclouds.ax.xaxis.set_units(units("gram / kilogram"))
-                axclouds.ax.xaxis.set_units("gram / kilogram")
-
+                axclouds.ax.xaxis.set_units(units("gram / kilogram"))
+                
                 axclouds.ax.set_title('Hodograph & Moisture Profile', fontsize=15)
                 axclouds.ax.set_xlabel('Mixing Ratio (g/kg)')
                 axclouds.ax.set_ylabel("")

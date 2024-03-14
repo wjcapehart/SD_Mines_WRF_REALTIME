@@ -783,7 +783,7 @@ for domain in range(chosen_domain,chosen_domain+1):
             # Create a Cloud Water Profile
             #
          
-            if (True):
+            if (False):
                 
                 axclouds = SkewT(fig      =       fig,
                                  rotation =         0, 
