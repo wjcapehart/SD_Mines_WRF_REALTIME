@@ -335,14 +335,13 @@ os.system("rm -frv " + WPS_WORK + "./ungrib.log")
 os.system("rm -frv " + WPS_WORK + "./GRIBFILE*")
 os.system("rm -frv " + WPS_WORK + "./met_em*.nc")
 os.system("rm -frv " + WPS_WORK + "./FILE:????-??-??_??")
+os.system("rm -frv " + WPS_WORK + "./FILE:????-??-??_??")
 
 os.system("rm -frv " + WPS_WORK + "./namelist.wps")
 os.system("rm -frv " + WPS_WORK + "./NAMELIST_WPS_SHARE.TXT")
-
+os.system("rm -frv " + WPS_WORK + "./ncep_first_guess_grib_*.grib2")
 
 if (not beta_on):
-    
-    os.system("rm -frv " + WPS_WORK + "./ncep_first_guess_grib_*.grib2")
 
     try:
         ftp = ftplib.FTP(NCEP_FTP_SERVER)
@@ -581,7 +580,9 @@ os.system("rm -frv " + WRF_EXE + "./namelist.input")
 os.system("rm -frv " + WRF_EXE + "./wrfbdy_*")
 os.system("rm -frv " + WRF_EXE + "./wrfinput_*")
 os.system("rm -frv " + WRF_EXE + "./wrfout*")
-    
+#
+os.system("rm -frv " + WRF_EXE + "./rsl*")
+
 #
 ####################################################
 ####################################################
