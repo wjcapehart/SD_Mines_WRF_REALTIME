@@ -347,11 +347,12 @@ for domain in range(chosen_domain,chosen_domain+1):
     #
 
     for station in station_doms.iterrows():
-        station_id     = station[1][0]
-        grid_domain    = station[1][1]
-        station_name   = station[1][2]
-        station_lat    = station[1][3]
-        station_lon    = station[1][4]
+        
+        station_id     = station_doms.iloc[station_row]["Station ID"]
+        grid_domain    = station_doms.iloc[station_row]["Domain"]
+        station_name   = station_doms.iloc[station_row]["Station Name"]
+        station_lat    = station_doms.iloc[station_row]["Latitude"]
+        station_lon    = station_doms.iloc[station_row]["Longitude"]
         
         tf     = tzf.TimezoneFinder()
         tz     = tf.certain_timezone_at(lng=station_lon, lat=station_lat)
@@ -789,13 +790,15 @@ for domain in range(chosen_domain,chosen_domain+1):
                                  aspect = 'auto',
                                  #aspect   =    (90./np.log10(1050.-100)) / (np.ceil(clouds_maxx)/np.log10(1050.-100)) ,
                                  rect     = [0.77, skew_box_y_start, 0.28, skew_box_y_length])
+
+                # axclouds.ax.xaxis.set_units(units("g/kg"))
                 
                 axclouds.ax.set_title('Hodograph & Moisture Profile', fontsize=15)
                 axclouds.ax.set_xlabel('Mixing Ratio (g/kg)')
                 axclouds.ax.set_ylabel("")
                 axclouds.ax.set_xlim(0, np.ceil(clouds_maxx))
                 axclouds.ax.xaxis.set_major_locator(MultipleLocator(1))
-                axclouds.ax.xaxis.set_units(units("g/kg"))
+                
                 axclouds.ax.spines["right"].set_visible(False)
                 axclouds.ax.spines[  "top"].set_color("white")
                 
