@@ -53,6 +53,9 @@ import timezonefinder    as tzf
 import pytz              as pytz
 import socket            as socket
 
+CLOUDS_ON = False
+
+
 #
 ####################################################
 ####################################################
@@ -783,7 +786,7 @@ for domain in range(chosen_domain,chosen_domain+1):
             # Create a Cloud Water Profile
             #
          
-            if (False):
+            if (CLOUDS_ON):
                 
                 axclouds = SkewT(fig      =       fig,
                                  rotation =         0, 
@@ -815,13 +818,13 @@ for domain in range(chosen_domain,chosen_domain+1):
                                   loc = 'center right',
                                   frameon = False)
             
-            axclouds_box          = axclouds.ax.get_position()
-            axclouds_box_x_start  = axclouds_box.x0
-            axclouds_box_y_start  = axclouds_box.y0
-            axclouds_box_x_end    = axclouds_box.x1
-            axclouds_box_y_end    = axclouds_box.y1
-            axclouds_box_x_length = axclouds_box.x1 - axclouds_box.x0
-            axclouds_box_y_length = axclouds_box.y1 - axclouds_box.y0
+                axclouds_box          = axclouds.ax.get_position()
+                axclouds_box_x_start  = axclouds_box.x0
+                axclouds_box_y_start  = axclouds_box.y0
+                axclouds_box_x_end    = axclouds_box.x1
+                axclouds_box_y_end    = axclouds_box.y1
+                axclouds_box_x_length = axclouds_box.x1 - axclouds_box.x0
+                axclouds_box_y_length = axclouds_box.y1 - axclouds_box.y0
 
 
             #
