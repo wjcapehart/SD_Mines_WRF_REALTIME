@@ -355,7 +355,7 @@ for domain in range(chosen_domain,chosen_domain+1):
         
         tf     = tzf.TimezoneFinder()
         tz     = tf.certain_timezone_at(lng=station_lon, lat=station_lat)
-        tzabbr = pytz.timezone(tz).localize(model_start_datetime)
+        tzabbr = pytz.timezone(tz)
         
         #
         # Creating Graphics Directory

@@ -60,7 +60,8 @@ import matplotlib as mpl
 from      joblib import Parallel, delayed
 
 from metpy.plots import colortables
-from datetime    import timezone
+from datetime    import 
+
 
 
 
@@ -2315,7 +2316,7 @@ wrf_skewt_time    = model_start_datetime.strftime("%Y-%m-%d %H UTC")
 tf     = tzf.TimezoneFinder()
 tz     = tf.certain_timezone_at(lng=-104, lat=44)
 
-tzabbr = pytz.timezone(tz).localize(model_start_datetime)
+tzabbr = pytz.timezone(tz)
 
 print(tzabbr)
 
