@@ -141,39 +141,32 @@ lag_hours = 3
 
 current_datetime = datetime.datetime.now(tz=timezone.utc)
 
-if (not beta_on) :
 
-    current_datetime_lag3 = current_datetime - datetime.timedelta(hours=lag_hours)
+current_datetime_lag3 = current_datetime - datetime.timedelta(hours=lag_hours)
 
 
-    if (current_datetime.day == current_datetime_lag3.day):
-        if (current_datetime_lag3.hour < 6):
-            fx_hour =  0
-        elif (current_datetime_lag3.hour < 12):
-            fx_hour =  6
-        elif (current_datetime_lag3.hour < 18):
-            fx_hour = 12
-        else:
-            fx_hour = 18
-
-        model_start_datetime = datetime.datetime(year  = current_datetime_lag3.year,
-                                                 month = current_datetime_lag3.month, 
-                                                 day   = current_datetime_lag3.day, 
-                                                 hour  = fx_hour)     
+if (current_datetime.day == current_datetime_lag3.day):
+    if (current_datetime_lag3.hour < 6):
+        fx_hour =  0
+    elif (current_datetime_lag3.hour < 12):
+        fx_hour =  6
+    elif (current_datetime_lag3.hour < 18):
+        fx_hour = 12
     else:
         fx_hour = 18
-        model_start_datetime = datetime.datetime(year  = current_datetime_lag3.year,
-                                                 month = current_datetime_lag3.month, 
-                                                 day   = current_datetime_lag3.day, 
-                                                 hour  = fx_hour)
-        
+
+    model_start_datetime = datetime.datetime(year  = current_datetime_lag3.year,
+                                             month = current_datetime_lag3.month, 
+                                             day   = current_datetime_lag3.day, 
+                                             hour  = fx_hour)     
 else:
+    fx_hour = 18
+    model_start_datetime = datetime.datetime(year  = current_datetime_lag3.year,
+                                             month = current_datetime_lag3.month, 
+                                             day   = current_datetime_lag3.day, 
+                                             hour  = fx_hour)
+    
 
-
-    model_start_datetime = datetime.datetime(year  = 2021,
-                                             month =    9,
-                                             day   =   28,
-                                             hour  =   18)
     
 model_end_datetime = model_start_datetime + datetime.timedelta(hours=total_sumulation_time)
 
@@ -353,7 +346,7 @@ if (not beta_on):
                            open(WPS_WORK + local_ftp_file[file], 'wb').write)
 
         ftp.close()
-    except TimeoutError:
+    except:
         print("-- Darn: FTP is down")
         for file in range(0,len(ncep_boundary_condition_hour)):
             print("Wgetting " + ncep_http_address[file] + " to " + local_ftp_file[file])
