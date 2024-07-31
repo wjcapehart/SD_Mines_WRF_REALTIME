@@ -1,14 +1,68 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # TSList to NetCDF Converstion
+# ![AES-744 Masthead](http://kyrill.ias.sdsmt.edu/wjc/eduresources/AES_744_Masthead.png)
 # 
-# Code converts WRF Timeseries ASCII Files to netcdf output
+# # WRF Time Series File to netCDF
+# 
+# Code converts WRF Timeseries ASCII Files to netCDF files.
+# 
+# The documentation on WRF's TimeSeries configuration is available here:
+# 
+# *  https://github.com/wrf-model/WRF/blob/master/run/README.tslist
+# 
+# ## Code Overview
+# 
+# *  Reads *tslist* station file
+# *  Cross-references available output timeseries ASCII files and for each station determines the highest/innermost] domain.  This domain will be used to create the combined netCDF file. 
+#     *  Write optional excel file for future access
+# *  Extracts sigma layers coordinates
+# *  Loops through station files
+#     * Read individual files where ???? is the *tslist* station files station abbreviations (colunn 2), and dxx is the WRF domain from which the time series is extracted.
+#         * single layer fields (*????.dxx.TS*)
+#         * geopotential height profile (*????.dxx.PH*)
+#         * potential temperature profile (*????.dxx.TH*)
+#         * specific humidity profile (*????.dxx.QV*)
+#         * single layer fields (*????.dxx.TS*)
+#         * eastward wind speed profile (*????.dxx.UU*)
+#         * northward wind speed profile (*????.dxx.VV*)
+#         * vertical wind speed profile (*????.dxx.WW*)
+#         * pressure profile (*????.dxx.PR*)   
+#     * Output files into one CF-compliant netCDF timeSeries feature file per station
+#         * file output nameform is: *wrfout_dxx_YYYY-MM-DD_HH_????".nc*, where YYYY-MM-DD_HH is the model start time.
+#     
+# 
+# ## External Software Requirements
+# 
+# This notebook will require access to the following external packages
+# 
+# *  [The netCDF Command Operators (NCO) toolkit](https://nco.sourceforge.net): a unix-based tooklit that manipulates and analyzes data stored in netCDF-accessible formats
+#    *   [ncatted](https://nco.sourceforge.net/nco.html#ncatted-netCDF-Attribute-Editor): The NCO netCDF Attribute Editor
 # 
 
-# ## Libraries
+# ## Python Libraries
+# 
+# This script requires the following libraries.
+# 
+# * On-board Python Interfaces
+#     *  [os](https://docs.python.org/3/library/os.html): Miscellaneous operating system interfaces
+#     *  [glob](https://docs.python.org/3/library/glob.html): Unix style pathname pattern expansion
+#     *  [datetime](https://docs.python.org/3/library/datetime.html): Basic date and time types
+# *  External Libraries
+#     *  [numpy](https://numpy.org): The fundamental package for scientific computing with Python
+#     *  [xarray](https://xarray.dev): N-D labeled arrays and datasets in Python
+#     *  [pandas](https://pandas.pydata.org): Flexible and powerful data analysis / manipulation library for Python, providing labeled data structures similar to R data.frame objects, statistical functions, and much more
+#     *  [pint_xarray](https://pint-xarray.readthedocs.io/en/stable/): A convenience wrapper for using [pint](https://pint.readthedocs.io/en/stable/) in [xarray](https://xarray.dev) objects.
+#     *  [metpy](https://unidata.github.io/MetPy/latest/index.html): A collection of tools in Python for reading, visualizing, and performing calculations with weather data
+#     *  [haversine](https://github.com/mapado/haversine): calculates spherical line distance between two points (i.e., the [haversine distance](https://en.wikipedia.org/wiki/Haversine_formula)).
+# 
+# x
+# 
+# *  [platform](https://docs.python.org/3/library/platform.html): Access to underlying platform’s identifying data
+# *  [socket](https://docs.python.org/3/library/socket.html): Low-level networking interface
+# 
 
-# In[ ]:
+# In[11]:
 
 
 ####################################################
@@ -18,25 +72,23 @@
 # Libraries
 #
 
-import numpy             as np
-import datetime          as datetime
-import os                as os
-import xarray            as xr
-import pandas            as pd
-import glob              as glob
-import pint_xarray       as px
-import platform          as platform
+import numpy           as np
+import xarray          as xr
+import pandas          as pd
 
+import pint_xarray     as px
 
+import metpy.calc      as mpcalc
+from   metpy.units import units
 
-import metpy.calc  as mpcalc
-import metpy.units as mpunits
-import socket as socket
+import haversine       as haversine
 
+import os              as os
+import glob            as glob
+import datetime        as dt
 
-
-
-from metpy.units import units
+#import platform          as platform
+#import socket            as socket
 
 #
 ####################################################
@@ -44,61 +96,72 @@ from metpy.units import units
 ####################################################
 
 
-# ## File Organization
+# ---
+# ## Begin User Modification Area
+# 
+# Most general use of this code should only require manipulation of the following fields below
+# 
+# ### File Organization, Paths, and Filenames
+# 
+# ### Model Start Date String 
+# 
+# ### Latitude and Longitude of WRF Model Area of Interest
+# 
 
-# In[ ]:
+# In[23]:
 
 
 ####################################################
 ####################################################
 ####################################################
 #
-# File Organization
+# BEGIN USER MODIFICATION AREA
 #
 
-beta_on     = 0
-max_domains = 2
+#
+# File Organization, Paths, and Filenames
+#
 
-if (socket.gethostname() == "kyrill"):
-    WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
-else:
-    if (platform.system() == "Darwin"):
-         WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
-    else:
-         WRF_OVERALL_DIR = "/home/wjc/GitHub/SD_Mines_WRF_REALTIME/"
+PATH_TO_WRF_OUTPUT_FILES = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/WRF4/WRF/test/em_real/"
+TSLIST_FILE              = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/WRF4/WRF/test/em_real/tslist"
 
+USE_STATION_EXCEL_FILE   = False
+STATION_EXCEL_FILE       = "~/tslist_station_files.xlsx"
 
-os.chdir(WRF_OVERALL_DIR)
+NETCDF_OUTPUT_PATH       = "~/."
 
-print( "Current Working Directory is now " + os.getcwd()  )
+#
+# Model Start Date String (format must be YYYY_MM_DD_HH w/ "-"s and "_")
+#
 
-WPS_WORK    = WRF_OVERALL_DIR + "./WPS_PrepArea/"
-WPS_EXE     = WRF_OVERALL_DIR + "./WRF4/WPS/"
-WRF_EXE     = WRF_OVERALL_DIR + "./WRF4/WRF/test/em_real/"
-WRF_ARCHIVE = WRF_OVERALL_DIR + "./ARCHIVE/"
-WRF_IMAGES  = WRF_OVERALL_DIR + "./WEB_IMAGES/"
+MODEL_START_DATE_YYYY_MM_DD_HH = "2023-03-28_18" # YYYY_MM_DD_HH
 
-File_Suffixes = [ "TS", "UU", "VV", "WW", "PH", "PR", "QV", "TH" ] 
+#
+# Latitude and Longitude of WRF Model Area of Interest
+#
 
+TARGET_LATITUDE  =   44.074915 # degrees north
+TARGET_LONGITUDE = -103.206571 # degrees east
 
-use_excel_inventory_file = 1
-
-station_list_file = WRF_OVERALL_DIR + "namelist_files_and_local_scripts/time_series_station_files_"+str(max_domains)+"_dom_all.xlsx"
-
-
-
-os.chdir(WRF_EXE)
-print( "Current Working Directory is now " + os.getcwd() )
-
+#
+# END USER MODIFICATION AREA
 #
 ####################################################
 ####################################################
-####################################################38880
+####################################################
 
 
-# ## Extract Model Start Date
+# ## End User Modification Area
+# ---
+# 
+# ## Process Model Start Date
+# 
+# String manipulation is applied to the user-provided model start date to create a date format matching the WRF Model's *wrfout* files' nameform.
+# 
+# The model start time is also converted into a Python Datetime Object using the [datetime.datetime.strptime()](https://docs.python.org/3/library/datetime.html#datetime.datetime.strptime)
+# 
 
-# In[ ]:
+# In[19]:
 
 
 ####################################################
@@ -108,16 +171,17 @@ print( "Current Working Directory is now " + os.getcwd() )
 # Model Start Date
 #
 
-with open(WRF_OVERALL_DIR + "./current_run.txt") as f:
-    model_start_date_YYYY_MM_DD_HH = f.readlines()
+model_start_date_YYYY_MM_DD_HH0000 = MODEL_START_DATE_YYYY_MM_DD_HH + ":00:00"
 
-model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:13]
-
-model_start_date_YYYY_MM_DD_HH0000 = model_start_date_YYYY_MM_DD_HH + ":00:00"
-print(model_start_date_YYYY_MM_DD_HH0000)
+print("WRFOUT Model Time Field: ", model_start_date_YYYY_MM_DD_HH0000)
     
-model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')
-print("Model Simulation Date ", model_start_datetime)
+    
+    
+model_start_datetime = dt.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, 
+                                            '%Y-%m-%d_%H:%M:%S')
+
+print("  Model Simulation Date: ", model_start_datetime)
+
 
 #
 ####################################################
@@ -126,22 +190,41 @@ print("Model Simulation Date ", model_start_datetime)
 
 
 # ## Read tslist file
-
-# ### Pull Available Files for each domain.
 # 
-# ### Template for File IO
+# The *tslist* file contains the station location information for fields needed to extract.
+
+# ### Pull Available Files for Each Domain.
+# 
+# The user can use the script to generate a pandas-readable MS Excel file with of the stations IDs, Station Long-Name (editable), their latitude & longitudes, and a distance of each station from a single reference point (e.g., the center point of the event under scrutiny).
+# https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html
+# 
+# https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html
+# 
+# https://pandas.pydata.org/docs/reference/api/pandas.read_fwf.html
+# 
+# https://docs.python.org/3/library/glob.html#glob.glob
+# 
+# 
+# 
+# ### Template for *tslist* Station File 
 # 
 # ```
+# 
+# 0000000000111111111122222222223333333333444444444
+# 0123456789012345678901234567890123456789012345678
 # #-----------------------------------------------#
 # # 24 characters for name | pfx |  LAT  |   LON  |
 # #-----------------------------------------------#
-# 0123456789012345678901234567890123456789012345678
 # RAPID CITY NWS SD         KUNR  44.0727 -103.211
 # RAPID CITY ARPT SD        KRAP  44.0430 -103.054
 # 
+# 0000000000111111111122222222223333333333444444444
+# 0123456789012345678901234567890123456789012345678
+# 
+# Fortran I/O Format : (A25,1X,A5,1X,F7,1X,F8)
 # ```
 
-# In[ ]:
+# In[43]:
 
 
 ####################################################
@@ -151,11 +234,11 @@ print("Model Simulation Date ", model_start_datetime)
 # Read TSLIST File or Excel File derived from TSLIST
 #
 
-if (use_excel_inventory_file):
+if (USE_STATION_EXCEL_FILE):
 
     print("Read file from "+station_list_file)
     
-    available_time_series_list = pd.read_excel(station_list_file,
+    available_time_series_list = pd.read_excel(STATION_EXCEL_FILE,
                                                index_col=0)
     
 else:
@@ -166,29 +249,27 @@ else:
     
     print("Generating time series list from original wrf time series files")
     
-    print("Accessing TSLIST: ",WRF_EXE + "./tslist")
+    print("Accessing TSLIST: ", TSLIST_FILE)
 
-    full_time_series_list = pd.read_fwf(WRF_EXE + "./tslist", 
-                                        header   = 2,
-                                        colspecs = [       [ 0,26],
-                                                           [26,30],
-                                                           [30,39],
-                                                           [39,-1]],
-                                        names    = ['Station Name', 
-                                                      'Station ID', 
-                                                        'Latitude', 
-                                                       'Longitude'])
-    print("Full Time Series List")
-    print(full_time_series_list)
+    full_time_series_list = pd.read_fwf(filepath_or_buffer =    TSLIST_FILE, 
+                                        header             =              2,
+                                        colspecs           = [     [ 0,25],
+                                                                   [26,31],
+                                                                   [31,39],
+                                                                   [39,-1] ],
+                                        names              = ['Station Name',
+                                                                'Station ID',
+                                                                  'Latitude',
+                                                                 'Longitude'])    
+    
+          
     # Grep the Library for *.TS
     
     display(len(full_time_series_list['Longitude'].values))
 
-    available_time_series_list = glob.glob("????.d??.TS")
+    available_time_series_list = glob.glob(pathname =            "????.d??.TS",
+                                           root_dir = PATH_TO_WRF_OUTPUT_FILES)
     
-    
-    
-
     # Trim *.TS Suffix
 
     available_time_series_list = {x.replace('.TS', '') for x in available_time_series_list}
@@ -199,7 +280,7 @@ else:
 
     # Convert to Split Domains and Station IDs
 
-    available_time_series_list = available_time_series_list["a"].str.split(         ".d", 
+    available_time_series_list = available_time_series_list["a"].str.split(pat    = ".d", 
                                                                            n      =    1, 
                                                                            expand = True).rename(columns={0:"Station ID",
                                                                                                           1:    "Domain"})
@@ -222,7 +303,7 @@ else:
     lons = available_time_series_list['Longitude'].values
     dist = lats.copy()
     for i in range(len(lats)):
-        dist[i] = haversine.haversine([lats[i],lons[i]],[ 44.074915, -103.206571])
+        dist[i] = haversine.haversine([lats[i],lons[i]],[ TARGET_LATITUDE, TARGET_LONGITUDE])
                                   
 
 
@@ -231,15 +312,21 @@ else:
     available_time_series_list.sort_values(by = "Distane from SDMines", inplace=True)
 
     
-    available_time_series_list.to_excel(station_list_file)
+    available_time_series_list.to_excel(STATION_EXCEL_FILE)
 
     print("Available Time Series List")
-    print(available_time_series_list)
+    display(available_time_series_list)
 
 #
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[31]:
+
+
+
 
 
 # In[ ]:
@@ -279,11 +366,7 @@ sigma = xr.DataArray(xr.open_dataset(wrf_file, engine="netcdf4")["ZNU"][0][0:15]
                                    "positive"      : "down"})
 
 sigma = sigma.assign_coords({"sigma":sigma.values})
-
-
-
-                   
-                           
+                        
 wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file)["P_TOP"].values,
                         name  = "wrf_ptop",
                              dims=["wrf_ptop"],
@@ -303,7 +386,7 @@ wrf_ptop = wrf_ptop.assign_coords({"wrf_ptop":wrf_ptop.values})
 
 # ## Loop through all stations
 
-# In[ ]:
+# In[2]:
 
 
 ####################################################
@@ -312,17 +395,6 @@ wrf_ptop = wrf_ptop.assign_coords({"wrf_ptop":wrf_ptop.values})
 #
 # Read TSLIST File or Excel File derived from TSLIST
 #
-
-#
-# Creating Archive Directory
-#
-
-archive_directory = WRF_ARCHIVE + "/" + model_start_date_YYYY_MM_DD_HH + "/STATION_TIME_SERIES/"
-
-print("Creating ARCHIVE/" + model_start_date_YYYY_MM_DD_HH + "/STATION_TIME_SERIES")
-
-os.system("mkdir -pv " + archive_directory )
-
 
 #
 # Loop through stations
@@ -335,9 +407,7 @@ for station in available_time_series_list.iterrows():
     station_lat    = station[1][3]
     station_lon    = station[1][4]
     
-    
     print("")  
-    
     
     #
     #  Pull Grid-Relative Information
@@ -359,8 +429,6 @@ for station in available_time_series_list.iterrows():
 
     print(units_time)
 
-
-         
     #
     #  Pull Time Series
     #
@@ -815,7 +883,7 @@ for station in available_time_series_list.iterrows():
                                           "northward_wind"                      : vv,
                                           "upward_air_velocity"                 : ww,
                                           "air_pressure"                        : pr},
-                            attrs = {"featureType"                : "ntimeSeries",
+                            attrs = {"featureType"                : "timeSeries",
                                      "Conventions"                : "CF-1.6",
                                      "Station_Name"               : station_name, 
                                      "Station_ID"                 : station_id,
@@ -828,18 +896,13 @@ for station in available_time_series_list.iterrows():
                                      "WRF_Grid_J"                 : grid_j,
                                      "WRF_Grid_Surface_Elevation" : grid_elevation})
  
-
-
-
-
-
-
-
-    netcdf_file_name = archive_directory + "./wrfout_d"+str(grid_domain).zfill(2)+"_"+model_start_date_YYYY_MM_DD_HH+"_"+station_id+".nc"
+    netcdf_file_name = NETCDF_OUTPUT_PATH + "./wrfout_d"+str(grid_domain).zfill(2)+"_"+ MODEL_START_DATE_YYYY_MM_DD_HH+"_"+station_id+".nc"
     
     print(netcdf_file_name)
     
-    time_series.to_netcdf(path=netcdf_file_name, mode='w', format="NETCDF4")
+    time_series.to_netcdf(path   = netcdf_file_name, 
+                          mode   =              'w', 
+                          format =        "NETCDF4")
     
     os.system("ncatted -Oh --attribute _FillValue,sigma,d,, "+netcdf_file_name)
 
@@ -853,7 +916,13 @@ print("--------------------")
     
 
 
-# ## Pushing NetCDF Files to Storage
+# 
+
+# In[ ]:
+
+
+
+
 
 # In[ ]:
 
