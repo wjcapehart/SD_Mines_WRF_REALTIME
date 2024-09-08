@@ -2,7 +2,3 @@
         recurse = true
 	path = WRF4/WPS
 	url = https://github.com/wrf-model/WPS
-[submodule "WRF4/WRF"]
-        recurse = true
-	path = WRF4/WRF
-	url = https://github.com/wjcapehart/WRF
