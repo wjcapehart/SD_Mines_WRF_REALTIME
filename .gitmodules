@@ -1,4 +1,0 @@
-[submodule "WRF4/WPS"]
-        recurse = true
-	path = WRF4/WPS
-	url = https://github.com/wrf-model/WPS
