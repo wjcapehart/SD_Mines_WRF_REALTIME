@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # TSList to NetCDF Converstion
+# # TSList to NetCDF Conversion
 # 
 # Code converts WRF Timeseries ASCII Files to netcdf output
 # 
@@ -852,7 +852,7 @@ for station in available_time_series_list.iterrows():
     #  Pull Soil Water Content
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".SW"
+    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".SM"
 
     colnames = ["ts_hour","0","1","2","3"]
     
@@ -950,7 +950,7 @@ for station in available_time_series_list.iterrows():
                                           "northward_wind"                           : vv,
                                           "upward_air_velocity"                      : ww,
                                           "specific_turbulent_kinetic_energy_of_air" : te,
-                                          "soil_volumetric_water_content"            : sm,
+                                          "soil_volumetric_water_content"            : sw,
                                           "soil_temperature"                         : st},
                             attrs = {"featureType"                : "ntimeSeries",
                                      "Conventions"                : "CF-1.6",

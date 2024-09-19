@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # TSList to NetCDF Converstion
+# # TSList to NetCDF Conversion
 # 
 # Code converts WRF Timeseries ASCII Files to netcdf output
 # 
