@@ -923,7 +923,7 @@ for station in available_time_series_list.iterrows():
 
     time_series = xr.Dataset(coords = {"time": time,
                                       "sigma":sigma,
-                                      "soil_depth",soil_depth,
+                                      "soil_depth":soil_depth,
                                       "soil_thickness": soil_thickness,
                                       "wrf_grid_latitude"  : wrf_grid_latitude,
                                       "wrf_grid_longitude" : wrf_grid_longitude,
