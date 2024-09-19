@@ -852,7 +852,7 @@ for station in available_time_series_list.iterrows():
     #  Pull Soil Water Content
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".SW"
+    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".SM"
 
     colnames = ["ts_hour","0","1","2","3"]
     
