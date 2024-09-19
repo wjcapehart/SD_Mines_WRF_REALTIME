@@ -950,7 +950,7 @@ for station in available_time_series_list.iterrows():
                                           "northward_wind"                           : vv,
                                           "upward_air_velocity"                      : ww,
                                           "specific_turbulent_kinetic_energy_of_air" : te,
-                                          "soil_volumetric_water_content"            : sm,
+                                          "soil_volumetric_water_content"            : sw,
                                           "soil_temperature"                         : st},
                             attrs = {"featureType"                : "ntimeSeries",
                                      "Conventions"                : "CF-1.6",
