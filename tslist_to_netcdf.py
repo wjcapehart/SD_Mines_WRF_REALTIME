@@ -821,7 +821,7 @@ for station in available_time_series_list.iterrows():
     
     file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".ST"
 
-    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    colnames = ["ts_hour","0","1","2","3"]
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -854,7 +854,7 @@ for station in available_time_series_list.iterrows():
     
     file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".SW"
 
-    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    colnames = ["ts_hour","0","1","2","3"]
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,

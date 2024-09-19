@@ -34,6 +34,8 @@ import metpy.units as mpunits
 import socket as socket
 
 
+
+
 from metpy.units import units
 
 #
@@ -76,7 +78,7 @@ WRF_EXE     = WRF_OVERALL_DIR + "./WRF4/WRF/test/em_real/"
 WRF_ARCHIVE = WRF_OVERALL_DIR + "./ARCHIVE/"
 WRF_IMAGES  = WRF_OVERALL_DIR + "./WEB_IMAGES/"
 
-File_Suffixes = [ "TS", "UU", "VV", "WW", "PH", "PR", "QV", "TH" ] 
+File_Suffixes = [ "TS", "UU", "VV", "WW", "PH", "PR", "QV", "WW", "TH", "ST", "SM" ] 
 
 
 use_excel_inventory_file = 1
@@ -157,10 +159,14 @@ if (use_excel_inventory_file):
                                                index_col=0)
     
 else:
+    
+    import haversine as haversine
 
     # Pull Full Time Series List
     
     print("Generating time series list from original wrf time series files")
+    
+    print("Accessing TSLIST: ",WRF_EXE + "./tslist")
 
     full_time_series_list = pd.read_fwf(WRF_EXE + "./tslist", 
                                         header   = 2,
@@ -175,8 +181,13 @@ else:
     print("Full Time Series List")
     print(full_time_series_list)
     # Grep the Library for *.TS
+    
+    display(len(full_time_series_list['Longitude'].values))
 
     available_time_series_list = glob.glob("????.d??.TS")
+    
+    
+    
 
     # Trim *.TS Suffix
 
@@ -207,15 +218,34 @@ else:
                                           on  = 'Station ID',
                                           how = 'left').sort_values(by=['Domain','Station ID'])
     
+    lats = available_time_series_list['Latitude'].values
+    lons = available_time_series_list['Longitude'].values
+    dist = lats.copy()
+    for i in range(len(lats)):
+        dist[i] = haversine.haversine([lats[i],lons[i]],[ 44.074915, -103.206571])
+                                  
+
+
+    available_time_series_list["Distane from SDMines"] = dist
+
+    available_time_series_list.sort_values(by = "Distane from SDMines", inplace=True)
+
+    
     available_time_series_list.to_excel(station_list_file)
 
-print("Available Time Series List")
-print(available_time_series_list)
+    print("Available Time Series List")
+    print(available_time_series_list)
 
 #
 ####################################################
 ####################################################
 ####################################################
+
+
+# In[ ]:
+
+
+
 
 
 # ## Read common values for sigma levels and top of model space
@@ -251,7 +281,10 @@ sigma = xr.DataArray(xr.open_dataset(wrf_file, engine="netcdf4")["ZNU"][0][0:15]
 sigma = sigma.assign_coords({"sigma":sigma.values})
 
 
-wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file["P_TOP"].values),
+
+                   
+                           
+wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file)["P_TOP"].values,
                         name  = "wrf_ptop",
                              dims=["wrf_ptop"],
                              attrs = {"description"   : "Top-most Model Pressure",
@@ -262,6 +295,39 @@ wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file["P_TOP"].values),
 
 wrf_ptop = wrf_ptop.assign_coords({"wrf_ptop":wrf_ptop.values})
 
+#
+####################################################
+####################################################
+####################################################
+
+
+# ## Loading the Soil Depths
+
+# In[ ]:
+
+
+####################################################
+####################################################
+####################################################
+#
+# Manually Set the Soil Depth Coordinate
+#
+
+
+soil_depth = xr.DataArray(np.array([ 0.05, 0.25, 0.7, 1.5 ], np.float32), 
+                          name  =  "soil_depth",
+                          dims  = ["soil_depth"],
+                          attrs = {"description"   : "center depth of soil layer",
+                                   "long_name"     : "center depth of soil layer",
+                                   "units"         : "m",
+                                   "positive"      : "down"})
+
+soil_thickness = xr.DataArray(np.array([ 0.1, 0.3, 0.6, 1. ], np.float32), 
+                          name  =  "soil_thickness",
+                          dims  = ["soil_depth"],
+                          attrs = {"description"   : "thickness of soil layer",
+                                   "long_name"     : "thickness of soil layer",
+                                   "units"         : "m"})
 #
 ####################################################
 ####################################################
@@ -507,7 +573,6 @@ for station in available_time_series_list.iterrows():
                                     "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
                                     "units"         : "K"})     
 
-
     #
     #  Pull Geopotential Height
     #
@@ -716,19 +781,119 @@ for station in available_time_series_list.iterrows():
                                "units"         : "Pa",
                                "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude sigma"})
 
+
+
+    #
+    #  Pull Turbulent Kinetic Energy
+    #
+    
+    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".TE"
+
+    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    
+    ts_input = pd.read_fwf(file_2d,
+                           header      = None,
+                           skiprows    = 1,
+                           infer_nrows = 38880,
+                           names       = colnames)
+    
+    ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
+
+    ts_input = ts_input.set_index('time')
+    ts_input = ts_input.drop(columns = ["ts_hour"])
+    
+    
+    te = xr.DataArray(ts_input.to_numpy(), 
+                      coords=[time,sigma],
+                      name  =  "specific_turbulent_kinetic_energy_of_air",
+                      dims  = ["time","sigma"],
+                      attrs = {"description"   : "Turbulent Kinetic Energy",
+                               "long_name"     : "Turbulent Kinetic Energy",
+                               "standard_name" : "specific_turbulent_kinetic_energy_of_air",
+                               "units"         : "m2 s-2",
+                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude sigma"})
+
+
+
+    #
+    #  Pull Soil Temperature
+    #
+    
+    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".ST"
+
+    colnames = ["ts_hour","0","1","2","3"]
+    
+    ts_input = pd.read_fwf(file_2d,
+                           header      = None,
+                           skiprows    = 1,
+                           infer_nrows = 38880,
+                           names       = colnames)
+    
+    ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
+
+    ts_input = ts_input.set_index('time')
+    ts_input = ts_input.drop(columns = ["ts_hour"])
+    
+    
+    st = xr.DataArray(ts_input.to_numpy(), 
+                      coords=[time,soil_depth],
+                      name  =  "soil_temperature",
+                      dims  = ["time","soil_depth"],
+                      attrs = {"description"   : "Soil Temperature",
+                               "long_name"     : "Soil Temperature",
+                               "standard_name" : "soil_temperature",
+                               "units"         : "K",
+                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude soil_depth"})
+
+
+
+
+    #
+    #  Pull Soil Water Content
+    #
+    
+    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".SW"
+
+    colnames = ["ts_hour","0","1","2","3"]
+    
+    ts_input = pd.read_fwf(file_2d,
+                           header      = None,
+                           skiprows    = 1,
+                           infer_nrows = 38880,
+                           names       = colnames)
+    
+    ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
+
+    ts_input = ts_input.set_index('time')
+    ts_input = ts_input.drop(columns = ["ts_hour"])
+    
+    
+    sw = xr.DataArray(ts_input.to_numpy(), 
+                      coords=[time,soil_depth],
+                      name  =  "soil_volumetric_water_content",
+                      dims  = ["time","soil_depth"],
+                      attrs = {"description"   : "Volumetric Soil Water Content",
+                               "long_name"     : "Volumetric Soil Water Content",
+                               "units"         : "m3 m-3",
+                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude soil_depth"})
+
+
+
+    
+    ####################################################################
     #
     # Single Value Arrays
     #
     
     wrf_grid_longitude = xr.DataArray(np.array([grid_lon]),
-                                 name  = "lon",
-                                 dims=["lon"],
+                                 name  = "wrf_grid_longitude",
+                                 dims=["wrf_grid_longitude"],
                                  attrs = {"description"   : "WRF Grid Longitude",
                                           "long_name"     : "WRF Grid Longitude",
                                           "standard_name" : "longitude",
                                           "units"         : "degrees_east"})
     
-    wrf_grid_longitude = wrf_grid_longitude.assign_coords({"lon":wrf_grid_longitude.values})
+    wrf_grid_longitude = wrf_grid_longitude.assign_coords({"wrf_grid_longitude":wrf_grid_longitude.values})
 
 
     wrf_grid_latitude = xr.DataArray(np.array([grid_lat]),
@@ -758,31 +923,35 @@ for station in available_time_series_list.iterrows():
 
     time_series = xr.Dataset(coords = {"time": time,
                                       "sigma":sigma,
+                                      "soil_depth":soil_depth,
+                                      "soil_thickness": soil_thickness,
                                       "wrf_grid_latitude"  : wrf_grid_latitude,
                                       "wrf_grid_longitude" : wrf_grid_longitude,
                                       "wrf_grid_elevation" : wrf_grid_elevation},
-                            data_vars = {"air_temperature_2m"                  : t_air,
-                                          "specific_humidity_2m"                : q_air,
-                                          "dew_point_temperature_2m"            : td_2m,
-                                          "eastward_wind_10m"                   : u_10m,
-                                          "northward_wind_10m"                  : v_10m,
-                                          "surface_air_pressure"                : p_sfc,
-                                          "surface_net_downward_shortwave_flux" : gsw,
-                                          "surface_net_downward_longwave_flux"  : glw,
-                                          "surface_upward_sensible_heat_flux"   : hfx,
-                                          "surface_upward_latent_heat_flux"     : lfx,
-                                          "surface_temperature"                 : tsk,
-                                          "topmost_soil_temperature"            : tslb,
-                                          "stratiform_precipitation_amount"     : rainnc,
-                                          "convective_precipitation_amount"     : rainc,
-                                          "atmosphere_mass_content_of_water"    : clw,
-                                          "geopotential_height"                 : ph,
-                                          "air_potential_temperature"           : th,
-                                          "specific_humidity"                   : qv,
-                                          "eastward_wind"                       : uu,
-                                          "northward_wind"                      : vv,
-                                          "upward_air_velocity"                 : ww,
-                                          "air_pressure"                        : pr},
+                            data_vars = {"air_temperature_2m"                        : t_air,
+                                          "specific_humidity_2m"                     : q_air,
+                                          "dew_point_temperature_2m"                 : td_2m.as_numpy(),
+                                          "eastward_wind_10m"                        : u_10m,
+                                          "northward_wind_10m"                       : v_10m,
+                                          "surface_air_pressure"                     : p_sfc,
+                                          "surface_net_downward_shortwave_flux"      : gsw,
+                                          "surface_net_downward_longwave_flux"       : glw,
+                                          "surface_upward_sensible_heat_flux"        : hfx,
+                                          "surface_upward_latent_heat_flux"          : lfx,
+                                          "surface_temperature"                      : tsk,
+                                          "topmost_soil_temperature"                 : tslb,
+                                          "stratiform_precipitation_amount"          : rainnc,
+                                          "convective_precipitation_amount"          : rainc,
+                                          "atmosphere_mass_content_of_water"         : clw,
+                                          "geopotential_height"                      : ph,
+                                          "air_potential_temperature"                : th,
+                                          "specific_humidity"                        : qv,
+                                          "eastward_wind"                            : uu,
+                                          "northward_wind"                           : vv,
+                                          "upward_air_velocity"                      : ww,
+                                          "specific_turbulent_kinetic_energy_of_air" : te,
+                                          "soil_volumetric_water_content"            : sm,
+                                          "soil_temperature"                         : st},
                             attrs = {"featureType"                : "ntimeSeries",
                                      "Conventions"                : "CF-1.6",
                                      "Station_Name"               : station_name, 
@@ -847,22 +1016,4 @@ print("tslist_to_netcdf complete.")
 ####################################################
 ####################################################
 ####################################################
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
 
