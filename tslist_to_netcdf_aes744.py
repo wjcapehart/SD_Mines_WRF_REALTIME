@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# ![AES-744 Masthead](http://kyrill.ias.sdsmt.edu/wjc/eduresources/AES_744_Masthead.png)
+# ![AES-744 Masthead](https://kyrill.ias.sdsmt.edu/wjc/eduresources/AES_744_Masthead.png)
 # 
 # # WRF Time Series File to netCDF
 # 
