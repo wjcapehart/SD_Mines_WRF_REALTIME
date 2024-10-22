@@ -27,16 +27,19 @@ import glob              as glob
 import pint_xarray       as px
 import platform          as platform
 
-
-
 import metpy.calc  as mpcalc
 import metpy.units as mpunits
 import socket as socket
 
-
-
-
 from metpy.units import units
+
+
+def range_to_string_list(start, end):
+    matrix    = [["ts_hour"], [str(num) for num in range(start, end)]]
+    flat_list = []
+    for row in matrix:
+        flat_list.extend(row)
+    return flat_list
 
 #
 ####################################################
@@ -56,8 +59,12 @@ from metpy.units import units
 # File Organization
 #
 
-beta_on     = 0
-max_domains = 2
+
+MAX_TS_LEVELS    = 15
+NUM_SOIL_LAYERS  =  4
+
+beta_on      =  0
+max_domains  =  2
 
 if (socket.gethostname() == "kyrill"):
     WRF_OVERALL_DIR = "/projects/SD_Mines_WRF_REALTIME/"
@@ -66,7 +73,6 @@ else:
          WRF_OVERALL_DIR = "/Users/wjc/GitHub/SD_Mines_WRF_REALTIME/"
     else:
          WRF_OVERALL_DIR = "/home/wjc/GitHub/SD_Mines_WRF_REALTIME/"
-
 
 os.chdir(WRF_OVERALL_DIR)
 
@@ -78,6 +84,8 @@ WRF_EXE     = WRF_OVERALL_DIR + "./WRF4/WRF/test/em_real/"
 WRF_ARCHIVE = WRF_OVERALL_DIR + "./ARCHIVE/"
 WRF_IMAGES  = WRF_OVERALL_DIR + "./WEB_IMAGES/"
 
+PATH_TO_WRF_OUTPUT_FILES = WRF_EXE
+
 File_Suffixes = [ "TS", "UU", "VV", "WW", "PH", "PR", "QV", "WW", "TH", "ST", "SM" ] 
 
 
@@ -87,7 +95,7 @@ station_list_file = WRF_OVERALL_DIR + "namelist_files_and_local_scripts/time_ser
 
 
 
-os.chdir(WRF_EXE)
+os.chdir(PATH_TO_WRF_OUTPUT_FILES)
 print( "Current Working Directory is now " + os.getcwd() )
 
 #
@@ -166,9 +174,9 @@ else:
     
     print("Generating time series list from original wrf time series files")
     
-    print("Accessing TSLIST: ",WRF_EXE + "./tslist")
+    print("Accessing TSLIST: ",PATH_TO_WRF_OUTPUT_FILES + "./tslist")
 
-    full_time_series_list = pd.read_fwf(WRF_EXE + "./tslist", 
+    full_time_series_list = pd.read_fwf(PATH_TO_WRF_OUTPUT_FILES + "./tslist", 
                                         header   = 2,
                                         colspecs = [       [ 0,26],
                                                            [26,30],
@@ -262,13 +270,13 @@ else:
 
 model_start_date_YYYY_MM_DD_HH0000 = model_start_datetime.strftime('%Y-%m-%d_%H:00:00')
 
-wrf_file  = WRF_EXE  + "./wrfout_d01_" + model_start_date_YYYY_MM_DD_HH0000
+wrf_file  = PATH_TO_WRF_OUTPUT_FILES  + "./wrfout_d01_" + model_start_date_YYYY_MM_DD_HH0000
     
 #
 # Extract Sigma Coordinates
 #
 
-sigma = xr.DataArray(xr.open_dataset(wrf_file, engine="netcdf4")["ZNU"][0][0:15].values, 
+sigma = xr.DataArray(xr.open_dataset(wrf_file, engine="netcdf4")["ZNU"][0][0:MAX_TS_LEVEL].values, 
                           name  =  "sigma",
                           dims  = ["sigma"],
                           attrs = {"description"   : "vertical sigma coordinates on mass points",
@@ -342,19 +350,16 @@ soil_thickness = xr.DataArray(np.array([ 0.1, 0.3, 0.6, 1. ], np.float32),
 ####################################################
 ####################################################
 ####################################################
-#
-# Read TSLIST File or Excel File derived from TSLIST
-#
 
 #
 # Creating Archive Directory
 #
 
-archive_directory = WRF_ARCHIVE + "/" + model_start_date_YYYY_MM_DD_HH + "/STATION_TIME_SERIES/"
+NETCDF_OUTPUT_PATH = WRF_ARCHIVE + "/" + model_start_date_YYYY_MM_DD_HH + "/STATION_TIME_SERIES/"
 
 print("Creating ARCHIVE/" + model_start_date_YYYY_MM_DD_HH + "/STATION_TIME_SERIES")
 
-os.system("mkdir -pv " + archive_directory )
+os.system("mkdir -pv " + NETCDF_OUTPUT_PATH )
 
 
 #
@@ -362,11 +367,11 @@ os.system("mkdir -pv " + archive_directory )
 #
 
 for station in available_time_series_list.iterrows():
-    station_id     = station[1][0]
-    grid_domain    = station[1][1]
-    station_name   = station[1][2]
-    station_lat    = station[1][3]
-    station_lon    = station[1][4]
+    station_id     = station[1].iloc[0]
+    grid_domain    = station[1].iloc[1]
+    station_name   = station[1].iloc[2]
+    station_lat    = station[1].iloc[3]
+    station_lon    = station[1].iloc[4]
     
     
     print("")  
@@ -376,7 +381,7 @@ for station in available_time_series_list.iterrows():
     #  Pull Grid-Relative Information
     #
     
-    ts_file = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".TS"
+    ts_file = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".TS"
     print(ts_file)
     
     myfile = open(ts_file, "r")
@@ -577,9 +582,10 @@ for station in available_time_series_list.iterrows():
     #  Pull Geopotential Height
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".PH"
+    file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".PH"
 
-    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    colnames = range_to_string_list(0, MAX_TS_LEVELS)
+
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -607,9 +613,9 @@ for station in available_time_series_list.iterrows():
     #  Pull Potential Temperature 
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".TH"
+    file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".TH"
 
-    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    colnames = range_to_string_list(0, MAX_TS_LEVELS)
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -636,9 +642,9 @@ for station in available_time_series_list.iterrows():
     #  Pull Specific Humidity
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".QV"
+    file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".QV"
 
-    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    colnames = range_to_string_list(0, MAX_TS_LEVELS)
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -666,9 +672,9 @@ for station in available_time_series_list.iterrows():
     #  Pull  "Eastward Wind"
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".UU"
+    file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".UU"
 
-    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    colnames = range_to_string_list(0, MAX_TS_LEVELS)
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -696,9 +702,9 @@ for station in available_time_series_list.iterrows():
     #  Pull  "Nortward Wind"
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".VV"
+    file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".VV"
 
-    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    colnames = range_to_string_list(0, MAX_TS_LEVELS)
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -726,9 +732,9 @@ for station in available_time_series_list.iterrows():
     #  Pull  "Vertical Velocities 
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".WW"
+    file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".WW"
 
-    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    colnames = range_to_string_list(0, MAX_TS_LEVELS)
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -755,9 +761,9 @@ for station in available_time_series_list.iterrows():
     #  Pull  "Pressure 
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".PR"
+    file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".PR"
 
-    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    colnames = range_to_string_list(0, MAX_TS_LEVELS)
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -787,9 +793,9 @@ for station in available_time_series_list.iterrows():
     #  Pull Turbulent Kinetic Energy
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".TE"
+    file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".TE"
 
-    colnames = ["ts_hour","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"]
+    colnames = range_to_string_list(0, MAX_TS_LEVELS)
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -819,9 +825,9 @@ for station in available_time_series_list.iterrows():
     #  Pull Soil Temperature
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".ST"
+    file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".ST"
 
-    colnames = ["ts_hour","0","1","2","3"]
+    colnames = range_to_string_list(0, NUM_SOIL_LAYERS)
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -852,9 +858,9 @@ for station in available_time_series_list.iterrows():
     #  Pull Soil Water Content
     #
     
-    file_2d = WRF_EXE + station_id + ".d" + str(grid_domain).zfill(2) + ".SM"
+    file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".SM"
 
-    colnames = ["ts_hour","0","1","2","3"]
+    colnames = range_to_string_list(0, NUM_SOIL_LAYERS)
     
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
@@ -972,7 +978,7 @@ for station in available_time_series_list.iterrows():
 
 
 
-    netcdf_file_name = archive_directory + "./wrfout_d"+str(grid_domain).zfill(2)+"_"+model_start_date_YYYY_MM_DD_HH+"_"+station_id+".nc"
+    netcdf_file_name = NETCDF_OUTPUT_PATH + "./wrfout_d"+str(grid_domain).zfill(2)+"_"+model_start_date_YYYY_MM_DD_HH+"_"+station_id+".nc"
     
     print(netcdf_file_name)
     

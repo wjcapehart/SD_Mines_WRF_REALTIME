@@ -452,7 +452,7 @@ date
 
 echo "End of Output Job"
 
-ecbo
+echo
 echo #######################################################
 echo
 echo Script Ends
