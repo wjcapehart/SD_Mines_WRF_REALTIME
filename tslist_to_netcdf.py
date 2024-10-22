@@ -276,7 +276,7 @@ wrf_file  = PATH_TO_WRF_OUTPUT_FILES  + "./wrfout_d01_" + model_start_date_YYYY_
 # Extract Sigma Coordinates
 #
 
-sigma = xr.DataArray(xr.open_dataset(wrf_file, engine="netcdf4")["ZNU"][0][0:MAX_TS_LEVEL].values, 
+sigma = xr.DataArray(xr.open_dataset(wrf_file, engine="netcdf4")["ZNU"][0][0:MAX_TS_LEVELS].values, 
                           name  =  "sigma",
                           dims  = ["sigma"],
                           attrs = {"description"   : "vertical sigma coordinates on mass points",
