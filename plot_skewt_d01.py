@@ -53,7 +53,7 @@ import timezonefinder    as tzf
 import pytz              as pytz
 import socket            as socket
 
-CLOUDS_ON = False
+CLOUDS_ON = True
 
 #
 ####################################################
