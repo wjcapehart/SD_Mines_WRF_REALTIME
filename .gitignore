@@ -54,3 +54,4 @@ Metar_Dump.csv
 .ipynb_checkpoints/plot_maps_dxx-checkpoint.ipynb
 .ipynb_checkpoints/plot_skewt_d01-checkpoint.ipynb
 .ipynb_checkpoints/plot_skewt_d02-checkpoint.ipynb
+*.LOG

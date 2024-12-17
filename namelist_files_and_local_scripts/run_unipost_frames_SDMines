@@ -446,6 +446,10 @@ done
 
 for domain in ${domain_list}; do
     cat ./WRFPRS_${domain}.?? > ${FINAL_GRIB}/wrfout_${domain}_${YYi}-${MMi}-${DDi}_${HHi}.grib2
+    ln -sv ${FINAL_GRIB}/wrfout_${domain}_${YYi}-${MMi}-${DDi}_${HHi}.grib2 ${FINAL_GRIB}/wrfout_${domain}_current.grib2
+    ln -sv ${FINAL_GRIB}/wrfout_${domain}_${YYi}-${MMi}-${DDi}_${HHi}.grib2 ${FINAL_GRIB}/wrfout_${domain}_current.grib2
+
+
 done
 
 date
