@@ -6,7 +6,7 @@
 
 # ## Libraries
 
-# In[ ]:
+# In[1]:
 
 
 ####################################################
@@ -78,7 +78,7 @@ def haversine(row):
 ####################################################
 
 
-# In[ ]:
+# In[2]:
 
 
 ####################################################
@@ -106,7 +106,7 @@ plt.rcParams.update({'text.color'      : Mines_Blue,
 
 # ## File Organization
 
-# In[ ]:
+# In[3]:
 
 
 ####################################################
@@ -153,7 +153,7 @@ os.chdir(WRF_EXE)
 ####################################################
 
 
-# In[ ]:
+# In[4]:
 
 
 ####################################################
@@ -187,7 +187,7 @@ geospatial_lon_max =  lon2d_d01.values.max()
 
 # ## Time Control
 
-# In[ ]:
+# In[5]:
 
 
 with open(WRF_ARCHIVE  + "./current_complete_run/current_run.txt") as f:
@@ -226,7 +226,7 @@ print(siphon_pulls_YYYYMMDD_HH)
 # 
 # 
 
-# In[ ]:
+# In[6]:
 
 
 ####################################################
@@ -254,7 +254,7 @@ print(target_time_series_as_list)
 
 # ## Get Station Information
 
-# In[ ]:
+# In[7]:
 
 
 ####################################################
@@ -274,7 +274,7 @@ airport_database = airpt.load('ICAO')
 
 # ## Pull METARS from Siphon Services
 
-# In[ ]:
+# In[8]:
 
 
 ####################################################
@@ -774,6 +774,8 @@ for station_row in range(len(available_time_series_list)):
     ax[0,1].spines["right"].set_visible(False)
     ax01.spines[   "right"].set_visible(False)
 
+    product_label = "Generated "+current_datetime.strftime('%Y-%m-%d %H%M %Z')
+    fig.text(0,0,product_label, fontsize="xx-small")
     
     plt.tight_layout()
     plt.subplots_adjust(top=0.90)
