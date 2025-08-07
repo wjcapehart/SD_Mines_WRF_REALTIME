@@ -1,5 +1,5 @@
 #!/bin/bash
-source /home/wjc/.bashrc
+source /home/wjc/.bash_profile
 cd /Users/wjc/GitHub/SD_Mines_WRF_REALTIME/
 ( python /Users/wjc/GitHub/SD_Mines_WRF_REALTIME/./tslist_to_netcdf.py  && python /Users/wjc/GitHub/SD_Mines_WRF_REALTIME/./plot_tslist_meteograms.py ) &
 ( python /Users/wjc/GitHub/SD_Mines_WRF_REALTIME/./plot_maps.py  ) &
