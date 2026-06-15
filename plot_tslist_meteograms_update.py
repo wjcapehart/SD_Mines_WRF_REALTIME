@@ -511,7 +511,7 @@ for station_row in range(len(available_time_series_list)):
     sta_to_wrf_distance   = hs.haversine((station_lat,
                                           station_lon),
                                          (wrf_timeseries["latitude" ],
-                                          wrf_timeseries["longitude"])    
+                                          wrf_timeseries["longitude"]))  
 
     print("distance between  metar and tslist ",metar_to_sta_distance)
     print("distance between  metar and    wrf ",metar_to_wrf_distance)
