@@ -314,7 +314,7 @@ for datehour in siphon_pulls_YYYYMMDD_HH:
     try:
         indata = mpio.metar.parse_metar_file(metar_file)
 
-        print(indata)
+        #print(indata)
 
         indata = indata[(indata['latitude']  > geospatial_lat_min) & 
                         (indata['latitude']  < geospatial_lat_max) &
