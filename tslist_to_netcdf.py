@@ -123,7 +123,7 @@ model_start_date_YYYY_MM_DD_HH     = model_start_date_YYYY_MM_DD_HH[0][0:13]
 
 model_start_date_YYYY_MM_DD_HH0000 = model_start_date_YYYY_MM_DD_HH + ":00:00"
 print(model_start_date_YYYY_MM_DD_HH0000)
-    
+
 model_start_datetime = datetime.datetime.strptime(model_start_date_YYYY_MM_DD_HH0000, '%Y-%m-%d_%H:%M:%S')
 print("Model Simulation Date ", model_start_datetime)
 
@@ -162,18 +162,18 @@ print("Model Simulation Date ", model_start_datetime)
 if (use_excel_inventory_file):
 
     print("Read file from "+station_list_file)
-    
+
     available_time_series_list = pd.read_excel(station_list_file,
                                                index_col=0)
-    
+
 else:
-    
+
     import haversine as haversine
 
     # Pull Full Time Series List
-    
+
     print("Generating time series list from original wrf time series files")
-    
+
     print("Accessing TSLIST: ",PATH_TO_WRF_OUTPUT_FILES + "./tslist")
 
     full_time_series_list = pd.read_fwf(PATH_TO_WRF_OUTPUT_FILES + "./tslist", 
@@ -189,13 +189,13 @@ else:
     print("Full Time Series List")
     print(full_time_series_list)
     # Grep the Library for *.TS
-    
+
     display(len(full_time_series_list['Longitude'].values))
 
     available_time_series_list = glob.glob("????.d??.TS")
-    
-    
-    
+
+
+
 
     # Trim *.TS Suffix
 
@@ -215,7 +215,7 @@ else:
 
     available_time_series_list['Domain'] = available_time_series_list['Domain'].astype(int)
 
-    # Capture only innermost available domain for each station
+    # Capture only the innermost available domain for each station
 
     available_time_series_list = available_time_series_list.groupby('Station ID').agg({'Domain':'max'}).reset_index()
 
@@ -225,20 +225,20 @@ else:
                                           full_time_series_list,
                                           on  = 'Station ID',
                                           how = 'left').sort_values(by=['Domain','Station ID'])
-    
+
     lats = available_time_series_list['Latitude'].values
     lons = available_time_series_list['Longitude'].values
     dist = lats.copy()
     for i in range(len(lats)):
         dist[i] = haversine.haversine([lats[i],lons[i]],[ 44.074915, -103.206571])
-                                  
+
 
 
     available_time_series_list["Distane from SDMines"] = dist
 
     available_time_series_list.sort_values(by = "Distane from SDMines", inplace=True)
 
-    
+
     available_time_series_list.to_excel(station_list_file)
 
     print("Available Time Series List")
@@ -248,12 +248,6 @@ else:
 ####################################################
 ####################################################
 ####################################################
-
-
-# In[ ]:
-
-
-
 
 
 # ## Read common values for sigma levels and top of model space
@@ -271,7 +265,7 @@ else:
 model_start_date_YYYY_MM_DD_HH0000 = model_start_datetime.strftime('%Y-%m-%d_%H:00:00')
 
 wrf_file  = PATH_TO_WRF_OUTPUT_FILES  + "./wrfout_d01_" + model_start_date_YYYY_MM_DD_HH0000
-    
+
 #
 # Extract Sigma Coordinates
 #
@@ -290,8 +284,8 @@ sigma = sigma.assign_coords({"sigma":sigma.values})
 
 
 
-                   
-                           
+
+
 wrf_ptop = xr.DataArray(xr.open_dataset(wrf_file)["P_TOP"].values,
                         name  = "wrf_ptop",
                              dims=["wrf_ptop"],
@@ -372,21 +366,21 @@ for station in available_time_series_list.iterrows():
     station_name   = station[1].iloc[2]
     station_lat    = station[1].iloc[3]
     station_lon    = station[1].iloc[4]
-    
-    
+
+
     print("")  
-    
-    
+
+
     #
     #  Pull Grid-Relative Information
     #
-    
+
     ts_file = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".TS"
     print(ts_file)
-    
+
     myfile = open(ts_file, "r")
     headerline = myfile.readline()
-    
+
     grid_i         =   int(headerline[ 58:62])
     grid_j         =   int(headerline[ 63:67])
     grid_lat       = float(headerline[ 70:77])
@@ -396,13 +390,14 @@ for station in available_time_series_list.iterrows():
     units_time     = grid_time.strftime('%Y-%m-%d_%H:%M:%S.00')
 
     print(units_time)
+    print(grid_lat, grid_lon, grid_elevation)
 
 
-         
+
     #
     #  Pull Time Series
     #
-    
+
     ts_input = pd.read_fwf(ts_file,
                            header   = None,
                            skiprows = 1, delim_whitespace=True,
@@ -411,7 +406,7 @@ for station in available_time_series_list.iterrows():
                            width    = [   2,        13,          5,    5,    5,  14,  14,  14,  14,     14,    14,    14,    14,   14,    14,     14,      14,       14,    14])
 
 
-    
+
     time = xr.DataArray(ts_input["ts_hour"].to_numpy(), 
                         name="time",
                         dims=["time"],
@@ -421,7 +416,7 @@ for station in available_time_series_list.iterrows():
                                  "units": "hours since "+units_time})
     time = time.assign_coords({"time":time.values})
 
-    
+
 
     t_air = xr.DataArray(ts_input["t"].to_numpy(), 
                          coords=[time],
@@ -430,7 +425,7 @@ for station in available_time_series_list.iterrows():
                          attrs = {"description"   : "2-m Air Temperatrue",
                                   "long_name"     : "2-m Air Temperatrue",
                                   "standard_name" : "air_temperature",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "K"})
 
     q_air = xr.DataArray(ts_input["q"].to_numpy(), 
@@ -440,7 +435,7 @@ for station in available_time_series_list.iterrows():
                          attrs = {"description"   : "2-m Specific Humidity",
                                   "long_name"     : "2-m Specific Humidity",
                                   "standard_name" : "specific_humidity",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "kg3 kg-3"})
 
     p_sfc = xr.DataArray(ts_input["psfc"].to_numpy(), 
@@ -450,9 +445,9 @@ for station in available_time_series_list.iterrows():
                          attrs = {"description"   : "Surface Air Pressure",
                                   "long_name"     : "Surface Air Pressure",
                                   "standard_name" : "surface_air_pressure",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "Pa"})  
-    
+
     u_10m = xr.DataArray(ts_input["u"].to_numpy(), 
                          coords=[time],
                          dims  = ["time"],
@@ -460,7 +455,7 @@ for station in available_time_series_list.iterrows():
                          attrs = {"description"   : "10-m Eastward Wind",
                                   "long_name"     : "10-m Eastward Wind",
                                   "standard_name" : "eastward_wind",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "m s-1"})
 
     v_10m = xr.DataArray(ts_input["v"].to_numpy(), 
@@ -470,9 +465,9 @@ for station in available_time_series_list.iterrows():
                          attrs = {"description"   : "10-m Northward Wind",
                                   "long_name"     : "10-m Northward Wind",
                                   "standard_name" : "northward_wind",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "m s-1"})
-  
+
 
     glw   = xr.DataArray(ts_input["glw"].to_numpy(), 
                          coords=[time],
@@ -481,7 +476,7 @@ for station in available_time_series_list.iterrows():
                          attrs = {"description"   : "Surface Net Downward Longwave Flux",
                                   "long_name"     : "Surface Net Downward Longwave Flux",
                                   "standard_name" : "surface_net_downward_longwave_flux",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "W m-2"})    
 
     gsw   = xr.DataArray(ts_input["gsw"].to_numpy(), 
@@ -491,7 +486,7 @@ for station in available_time_series_list.iterrows():
                          attrs = {"description"   : "Surface Net Downward Shortwave Flux",
                                   "long_name"     : "Surface Net Downward Shortwave Flux",
                                   "standard_name" : "surface_net_downward_shortwave_flux",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "W m-2"})    
 
     hfx   = xr.DataArray(ts_input["hfx"].to_numpy(), 
@@ -501,9 +496,9 @@ for station in available_time_series_list.iterrows():
                          attrs = {"description"   : "Surface Net Upward Sensible Heat Flux",
                                   "long_name"     : "Surface Net Upward Sensible Heat Flux",
                                   "standard_name" : "surface_upward_sensible_heat_flux",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "W m-2"})    
-    
+
     lfx   = xr.DataArray(ts_input["lfx"].to_numpy(), 
                          coords = [time],
                          dims   =  ["time"],
@@ -511,9 +506,9 @@ for station in available_time_series_list.iterrows():
                          attrs  =  {"description"   : "Surface Net Upward Latent Heat Flux",
                                   "long_name"     : "Surface Net Upward Latent Heat Flux",
                                   "standard_name" : "surface_upward_latent_heat_flux",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "W m-2"})   
-    
+
     tsk   = xr.DataArray(ts_input["tsk"].to_numpy(), 
                          coords = [time],
                          dims   = ["time"],
@@ -521,9 +516,9 @@ for station in available_time_series_list.iterrows():
                          attrs  = {"description"  : "Surface Skin Temperature",
                                   "long_name"     : "Surface Skin Temperature",
                                   "standard_name" : "surface_temperature",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "K"})       
-        
+
     tslb  = xr.DataArray(ts_input["tslb"].to_numpy(), 
                          coords = [time],
                          dims   = ["time"],
@@ -531,7 +526,7 @@ for station in available_time_series_list.iterrows():
                          attrs  =  {"description" : "Temperature of Top-Most Soil Layer",
                                   "long_name"     : "Temperature of Top-Most Soil Layer",
                                   "standard_name" : "soil_temperature",
-                                  "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                  "coordinates"   : "time latitude longitude elevation",
                                   "units"         : "K"})       
 
     rainnc  = xr.DataArray(ts_input["rainnc"].to_numpy(), 
@@ -541,9 +536,9 @@ for station in available_time_series_list.iterrows():
                          attrs  =  {"description"   : "Grid-Scale Precipitation Amount",
                                     "long_name"     : "Grid-Scale Precipitation Amount",
                                     "standard_name" : "stratiform_precipitation_amount",
-                                    "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                    "coordinates"   : "time latitude longitude elevation",
                                     "units"         : "kg m-2"})       
- 
+
     rainc  = xr.DataArray(ts_input["rainc"].to_numpy(), 
                          coords = [time],
                          dims   = ["time"],
@@ -551,9 +546,9 @@ for station in available_time_series_list.iterrows():
                          attrs  =  {"description"   : "Convective Precipitation Amount",
                                     "long_name"     : "Convective Precipitation Amount",
                                     "standard_name" : "convective_precipitation_amount",
-                                    "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                    "coordinates"   : "time latitude longitude elevation",
                                     "units"         : "kg m-2"})     
-           
+
     clw  = xr.DataArray(ts_input["clw"].to_numpy(), 
                          coords = [time],
                          dims   = ["time"],
@@ -561,9 +556,9 @@ for station in available_time_series_list.iterrows():
                          attrs  =  {"description"   : "Total Integrated Water",
                                     "long_name"     : "Total Integrated Water",
                                     "standard_name" : "atmosphere_mass_content_of_water",
-                                    "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                    "coordinates"   : "time latitude longitude elevation",
                                     "units"         : "kg m-2"})     
-   
+
 
     td_2m =mpcalc.dewpoint_from_specific_humidity(p_sfc, t_air, q_air).pint.to("K")
 
@@ -575,29 +570,29 @@ for station in available_time_series_list.iterrows():
                          attrs  =  {"description"   : "2-m Dew Point Temperatrue",
                                     "long_name"     : "2-m Dew Point Temperatrue",
                                     "standard_name" : "dew_point_temperature",
-                                    "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude wrf_grid_elevation",
+                                    "coordinates"   : "time latitude longitude elevation",
                                     "units"         : "K"})     
 
     #
     #  Pull Geopotential Height
     #
-    
+
     file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".PH"
 
     colnames = range_to_string_list(0, MAX_TS_LEVELS)
 
-    
+
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
                            skiprows    = 1,
                            infer_nrows = 38880,
                            names       = colnames)
-    
+
     ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
 
     ts_input = ts_input.set_index('time')
     ts_input = ts_input.drop(columns = ["ts_hour"])
-    
+
     ph = xr.DataArray(ts_input.to_numpy(), 
                       coords=[time,sigma],
                       name  =  "geopotential_height",
@@ -607,27 +602,27 @@ for station in available_time_series_list.iterrows():
                                "standard_name" : "geopotential_height",
                                "units"         : "m",
                                "positive"      : "down",
-                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude sigma"})
-    
+                               "coordinates"   : "time latitude longitude sigma"})
+
     #
     #  Pull Potential Temperature 
     #
-    
+
     file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".TH"
 
     colnames = range_to_string_list(0, MAX_TS_LEVELS)
-    
+
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
                            skiprows    = 1,
                            infer_nrows = 38880,
                            names       = colnames)
-    
+
     ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
 
     ts_input = ts_input.set_index('time')
     ts_input = ts_input.drop(columns = ["ts_hour"])
-    
+
     th = xr.DataArray(ts_input.to_numpy(), 
                       coords=[time,sigma],
                       name  =  "air_potential_temperature",
@@ -636,28 +631,28 @@ for station in available_time_series_list.iterrows():
                                "long_name"     : "Potential Air Temperature",
                                "standard_name" : "air_potential_temperature",
                                "units"         : "K",
-                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude sigma"})
+                               "coordinates"   : "time latitude longitude sigma"})
 
     #
     #  Pull Specific Humidity
     #
-    
+
     file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".QV"
 
     colnames = range_to_string_list(0, MAX_TS_LEVELS)
-    
+
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
                            skiprows    = 1,
                            infer_nrows = 38880,
                            names       = colnames)
-    
+
     ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
 
     ts_input = ts_input.set_index('time')
     ts_input = ts_input.drop(columns = ["ts_hour"])
-    
-    
+
+
     qv = xr.DataArray(ts_input.to_numpy(), 
                       coords=[time,sigma],
                       name  =  "specific_humidity",
@@ -666,28 +661,28 @@ for station in available_time_series_list.iterrows():
                                "long_name"     : "Specific Humidity",
                                "standard_name" : "specific_humidity",
                                "units"         : "kg3 kg-3",
-                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude sigma"})
-    
+                               "coordinates"   : "time latitude longitude sigma"})
+
     #
     #  Pull  "Eastward Wind"
     #
-    
+
     file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".UU"
 
     colnames = range_to_string_list(0, MAX_TS_LEVELS)
-    
+
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
                            skiprows    = 1,
                            infer_nrows = 38880,
                            names       = colnames)
-    
+
     ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
 
     ts_input = ts_input.set_index('time')
     ts_input = ts_input.drop(columns = ["ts_hour"])
-    
-    
+
+
     uu = xr.DataArray(ts_input.to_numpy(), 
                       coords=[time,sigma],
                       name  =  "eastward_wind",
@@ -696,28 +691,28 @@ for station in available_time_series_list.iterrows():
                                "long_name"     : "Eastward Wind",
                                "standard_name" : "eastward_wind",
                                "units"         : "m s-1",
-                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude sigma"})
+                               "coordinates"   : "time latitude longitude sigma"})
 
     #
     #  Pull  "Nortward Wind"
     #
-    
+
     file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".VV"
 
     colnames = range_to_string_list(0, MAX_TS_LEVELS)
-    
+
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
                            skiprows    = 1,
                            infer_nrows = 38880,
                            names       = colnames)
-    
+
     ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
 
     ts_input = ts_input.set_index('time')
     ts_input = ts_input.drop(columns = ["ts_hour"])
-    
-    
+
+
     vv = xr.DataArray(ts_input.to_numpy(), 
                       coords=[time,sigma],
                       name  =  "northward_wind",
@@ -726,27 +721,27 @@ for station in available_time_series_list.iterrows():
                                "long_name"     : "Northward Wind",
                                "standard_name" : "northward_wind",
                                "units"         : "m s-1",
-                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude sigma"})
+                               "coordinates"   : "time latitude longitude sigma"})
 
     #
     #  Pull  "Vertical Velocities 
     #
-    
+
     file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".WW"
 
     colnames = range_to_string_list(0, MAX_TS_LEVELS)
-    
+
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
                            skiprows    = 1,
                            infer_nrows = 38880,
                            names       = colnames)
-    
+
     ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
 
     ts_input = ts_input.set_index('time')
     ts_input = ts_input.drop(columns = ["ts_hour"])
-    
+
     ww = xr.DataArray(ts_input.to_numpy(), 
                       coords=[time,sigma],
                       name  =  "upward_air_velocity",
@@ -755,28 +750,28 @@ for station in available_time_series_list.iterrows():
                                "long_name"     : "Vertical Velocity",
                                "standard_name" : "upward_air_velocity",
                                "units"         : "m s-1",
-                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude sigma"})
-    
+                               "coordinates"   : "time latitude longitude sigma"})
+
     #
     #  Pull  "Pressure 
     #
-    
+
     file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".PR"
 
     colnames = range_to_string_list(0, MAX_TS_LEVELS)
-    
+
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
                            skiprows    = 1,
                            infer_nrows = 38880,
                            names       = colnames)
-    
+
     ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
 
     ts_input = ts_input.set_index('time')
     ts_input = ts_input.drop(columns = ["ts_hour"])
-    
-    
+
+
     pr = xr.DataArray(ts_input.to_numpy(), 
                       coords=[time,sigma],
                       name  =  "air_pressure",
@@ -785,30 +780,30 @@ for station in available_time_series_list.iterrows():
                                "long_name"     : "Air Pressure",
                                "standard_name" : "air_pressure",
                                "units"         : "Pa",
-                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude sigma"})
+                               "coordinates"   : "time latitude longitude sigma"})
 
 
 
     #
     #  Pull Turbulent Kinetic Energy
     #
-    
+
     file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".TE"
 
     colnames = range_to_string_list(0, MAX_TS_LEVELS)
-    
+
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
                            skiprows    = 1,
                            infer_nrows = 38880,
                            names       = colnames)
-    
+
     ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
 
     ts_input = ts_input.set_index('time')
     ts_input = ts_input.drop(columns = ["ts_hour"])
-    
-    
+
+
     te = xr.DataArray(ts_input.to_numpy(), 
                       coords=[time,sigma],
                       name  =  "specific_turbulent_kinetic_energy_of_air",
@@ -817,30 +812,30 @@ for station in available_time_series_list.iterrows():
                                "long_name"     : "Turbulent Kinetic Energy",
                                "standard_name" : "specific_turbulent_kinetic_energy_of_air",
                                "units"         : "m2 s-2",
-                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude sigma"})
+                               "coordinates"   : "time latitude longitude sigma"})
 
 
 
     #
     #  Pull Soil Temperature
     #
-    
+
     file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".ST"
 
     colnames = range_to_string_list(0, NUM_SOIL_LAYERS)
-    
+
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
                            skiprows    = 1,
                            infer_nrows = 38880,
                            names       = colnames)
-    
+
     ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
 
     ts_input = ts_input.set_index('time')
     ts_input = ts_input.drop(columns = ["ts_hour"])
-    
-    
+
+
     st = xr.DataArray(ts_input.to_numpy(), 
                       coords=[time,soil_depth],
                       name  =  "soil_temperature",
@@ -849,7 +844,7 @@ for station in available_time_series_list.iterrows():
                                "long_name"     : "Soil Temperature",
                                "standard_name" : "soil_temperature",
                                "units"         : "K",
-                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude soil_depth"})
+                               "coordinates"   : "time latitude longitude soil_depth"})
 
 
 
@@ -857,23 +852,23 @@ for station in available_time_series_list.iterrows():
     #
     #  Pull Soil Water Content
     #
-    
+
     file_2d = PATH_TO_WRF_OUTPUT_FILES + station_id + ".d" + str(grid_domain).zfill(2) + ".SM"
 
     colnames = range_to_string_list(0, NUM_SOIL_LAYERS)
-    
+
     ts_input = pd.read_fwf(file_2d,
                            header      = None,
                            skiprows    = 1,
                            infer_nrows = 38880,
                            names       = colnames)
-    
+
     ts_input['time'] = grid_time + ts_input["ts_hour"].to_numpy() * datetime.timedelta(hours=1)
 
     ts_input = ts_input.set_index('time')
     ts_input = ts_input.drop(columns = ["ts_hour"])
-    
-    
+
+
     sw = xr.DataArray(ts_input.to_numpy(), 
                       coords=[time,soil_depth],
                       name  =  "soil_volumetric_water_content",
@@ -881,48 +876,48 @@ for station in available_time_series_list.iterrows():
                       attrs = {"description"   : "Volumetric Soil Water Content",
                                "long_name"     : "Volumetric Soil Water Content",
                                "units"         : "m3 m-3",
-                               "coordinates"   : "time wrf_grid_latitude wrf_grid_longitude soil_depth"})
+                               "coordinates"   : "time latitude longitude soil_depth"})
 
 
 
-    
+
     ####################################################################
     #
     # Single Value Arrays
     #
-    
-    wrf_grid_longitude = xr.DataArray(np.array([grid_lon]),
-                                 name  = "wrf_grid_longitude",
-                                 dims=["wrf_grid_longitude"],
+
+    wrf_grid_longitude = xr.DataArray(grid_lon, # np.array([grid_lon]),
+                                 name  = "longitude",
+                                 #dims=["wrf_grid_longitude"],
                                  attrs = {"description"   : "WRF Grid Longitude",
                                           "long_name"     : "WRF Grid Longitude",
                                           "standard_name" : "longitude",
                                           "units"         : "degrees_east"})
-    
-    wrf_grid_longitude = wrf_grid_longitude.assign_coords({"wrf_grid_longitude":wrf_grid_longitude.values})
+
+    #wrf_grid_longitude = wrf_grid_longitude.assign_coords({"wrf_grid_longitude":wrf_grid_longitude.values})
 
 
-    wrf_grid_latitude = xr.DataArray(np.array([grid_lat]),
-                                 name  = "wrf_grid_latitude",
-                                 dims=["wrf_grid_latitude"],
+    wrf_grid_latitude = xr.DataArray(grid_lat, # np.array([grid_lat]),
+                                 name  = "latitude",
+                                 #dims=["wrf_grid_latitude"],
                                  attrs = {"description"   : "WRF Grid Latitude",
                                           "long_name"     : "WRF Grid Latitude",
                                           "standard_name" : "latitude",
                                           "units"         : "degrees_north"})
-    wrf_grid_latitude = wrf_grid_latitude.assign_coords({"wrf_grid_latitude":wrf_grid_latitude.values})
+    #wrf_grid_latitude = wrf_grid_latitude.assign_coords({"wrf_grid_latitude":wrf_grid_latitude.values})
 
 
-    wrf_grid_elevation = xr.DataArray(np.array([grid_elevation]),
-                                 name  = "wrf_grid_elevation",
-                                 dims=["wrf_grid_elevation"],
+    wrf_grid_elevation = xr.DataArray(grid_elevation, # np.array([grid_elevation]),
+                                 name  = "elevation",
+                                 #dims=["wrf_grid_elevation"],
                                  attrs = {"description"   : "WRF Grid Elevation",
                                           "long_name"     : "WRF Grid Elevation",
                                           "standard_name" : "elevation",
                                           "units"         : "m"})
-    wrf_grid_elevation = wrf_grid_elevation.assign_coords({"wrf_grid_elevation":wrf_grid_elevation.values})
+    #wrf_grid_elevation = wrf_grid_elevation.assign_coords({"wrf_grid_elevation":wrf_grid_elevation.values})
 
 
-    
+
     #
     # Group Dataset for Export
     #
@@ -930,11 +925,14 @@ for station in available_time_series_list.iterrows():
     time_series = xr.Dataset(coords = {"time": time,
                                       "sigma":sigma,
                                       "soil_depth":soil_depth,
-                                      "soil_thickness": soil_thickness,
-                                      "wrf_grid_latitude"  : wrf_grid_latitude,
-                                      "wrf_grid_longitude" : wrf_grid_longitude,
-                                      "wrf_grid_elevation" : wrf_grid_elevation},
-                            data_vars = {"air_temperature_2m"                        : t_air,
+                                      "soil_thickness": soil_thickness},
+                                      #"wrf_grid_latitude"  : wrf_grid_latitude,
+                                      #"wrf_grid_longitude" : wrf_grid_longitude,
+                                      #"wrf_grid_elevation" : wrf_grid_elevation},
+                            data_vars = {"latitude"  : wrf_grid_latitude,
+                                         "longitude" : wrf_grid_longitude,
+                                         "elevation" : wrf_grid_elevation,
+                                         "air_temperature_2m"                        : t_air,
                                           "specific_humidity_2m"                     : q_air,
                                           "dew_point_temperature_2m"                 : td_2m.as_numpy(),
                                           "eastward_wind_10m"                        : u_10m,
@@ -970,7 +968,7 @@ for station in available_time_series_list.iterrows():
                                      "WRF_Grid_I"                 : grid_i,
                                      "WRF_Grid_J"                 : grid_j,
                                      "WRF_Grid_Surface_Elevation" : grid_elevation})
- 
+
 
 
 
@@ -979,11 +977,11 @@ for station in available_time_series_list.iterrows():
 
 
     netcdf_file_name = NETCDF_OUTPUT_PATH + "./wrfout_d"+str(grid_domain).zfill(2)+"_"+model_start_date_YYYY_MM_DD_HH+"_"+station_id+".nc"
-    
+
     print(netcdf_file_name)
-    
+
     time_series.to_netcdf(path=netcdf_file_name, mode='w', format="NETCDF4")
-    
+
     os.system("ncatted -Oh --attribute _FillValue,sigma,d,, "+netcdf_file_name)
 
 print("")    
@@ -993,7 +991,7 @@ print("--------------------")
 ####################################################
 ####################################################
 ####################################################
-    
+
 
 
 # ## Pushing NetCDF Files to Storage
