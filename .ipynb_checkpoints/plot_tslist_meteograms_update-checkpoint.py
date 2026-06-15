@@ -504,21 +504,21 @@ for station_row in range(len(available_time_series_list)):
 
     print("------ metar_to_wrf_distance ----")
     print([metar_data.iloc[0][ "latitude"],metar_data.iloc[0]["longitude"]])
-    print([wrf_timeseries["latitude" ].values[0],wrf_timeseries["longitude"].values[0]])
+    print([float(wrf_timeseries["latitude" ].values),float(wrf_timeseries["longitude"].values)])
 
     metar_to_wrf_distance = hs.haversine([metar_data.iloc[0][ "latitude"],
                                           metar_data.iloc[0]["longitude"]],
-                                          [wrf_timeseries["latitude" ].values,
-                                           wrf_timeseries["longitude"].values])
+                                          [float(wrf_timeseries["latitude" ].values),
+                                           float(wrf_timeseries["longitude"].values)])
     
     print("------ sta_to_wrf_distance ----")
     print([station_lat,   station_lon])
-    print([wrf_timeseries["latitude" ].values,wrf_timeseries["longitude"].values])
+    print([float(wrf_timeseries["latitude" ].values),float(wrf_timeseries["longitude"].values)])
     
     sta_to_wrf_distance   = hs.haversine([station_lat,
                                           station_lon],
-                                         [wrf_timeseries["latitude" ].values,
-                                          wrf_timeseries["longitude"].values])    
+                                         [float(wrf_timeseries["latitude" ].values),
+                                           float(wrf_timeseries["longitude"].values)])    
 
     print("distance between  metar and tslist ",metar_to_sta_distance)
     print("distance between  metar and    wrf ",metar_to_wrf_distance)
