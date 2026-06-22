@@ -6,7 +6,7 @@
  time_step_fract_den                 = 1,
  max_dom                             = 3,
  max_ts_level                        = 15,
- max_ts_locs                         = 50,
+ max_ts_locs                         = 60,
  e_we                                = 150,   190,  169,
  e_sn                                = 150,   148,  190,
  e_vert                              = 45,     45,   45,

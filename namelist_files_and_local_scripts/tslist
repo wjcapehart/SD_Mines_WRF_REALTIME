@@ -6,15 +6,20 @@ Rapid City Airport, SD    KRAP  44.0430 -103.054
 Ellsworth AFB, SD         KRCA  44.1330 -103.100
 Rapid City, NEXRAD, SD    KUDX  44.1330 -102.833
 Custer Airport, SD        KCUT  43.7330 -103.611
-Custer Airport, SD        KSPF  44.4830 -103.783
+Sturgis Airport, SD       K49B  44.4186 -103.377
+Clyde Ice Field, SD       KSPF  44.4830 -103.783
 Belle Fourche Airport, SD KEFC  44.7340 -103.862
 Philip Airport, SD        KPHP  44.0510 -101.601
 Pine Ridge Airport, SD    KIEN  43.0210 -102.518
 Chadron Airport, NE       KCDR  42.8370 -103.098
+Martin Airport, SD        K9V6  43.1656 -101.713
 Faith Airport, SD         KD07  45.0320 -102.019
 Hulett Airport, WY        KW43  44.6629 -104.568
 Moorcroft, WY             K4MC  44.2670 -104.950
 Gordon Airport, NE        KGRN  42.8060 -102.175
+Cheyenne Eagle Butte, SD  K84D  44.9844 -101.251
+Rosebud Sioux Airport, SD KSUO  43.2585 -100.859
+Gettysburg Airport, SD    K0D8  44.9866 -99.9529
 Buffalo, SD               K2WX  45.6040 -103.546
 Gillette  Airport, WY     KGCC  44.3390 -105.542
 Hettinger Airport, ND     KHEI  46.0140 -102.655
@@ -23,6 +28,9 @@ Lemmon Airport, SD        KLEM  45.9190 -102.106
 Alliance Airport, NE      KAIA  42.0500 -102.800
 Pierre Airport, SD        KPIR  44.3810 -100.286
 Mission, SD               KMIS  43.0330 -100.617
+Linton Airport, ND        K7L2  46.2206 -100.246
+Standing Rock Airport, ND KY27  46.0669 -100.633
+Mobridge Airport, SD      KMBG  45.5463 -100.406
 Converse, Co. Airport, WY KDGW  42.7960 -105.380
 Douglas, WY               K4DG  42.7500 -105.383
 Torrington Airport, WY    KTOR  42.0610 -104.158
