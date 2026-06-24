@@ -1,57 +1,61 @@
 #-----------------------------------------------#
 # 24 characters for name | pfx |  LAT  |   LON  |
 #-----------------------------------------------#
-Rapid City NWS, SD        KUNR  44.0727 -103.211
-Rapid City Airport, SD    KRAP  44.0430 -103.054
-Ellsworth AFB, SD         KRCA  44.1330 -103.100
-Rapid City, NEXRAD, SD    KUDX  44.1330 -102.833
-Custer Airport, SD        KCUT  43.7330 -103.611
-Sturgis Airport, SD       K49B  44.4186 -103.377
-Clyde Ice Field, SD       KSPF  44.4830 -103.783
-Belle Fourche Airport, SD KEFC  44.7340 -103.862
-Philip Airport, SD        KPHP  44.0510 -101.601
-Pine Ridge Airport, SD    KIEN  43.0210 -102.518
-Chadron Airport, NE       KCDR  42.8370 -103.098
-Martin Airport, SD        K9V6  43.1656 -101.713
-Faith Airport, SD         KD07  45.0320 -102.019
-Hulett Airport, WY        KW43  44.6629 -104.568
-Moorcroft, WY             K4MC  44.2670 -104.950
-Gordon Airport, NE        KGRN  42.8060 -102.175
-Cheyenne Eagle Butte, SD  K84D  44.9844 -101.251
-Rosebud Sioux Airport, SD KSUO  43.2585 -100.859
-Gettysburg Airport, SD    K0D8  44.9866 -99.9529
-Buffalo, SD               K2WX  45.6040 -103.546
-Gillette  Airport, WY     KGCC  44.3390 -105.542
-Hettinger Airport, ND     KHEI  46.0140 -102.655
-Lemmon, SD                KY22  45.9330 -102.167
-Lemmon Airport, SD        KLEM  45.9190 -102.106
-Alliance Airport, NE      KAIA  42.0500 -102.800
-Pierre Airport, SD        KPIR  44.3810 -100.286
-Mission, SD               KMIS  43.0330 -100.617
-Linton Airport, ND        K7L2  46.2206 -100.246
-Standing Rock Airport, ND KY27  46.0669 -100.633
-Mobridge Airport, SD      KMBG  45.5463 -100.406
-Converse, Co. Airport, WY KDGW  42.7960 -105.380
-Douglas, WY               K4DG  42.7500 -105.383
-Torrington Airport, WY    KTOR  42.0610 -104.158
-Bowman Airport, ND        KBWW  46.1655 -103.300
-Sibley Peak, WY           KSIB  42.4330 -105.033
-Miller Field Airport, NE  KVTN  42.8780 -100.550
-Scottsbluff Airport, NE   KBFF  41.8710 -103.593
-Munich School, ND         MUNS  48.6675 -98.8344
-Sioux Falls NWS, SD       KFSD  43.5820 -96.7419
-Aberdeen NWS, SD          KABR  45.4467 -98.4224
-Bismark NWS, ND           KBIS  46.7727 -100.746
-Grand Forks NWS, ND       KFGF  47.9219 -97.0981
-Glasgow NWS, MT           KGGW  48.2124 -106.615
-Billings NWS, MT          KBYZ  45.7502 -108.570
-Riverton NWS, WY          KRIW  43.0642 -108.460
-Cheyenne NWS, WY          KCYS  41.1556 -104.810
-Boulder NWS, CO           KBOU  39.9920 -105.261
-Denver Intl Airport, CO   KDEN  39.8617 -104.673
-Grand Junction NWS, CO    KGJT  39.1224 -108.527
-Goodland NWS, KS          KGLD  39.3707 -101.699
-Topeka NWS, KS            KTOP  39.0688 -95.6224
-Hastings NWS, NE          KGID  40.6475 -98.3837
-North Platte NWS, NE      KLBF  41.1262 -100.684
-Omaha-Valley NWS, NE      KOAX  41.3197 -96.3673
+Aberdeen NWS, SD          KABR  45.4467 -98.4224
+Alliance Airport, NE      KAIA  42.0500 -102.800
+Baker Airport, MT         KBHK  46.3466 -104.258
+Belle Fourche Airport, SD KEFC  44.7340 -103.862
+Billings NWS, MT          KBYZ  45.7502 -108.570
+Bismark NWS, ND           KBIS  46.7727 -100.746
+Boulder NWS, CO           KBOU  39.9920 -105.261
+Bowman Airport, ND        KBWW  46.1655 -103.300
+Buffalo, SD               K2WX  45.6040 -103.546
+Chadron Airport, NE       KCDR  42.8370 -103.098
+Cheyenne Eagle Butte, SD  K84D  44.9844 -101.251
+Cheyenne NWS, WY          KCYS  41.1556 -104.810
+Clyde Ice Field, SD       KSPF  44.4830 -103.783
+Converse, Co. Airport, WY KDGW  42.7960 -105.380
+Custer Airport, SD        KCUT  43.7330 -103.611
+Denver Intl Airport, CO   KDEN  39.8617 -104.673
+Douglas, WY               K4DG  42.7500 -105.383
+Edgemont Airport, SD      K6V0  43.2950 -103.843
+Ekalaka Airport, MT       K96M  45.8765 -104.538
+Ellsworth AFB, SD         KRCA  44.1330 -103.100
+Faith Airport, SD         KD07  45.0320 -102.019
+Gettysburg Airport, SD    K0D8  44.9866 -99.9529
+Gillette Airport, WY      KGCC  44.3390 -105.542
+Glasgow NWS, MT           KGGW  48.2124 -106.615
+Goodland NWS, KS          KGLD  39.3707 -101.699
+Gordon Airport, NE        KGRN  42.8060 -102.175
+Grand Forks NWS, ND       KFGF  47.9219 -97.0981
+Grand Junction NWS, CO    KGJT  39.1224 -108.527
+Hastings NWS, NE          KGID  40.6475 -98.3837
+Hettinger Airport, ND     KHEI  46.0140 -102.655
+Hot Springs Airport, SD   KHSR  43.3683 -103.388
+Hulett Airport, WY        KW43  44.6629 -104.568
+Lemmon Airport, SD        KLEM  45.9190 -102.106
+Linton Airport, ND        K7L2  46.2206 -100.246
+Martin Airport, SD        K9V6  43.1656 -101.713
+Miller Field Airport, NE  KVTN  42.8780 -100.550
+Mission, SD               KMIS  43.0330 -100.617
+Mobridge Airport, SD      KMBG  45.5463 -100.406
+Mondell Field Airport, SD KECS  43.8843 -104.315
+Moorcroft, WY             K4MC  44.2670 -104.950
+Munich School, ND         MUNS  48.6675 -98.8344
+North Platte NWS, NE      KLBF  41.1262 -100.684
+Omaha-Valley NWS, NE      KOAX  41.3197 -96.3673
+Philip Airport, SD        KPHP  44.0510 -101.601
+Pierre Airport, SD        KPIR  44.3810 -100.286
+Pine Ridge Airport, SD    KIEN  43.0210 -102.518
+Rapid City Airport, SD    KRAP  44.0430 -103.054
+Rapid City NWS, SD        KUNR  44.0727 -103.211
+Rapid City, NEXRAD, SD    KUDX  44.1330 -102.833
+Riverton NWS, WY          KRIW  43.0642 -108.460
+Rosebud Sioux Airport, SD KSUO  43.2585 -100.859
+Scottsbluff Airport, NE   KBFF  41.8710 -103.593
+Sibley Peak, WY           KSIB  42.4330 -105.033
+Sioux Falls NWS, SD       KFSD  43.5820 -96.7419
+Standing Rock Airport, ND KY27  46.0669 -100.633
+Sturgis Airport, SD       K49B  44.4186 -103.377
+Topeka NWS, KS            KTOP  39.0688 -95.6224
+Torrington Airport, WY    KTOR  42.0610 -104.158
