@@ -72,3 +72,4 @@ current_run.txt
 *.VV
 *.PR
 .ipynb_checkpoints/plot_tslist_meteograms_update-checkpoint.py
+.DS_Store
