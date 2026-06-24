@@ -651,7 +651,7 @@ for station_row in range(len(available_time_series_list)):
     ax[0,0].plot(wrf_times,
              (wrf_timeseries["dew_point_temperature_2m"]*units("K")).pint.to("degF"),
               color = "blue")
-    ax[0,0].set_ylabel("Temperature/DewPoint (°F)")
+    ax[0,0].set_ylabel("2-m Temperature/DewPoint (°F)")
 
 
     try:
@@ -685,7 +685,7 @@ for station_row in range(len(available_time_series_list)):
     ax[0,1].plot(wrf_times,
             spd_wrf,
               color = "steelblue")
-    ax[0,1].set_ylabel("WRF Wind Speed (kts)")
+    ax[0,1].set_ylabel("10-m Wind Speed (kts)")
 
 
     ax01 = ax[0,1].twinx()

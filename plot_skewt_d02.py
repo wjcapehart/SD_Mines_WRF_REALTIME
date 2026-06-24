@@ -53,7 +53,7 @@ import timezonefinder    as tzf
 import pytz              as pytz
 import socket            as socket
 
-CLOUDS_ON = False
+CLOUDS_ON = True
 
 
 #
@@ -499,13 +499,13 @@ for domain in range(chosen_domain,chosen_domain+1):
                         "v_wind"      :   "kt",
                         "height"      :    "m",
                         "agl"         :    "m",
-                        "qv"          : "g/kg",
-                        "qc"          : "g/kg",
-                        "qi"          : "g/kg",
-                        "qr"          : "g/kg",
-                        "qs"          : "g/kg",
-                        "qh"          : "g/kg",
-                        "speed"       : "kt"}
+                        "speed"       : "kt", #}
+                        "qv"          : "degree_Celsius", #so I can use skewT
+                        "qc"          : "degree_Celsius",
+                        "qi"          : "degree_Celsius",
+                        "qr"          : "degree_Celsius",
+                        "qs"          : "degree_Celsius",
+                        "qh"          : "degree_Celsius"}
 
 
             sounding_df = pandas_dataframe_to_unit_arrays(df           = sounding_df, 
@@ -787,14 +787,16 @@ for domain in range(chosen_domain,chosen_domain+1):
             #
          
             if (CLOUDS_ON):
-                
-                axclouds = SkewT(fig      =       fig,
-                                 rotation =         0, 
-                                 aspect = 'auto',
-                                 #aspect   =    (90./np.log10(1050.-100)) / (np.ceil(clouds_maxx)/np.log10(1050.-100)) ,
-                                 rect     = [0.77, skew_box_y_start, 0.28, skew_box_y_length])
+               
 
-                # axclouds.ax.xaxis.set_units(units("gram / kilogram"))
+                axclouds = SkewT(fig      =       fig,
+                             rotation =         0,
+                             aspect   =     'auto',
+                             rect     = [0.77, skew_box_y_start, 0.28, skew_box_y_length])
+
+
+
+                #axclouds.ax.xaxis.set_units(units("gram / kilogram"))
 
                 
                 axclouds.ax.set_title('Hodograph & Moisture Profile', fontsize=15)
@@ -806,12 +808,23 @@ for domain in range(chosen_domain,chosen_domain+1):
                 axclouds.ax.spines[  "top"].set_color("white")
                 
                 
+                cloud_legend = ["$q_v$"]
                 axclouds.plot(sounding_df["pressure"], sounding_df["qv"], color="greenyellow")
-                axclouds.plot(sounding_df["pressure"], sounding_df["qc"], color="darkgrey")            
-                axclouds.plot(sounding_df["pressure"], sounding_df["qi"], color="cyan")            
-                axclouds.plot(sounding_df["pressure"], sounding_df["qr"], color="darkgreen")            
-                axclouds.plot(sounding_df["pressure"], sounding_df["qs"], color="blue")            
-                axclouds.plot(sounding_df["pressure"], sounding_df["qg"], color="red")  
+                if np.any(sounding_df["qc"] > 0):
+                    axclouds.plot(sounding_df["pressure"], sounding_df["qc"], color="darkgrey") 
+                    cloud_legend.append("$q_c$")
+                if np.any(sounding_df["qi"] > 0):
+                    axclouds.plot(sounding_df["pressure"], sounding_df["qi"], color="cyan")            
+                    cloud_legend.append("$q_i$")
+                if np.any(sounding_df["qr"] > 0):
+                    axclouds.plot(sounding_df["pressure"], sounding_df["qr"], color="darkgreen")            
+                    cloud_legend.append("$q_r$")
+                if np.any(sounding_df["qs"] > 0):
+                    axclouds.plot(sounding_df["pressure"], sounding_df["qs"], color="blue")            
+                    cloud_legend.append("$q_s$")
+                if np.any(sounding_df["qg"] > 0):
+                    axclouds.plot(sounding_df["pressure"], sounding_df["qg"], color="red")  
+                    cloud_legend.append("$q_g$")
 
 
                 axclouds.ax.legend(["$q_v$","$q_c$","$q_i$","$q_r$","$q_s$","$q_g$"],
