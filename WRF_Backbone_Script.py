@@ -695,7 +695,7 @@ if (open_mp ==1) :
     print()
     print("Executing Real with OMP")
     os.system("date")
-    os.system(". ~/.bashrc; nohup ./REAL.EXE 2>&1 reallog.txt")
+    os.system(". ~/.bashrc; nohup ./real.exe 2>&1 reallog.txt")
     os.system("date")
     print()   
 else:
@@ -715,7 +715,7 @@ else:
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
         print("export OMP_NUM_THREADS=18", file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 2  -ppn 2  " + WRF_EXE + "./REAL_INTEL_DMSM_AVX.EXE 2>&1 real.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 2  -ppn 2  " + WRF_EXE + "./real.exe 2>&1 real.log", file =  f) 
         print("echo WRF:REAL::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_real.sh")
@@ -758,7 +758,7 @@ if (open_mp ==1) :
     print()
     print("Executing WRF with OMP")
     os.system("date")
-    os.system(". ~/.bashrc; nohup ./WRF.EXE 2>&1 wrflog.txt")
+    os.system(". ~/.bashrc; nohup ./wrf.exe 2>&1 wrflog.txt")
     os.system("date")
     print()   
 else:
@@ -775,7 +775,7 @@ else:
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
         print("export OMP_NUM_THREADS=18", file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 2 -ppn 2  " + WRF_EXE + "./WRF_INTEL_DMSM_AVX.EXE 2>&1 wrf.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 4 -ppn 2  " + WRF_EXE + "./wrf.exe 2>&1 wrf.log", file =  f) 
         print("echo WRF:WRF::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
