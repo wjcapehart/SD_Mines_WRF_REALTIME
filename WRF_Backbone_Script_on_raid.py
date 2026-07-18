@@ -718,7 +718,7 @@ else:
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
         print("export OMP_NUM_THREADS=18", file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 2  -ppn 2  " + WRF_EXE + "./real.exe 2>&1 real.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map  -genv I_MPI_PIN_DOMAIN=omp  -f ~wjc/nodes.wrf.3 -np 2  -ppn 2  " + WRF_EXE + "./real.exe 2>&1 real.log", file =  f) 
         print("echo WRF:REAL::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_real.sh")
@@ -778,7 +778,7 @@ else:
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
         print("export OMP_NUM_THREADS=18", file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map -f ~wjc/nodes.wrf.3 -np 4 -ppn 2  " + WRF_EXE + "./wrf.exe 2>&1 wrf.log", file =  f) 
+        print("mpirun -print-all-exitcodes -print-rank-map  -genv I_MPI_PIN_DOMAIN=omp  -f ~wjc/nodes.wrf.3 -np 4 -ppn 2  " + WRF_EXE + "./wrf.exe 2>&1 wrf.log", file =  f) 
         print("echo WRF:WRF::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
