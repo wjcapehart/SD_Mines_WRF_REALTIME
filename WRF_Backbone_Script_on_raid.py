@@ -886,7 +886,7 @@ with open(WRF_OVERALL_DIR + "./wrf_post_upp.sh", 'w') as f:
         print(". /opt/intel/oneapi/setvars.sh", file = f)
     print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
     print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
-    print(".  ~/.bashrc ; " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines     > ./UPP."    +model_start_date_YYYY_MM_DD_HH+".LOG 2>&1   & ", file =  f) 
+    print(".  ~/.bashrc ; " + WRF_OVERALL_DIR + "namelist_files_and_local_scripts/run_unipost_frames_SDMines_on_raid > ./UPP."    +model_start_date_YYYY_MM_DD_HH+".LOG 2>&1   & ", file =  f) 
     print("echo We^re Outahere Like Vladimir", file =  f) 
 os.system("chmod a+x " + WRF_OVERALL_DIR + "./wrf_post_upp.sh")
 os.system(WRF_OVERALL_DIR + "./wrf_post_upp.sh > wrf_post_upp." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1 ")
@@ -899,10 +899,10 @@ with open(WRF_OVERALL_DIR + "./wrf_post_processing.sh", 'w') as f:
     print("#!/bin/bash", file =  f)
     print(". ~/.bashrc", file =  f)
     print("cd " + WRF_OVERALL_DIR, file =  f) 
-    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf.py > ./TS2NC."     + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_maps_dxx.py    > ./MAPS_DXX."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_skewt_d01.py   > ./SKEWT_D01." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
-    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_skewt_d02.py   > ./SKEWT_D02." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./tslist_to_netcdf_on_raid.py > ./TS2NC."     + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_maps_dxx_on_raid.py    > ./MAPS_DXX."  + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_skewt_d01_on_raid.py   > ./SKEWT_D01." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
+    print("(.  ~/.bashrc ;   /home/wjc/miniconda3/bin/python " + WRF_OVERALL_DIR+ "./plot_skewt_d02_on_raid.py   > ./SKEWT_D02." + model_start_date_YYYY_MM_DD_HH + ".LOG 2>&1  ) & ", file =  f) 
     print("wait", file =  f) 
     print("echo We^re Outahere Like Vladimir", file =  f) 
     
@@ -982,10 +982,10 @@ os.system("rm -fv " + WRF_ARCHIVE  + " ./current_complete_run")
 os.system("ln -sv ./" + model_start_date_YYYY_MM_DD_HH  + " ./current_complete_run")
 
 
-os.system("scp /home/wjc/GitHub/SD_Mines_WRF_REALTIME//ARCHIVE/current_complete_run/GRIB/wrfout_d02_" + model_start_date_YYYY_MM_DD_HH + ".grib2 wjc@kyrill:/var/www/html/WRF/GRIB/wrf_out_d02_current.grib2")
-os.system("scp /home/wjc/GitHub/SD_Mines_WRF_REALTIME//ARCHIVE/current_complete_run/GRIB/wrfout_d01_" + model_start_date_YYYY_MM_DD_HH + ".grib2 wjc@kyrill:/var/www/html/WRF/GRIB/wrf_out_d01_current.grib2")
+os.system("scp /projects/SD_Mines_WRF_REALTIME//ARCHIVE/current_complete_run/GRIB/wrfout_d02_" + model_start_date_YYYY_MM_DD_HH + ".grib2 wjc@kyrill:/var/www/html/WRF/GRIB/wrf_out_d02_current.grib2")
+os.system("scp /projects/SD_Mines_WRF_REALTIME//ARCHIVE/current_complete_run/GRIB/wrfout_d01_" + model_start_date_YYYY_MM_DD_HH + ".grib2 wjc@kyrill:/var/www/html/WRF/GRIB/wrf_out_d01_current.grib2")
 
-os.system("/home/wjc/GitHub/SD_Mines_WRF_REALTIME/run_hourly_meteogram_update.sh")
+os.system("/projects/SD_Mines_WRF_REALTIME/run_hourly_meteogram_update_on_raid.sh")
 
 #
 ####################################################
