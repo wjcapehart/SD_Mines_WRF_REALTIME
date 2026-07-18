@@ -777,8 +777,24 @@ else:
         print("export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH", file = f)
         print("export LD_LIBRARY_PATH=/usr/local/lib/::${LD_LIBRARY_PATH}", file = f)
         print("cd " + WRF_EXE, file =  f) 
+        print("ulimit -s unlimited", file =  f) 
+        print("export UCX_IB_SL=0", file =  f) 
+        print("export UCX_TLS=rc,sm", file =  f) 
+        print("export UCX_RC_TIMEOUT=100s", file =  f) 
         print("export OMP_NUM_THREADS=18", file =  f) 
-        print("mpirun -print-all-exitcodes -print-rank-map  -genv I_MPI_PIN_DOMAIN=omp  -f ~wjc/nodes.wrf.3 -np 4 -ppn 2  " + WRF_EXE + "./wrf.exe 2>&1 wrf.log", file =  f) 
+        print("mpirun -print-all-exitcodes "   + \
+              " -print-rank-map "              + \
+              " -genv UCX_IB_SL=0 "            + \
+              " -genv UCX_TLS=tcp,sm "         + \
+              " -genv UCX_RC_TIMEOUT=100s "    + \
+              " -genv UCX_IB_RETRY_COUNT=15 "  + \
+              " -genv I_MPI_OFI_PROVIDER=tcp " + \
+              " -genv I_MPI_PIN_DOMAIN=omp "   + \
+              " -genv OMP_NUM_THREADS=18 "     + \
+              " -genv FI_PROVIDER=tcp "        + \
+              " -f ~wjc/nodes.wrf.3 "          + \
+              " -np 4 -ppn 2 "                 + \
+                WRF_EXE + "./wrf.exe 2>&1 wrf.log", file =  f) 
         print("echo WRF:WRF::: We^re Outahere Like Vladimir", file =  f) 
 
     os.system("chmod a+x " + WRF_EXE + "./processing_wrf_wrf.sh")
