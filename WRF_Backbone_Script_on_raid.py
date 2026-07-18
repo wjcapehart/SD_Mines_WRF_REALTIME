@@ -186,7 +186,7 @@ model_start_date_YYYY_MM_DD_HH00UTC = model_start_datetime.strftime("%Y-%m-%d %H
 with open(WRF_OVERALL_DIR + "./current_run.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH, file =  f)
 
-with open(WRF_OVERALL_DIR + "/home/wjc/GitHub/SD_Mines_WRF_REALTIME/current_run.txt", 'w') as f:
+with open("/home/wjc/GitHub/SD_Mines_WRF_REALTIME/current_run.txt", 'w') as f:
     print(model_start_date_YYYY_MM_DD_HH, file =  f)
 
     
