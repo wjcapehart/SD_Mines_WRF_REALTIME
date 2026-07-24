@@ -60,7 +60,7 @@ def range_to_string_list(start, end):
 #
 
 
-MAX_TS_LEVELS    = 15
+MAX_TS_LEVELS    = 20
 NUM_SOIL_LAYERS  =  4
 
 beta_on      =  0
