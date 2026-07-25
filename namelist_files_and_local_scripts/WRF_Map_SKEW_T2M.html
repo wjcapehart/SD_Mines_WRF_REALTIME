@@ -63,14 +63,14 @@ function load_figures() {
   // let station       = Station.value;
 
 
-    fetch("http://kyrill.ias.sdsmt.edu/WRF/WEB_IMAGES/current_run_formatted.txt")
+    fetch("https://kyrilll.ias.sdsmt.edu/WRF/WEB_IMAGES/current_run_formatted.txt")
     .then(response => response.text())
     .then(json => {
        formatted_date_string = JSON.stringify(json).replace(/"/g, '').replace(/\\n/g, '')
        document.getElementById('WRF_RUN_HEADER_TEXT').innerHTML = "<font color='#002554'>Western South Dakota Real-Time WRF for<br>" + formatted_date_string + "</font>";
      });
 
-   fetch("http://kyrill.ias.sdsmt.edu/WRF/WEB_IMAGES/current_run.txt")
+   fetch("https://kyrilll.ias.sdsmt.edu/WRF/WEB_IMAGES/current_run.txt")
    .then(response => response.text())
    .then(json => {
       date_string = JSON.stringify(json).replace(/"/g, '').replace(/\\n/g, '')
@@ -85,7 +85,7 @@ function load_figures() {
     .then(response => response.text())
     .then(json => {
     date_string = JSON.stringify(json).replace(/"/g, '').replace(/\\n/g, '')
-    document.getElementById('HRLY_SKEWT').src = "http://kyrill.ias.sdsmt.edu/WRF/WEB_IMAGES/SKEWTS/KUNR/wrfout_dxx_" + date_string + "_"+fx_hour+"_SKEWT_KUNR.gif";
+    document.getElementById('HRLY_SKEWT').src = "https://kyrilll.ias.sdsmt.edu/WRF/WEB_IMAGES/SKEWTS/KUNR/wrfout_dxx_" + date_string + "_"+fx_hour+"_SKEWT_KUNR.gif";
   });
 
 
@@ -94,7 +94,7 @@ function load_figures() {
     .then(response => response.text())
     .then(json => {
     date_string = JSON.stringify(json).replace(/"/g, '').replace(/\\n/g, '')
-    document.getElementById('HRLY_SFCT').src = "http://kyrill.ias.sdsmt.edu/WRF/WEB_IMAGES/MAPS/d02/SFCT/wrfout_d02_" + date_string + "_"+fx_hour+"_MAP_SFCT.gif";
+    document.getElementById('HRLY_SFCT').src = "https://kyrilll.ias.sdsmt.edu/WRF/WEB_IMAGES/MAPS/d02/SFCT/wrfout_d02_" + date_string + "_"+fx_hour+"_MAP_SFCT.gif";
   });
 
 
@@ -106,7 +106,7 @@ function load_figures() {
    <table cellpadding=0 border=0 cellspacing=0>
         <tr cellpadding=0 border=0 cellspacing=0>
           <td align="left" cellpadding=0 cellspacing=0 border=0 width="50%">
-            <img src="http://kyrill.ias.sdsmt.edu/wjc/web_graphics/Department_Lockups_AES.jpg" align="left" alt="SD Mines AES Lockup" width="45%">
+            <img src="https://kyrilll.ias.sdsmt.edu/wjc/web_graphics/Department_Lockups_AES.jpg" align="left" alt="SD Mines AES Lockup" width="45%">
 
           </td>
           <td align="right" cellpadding=0 cellspacing=0 border=0>
