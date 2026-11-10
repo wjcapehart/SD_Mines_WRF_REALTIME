@@ -294,7 +294,7 @@ ncep_http_dir = NCEP_HTTP_GRIB_DIR_ROOT + model_start_YYYYMMDD + "/atmos/"
 
 
 print(ncep_ftp_dir)
-gfs.t00z.pgrb2.0p25.f028
+
 ncep_ftp_file  =                 ["./gfs.t" + model_start_HH + "z.pgrb2.0p25.f" + x  for x in ncep_boundary_condition_hour]
 ncep_http_file = [ncep_http_dir + "./gfs.t" + model_start_HH + "z.pgrb2.0p25.f" + x  for x in ncep_boundary_condition_hour]
 
