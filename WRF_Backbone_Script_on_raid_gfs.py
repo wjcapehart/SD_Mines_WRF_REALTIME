@@ -71,7 +71,7 @@ WRF_EXE     = WRF_OVERALL_DIR + "./WRF4/WRF/test/em_real/"
 WRF_ARCHIVE = WRF_OVERALL_DIR + "./ARCHIVE/"
 WRF_IMAGES  = WRF_OVERALL_DIR + "./WEB_IMAGES/"
 
-NCEP_FTP_URLROOT        = "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs."
+NCEP_FTP_URLROOT        =   "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs."
 NCEP_HTTP_URLROOT       = "https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs."
 
 
@@ -272,8 +272,8 @@ len(ncep_boundary_condition_hour)
 model_start_YYYYMMDD = model_start_datetime.strftime("%Y%m%d")
 model_start_HH       = model_start_datetime.strftime("%H")
 
-ftp_directory  = NCEP_FTP_URLROOT   + model_start_YYYYMMDD + "/atmos/" + model_start_HH + "/"
-http_directory = NCEP_HTTP_URLROOT  + model_start_YYYYMMDD + "/atmos/" + model_start_HH + "/"
+ftp_directory  = NCEP_FTP_URLROOT   + model_start_YYYYMMDD + "/" + model_start_HH + "/atmos/"
+http_directory = NCEP_HTTP_URLROOT  + model_start_YYYYMMDD + "/" + model_start_HH + "/atmos/" 
 
 
 print(ftp_directory)
