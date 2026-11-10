@@ -269,6 +269,9 @@ len(ncep_boundary_condition_hour)
 # Pull Times and Create URLs for First Guess NCEP Files
 #
 
+# NCEP File Name Template
+# /com/gfs/prod/gfs.20261106/06/atmos/gfs.t06z.pgrb2.0p25.f012# ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
+
 model_start_YYYYMMDD = model_start_datetime.strftime("%Y%m%d")
 model_start_HH       = model_start_datetime.strftime("%H")
 
@@ -285,9 +288,6 @@ print(http_directory)
 ncep_ftp_address  = [ ftp_directory + "./gfs.t" + model_start_HH + "z.pgrb2.0p25.f" + x for x in ncep_boundary_condition_hour]
 ncep_http_address = [http_directory + "./gfs.t" + model_start_HH + "z.pgrb2.0p25.f" + x for x in ncep_boundary_condition_hour]
 
-./gfs.t12z.pgrb2.0p25.f000
-# NCEP File Name Template
-# /com/gfs/prod/gfs.20261106/06/atmos/gfs.t06z.pgrb2.0p25.f012# ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
 
 ncep_ftp_dir  = NCEP_FTP_GRIB_DIR_ROOT  + model_start_YYYYMMDD + "/" + model_start_HH + "/atmos/"
 ncep_http_dir = NCEP_HTTP_GRIB_DIR_ROOT + model_start_YYYYMMDD + "/" + model_start_HH + "/atmos/"
