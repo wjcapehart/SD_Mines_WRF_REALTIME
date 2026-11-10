@@ -247,7 +247,7 @@ ncep_boundary_condition_hour = np.arange(0,
                                          total_sumulation_time + 1, 
                                          time_between_boundary_condition_feeds)
 
-ncep_boundary_condition_hour = [str(x).zfill(2) for x in ncep_boundary_condition_hour]
+ncep_boundary_condition_hour = [str(x).zfill(3) for x in ncep_boundary_condition_hour]
 
 print(ncep_boundary_condition_hour)
 
