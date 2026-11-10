@@ -285,7 +285,7 @@ print(http_directory)
 ncep_ftp_address  = [ ftp_directory + "./gfs.t" + model_start_HH + "z.pgrb2.0p25.f" + x for x in ncep_boundary_condition_hour]
 ncep_http_address = [http_directory + "./gfs.t" + model_start_HH + "z.pgrb2.0p25.f" + x for x in ncep_boundary_condition_hour]
 
-
+./gfs.t12z.pgrb2.0p25.f000
 # NCEP File Name Template
 # /com/gfs/prod/gfs.20261106/06/atmos/gfs.t06z.pgrb2.0p25.f012# ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
 
@@ -337,8 +337,12 @@ os.system("rm -frv " + WPS_WORK + "./NAMELIST_WPS_SHARE.TXT")
 os.system("rm -frv " + WPS_WORK + "./ncep_first_guess_grib_*.grib2")
 
 if (not beta_on):
-
     try:
+        for file in range(0,len(ncep_boundary_condition_hour)):
+            print("Wgetting " + ncep_http_address[file] + " to " + local_ftp_file[file])
+            urllibreq.urlretrieve(ncep_http_address[file], local_ftp_file[file])
+        
+    except:
         ftp = ftplib.FTP(NCEP_FTP_SERVER)
         ftp.login('Anonymous','William.Capehart@sdsmt.edu')
 
@@ -348,12 +352,8 @@ if (not beta_on):
                            open(WPS_WORK + local_ftp_file[file], 'wb').write)
 
         ftp.close()
-    except:
-        print("-- Darn: FTP is down")
-        for file in range(0,len(ncep_boundary_condition_hour)):
-            print("Wgetting " + ncep_http_address[file] + " to " + local_ftp_file[file])
-            urllibreq.urlretrieve(ncep_http_address[file], local_ftp_file[file])
 
+ 
         
         
 

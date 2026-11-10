@@ -55,7 +55,7 @@ Param| Type |Level1|Level2| Name     | Units   | Description                    
 # As of 22 March 2021:
 #
 #  https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.ccyymmdd/hh/atmos/
-#  ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.ccyymmdd/hh/atmos/
+#    ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.ccyymmdd/hh/atmos/
 #
 #                          approx.    grid    hours      domain  dx       notes
 #                         file size   no.
