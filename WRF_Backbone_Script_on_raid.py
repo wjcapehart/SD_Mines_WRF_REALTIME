@@ -71,16 +71,16 @@ WRF_EXE     = WRF_OVERALL_DIR + "./WRF4/WRF/test/em_real/"
 WRF_ARCHIVE = WRF_OVERALL_DIR + "./ARCHIVE/"
 WRF_IMAGES  = WRF_OVERALL_DIR + "./WEB_IMAGES/"
 
-NCEP_FTP_URLROOT        = "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/nam/prod/nam."
-NCEP_HTTP_URLROOT       = "https://nomads.ncep.noaa.gov/pub/data/nccf/com/nam/prod/nam."
+NCEP_FTP_URLROOT        = "ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs."
+NCEP_HTTP_URLROOT       = "https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs."
 
 
 NCEP_FTP_SERVER         = "ftpprd.ncep.noaa.gov"
 NCEP_HTTP_SERVER        = "nomads.ncep.noaa.gov"
 
 
-NCEP_FTP_GRIB_DIR_ROOT  = "/pub/data/nccf/com/nam/prod/nam."
-NCEP_HTTP_GRIB_DIR_ROOT = "/pub/data/nccf/com/nam/prod/nam."
+NCEP_FTP_GRIB_DIR_ROOT  = "/pub/data/nccf/com/gfs/prod/gfs."
+NCEP_HTTP_GRIB_DIR_ROOT = "/pub/data/nccf/com/gfs/prod/gfs."
 
 #
 ####################################################
@@ -287,17 +287,16 @@ ncep_http_address = [http_directory + "/nam.t" + model_start_HH + "z.conusnest.h
 
 
 # NCEP File Name Template
-# /pub/data/nccf/com/nam/prod/nam.20210904/nam.t00z.conusnest.hiresf03.tm00.grib2
-# ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
+# /com/gfs/prod/gfs.20261106/06/atmos/gfs.t06z.pgrb2.0p25.f012# ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
 
-ncep_ftp_dir  = NCEP_FTP_GRIB_DIR_ROOT  + model_start_YYYYMMDD 
-ncep_http_dir = NCEP_HTTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
+ncep_ftp_dir  = NCEP_FTP_GRIB_DIR_ROOT  + model_start_YYYYMMDD + "/atmos/"
+ncep_http_dir = NCEP_HTTP_GRIB_DIR_ROOT + model_start_YYYYMMDD + "/atmos/"
 
 
 print(ncep_ftp_dir)
-
-ncep_ftp_file  = ["./nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
-ncep_http_file = [ncep_http_dir + "./nam.t" + model_start_HH + "z.conusnest.hiresf" + x + ".tm00.grib2" for x in ncep_boundary_condition_hour]
+gfs.t00z.pgrb2.0p25.f028
+ncep_ftp_file  =                 ["./gfs.t" + model_start_HH + "z.pgrb2.0p25.f" + x  for x in ncep_boundary_condition_hour]
+ncep_http_file = [ncep_http_dir + "./gfs.t" + model_start_HH + "z.pgrb2.0p25.f" + x  for x in ncep_boundary_condition_hour]
 
 
 local_ftp_file = ["./ncep_first_guess_grib_" + x + ".grib2" for x in ncep_boundary_condition_hour]
