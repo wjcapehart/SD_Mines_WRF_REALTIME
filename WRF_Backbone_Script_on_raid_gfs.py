@@ -272,8 +272,8 @@ len(ncep_boundary_condition_hour)
 model_start_YYYYMMDD = model_start_datetime.strftime("%Y%m%d")
 model_start_HH       = model_start_datetime.strftime("%H")
 
-ftp_directory  = NCEP_FTP_URLROOT  + model_start_YYYYMMDD + "/atmos/"
-http_directory = NCEP_HTTP_URLROOT  + model_start_YYYYMMDD + "/atmos/"
+ftp_directory  = NCEP_FTP_URLROOT   + model_start_YYYYMMDD + "/atmos/" + model_start_HH + "/"
+http_directory = NCEP_HTTP_URLROOT  + model_start_YYYYMMDD + "/atmos/" + model_start_HH + "/"
 
 
 print(ftp_directory)
@@ -289,8 +289,8 @@ ncep_http_address = [http_directory + "./gfs.t" + model_start_HH + "z.pgrb2.0p25
 # NCEP File Name Template
 # /com/gfs/prod/gfs.20261106/06/atmos/gfs.t06z.pgrb2.0p25.f012# ncep_ftp_file = NCEP_FTP_GRIB_DIR_ROOT + model_start_YYYYMMDD 
 
-ncep_ftp_dir  = NCEP_FTP_GRIB_DIR_ROOT  + model_start_YYYYMMDD + "/atmos/"
-ncep_http_dir = NCEP_HTTP_GRIB_DIR_ROOT + model_start_YYYYMMDD + "/atmos/"
+ncep_ftp_dir  = NCEP_FTP_GRIB_DIR_ROOT  + model_start_YYYYMMDD + "/atmos/" + model_start_HH + "/"
+ncep_http_dir = NCEP_HTTP_GRIB_DIR_ROOT + model_start_YYYYMMDD + "/atmos/" + model_start_HH + "/"
 
 
 print("NCEP FTPDIR: "+ncep_ftp_dir)
